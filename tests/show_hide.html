@@ -1,0 +1,277 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<link rel="stylesheet" href="../../dijit/themes/claro/claro.css"/>
+
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script src="https://www.google.com/jsapi?key=ABQIAAAA-DMAtggvLwlIYlUJiASaAxRQnCpeV9jusWIeBw0POFqU6SItGxRWZhddpS8pIkVUd2fDQhzwPUWmMA"></script>
+<script src="http://api-maps.yandex.ru/1.1/index.xml?key=AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=="></script>
+
+<script>
+    dojoConfig = {
+        isDebug: true,
+		parseOnLoad: false,
+        paths: {djeo: "../djeo"},
+		mapEngine: "gfx"
+    };
+</script>
+<script src="util.js"></script>
+
+<script src="../../dojo/dojo.js"></script>
+
+<script>
+DebugUtil.timer.start("loading");
+if (dojoConfig.mapEngine=="ge") dojo.require("djeo.ge.Engine");
+
+dojo.require("dijit.form.Button");
+dojo.require("djeo.Map");
+dojo.require("djeo.control.Highlight");
+dojo.require("djeo.control.Tooltip");
+dojo.require("djeo.control.Navigation");
+
+dojo.require("djeo.tests.data.usa_geometries");
+dojo.require("djeo.tests.data.usa_features");
+dojo.require("djeo.tests.data.usa_some_railways");
+
+var style = [
+	{
+		stroke: "black",
+		strokeWidth: 1,
+		fill: "lightgrey",
+		size: 20
+	},
+	{
+		styleClass: "styleForAreas",
+		filter: "this.pd<=52.38",
+		fill: "orange"
+	},
+	{
+		styleClass: "styleForAreas",
+		filter: "this.pd>52.38 && this.pd<=188.64",
+		fill: "lime",
+		stroke: "blue",
+		strokeWidth: 2
+	},
+	{
+		fid: "US-CA",
+		polygon: {
+			fillOpacity: 0.5,
+			fill: "blue",
+			stroke: "brown"
+		}
+	},
+	{
+		fid: ["US-IL","US-OH"],
+		polygon: {
+			fill: "green",
+			stroke: "cyan"
+		}
+	}
+]
+
+var features = [
+	{
+		id: "areas",
+		styleClass: "styleForAreas",
+		features: djeo.tests.data.usa_features,
+		style: {
+			theme: "highlight",
+			reset: true,
+			stroke: "red",
+			strokeWidth: 4,
+			styleFunction: {
+				getStyle: function(feature, style, styleFunctionDef) {
+					if (feature.id == "US-PA") style.fill = "yellow";
+				}
+			}
+		}
+	},
+	{
+		style: {
+			fill: "lime",
+			stroke: "green",
+			strokeWidth: 4
+		},
+		features: {
+			name: "A polygon with a hole",
+			type: "Polygon",
+			coords: [
+				[[-170,45],[-160,45],[-160,35],[-170,35],[-170,45]],
+				[[-168,43],[-168,37],[-162,37],[-162,43],[-168,43]]
+			]
+		}
+	},
+	{
+		id: "railways",
+		style: [
+			{
+				stroke: "red",
+				strokeWidth: 3
+			}
+		],
+		features: djeo.tests.data.usa_some_railways
+	},
+	{
+		features: [
+			{
+				id: "nyc",
+				type: "Point",
+				coords:[-74, 40.71],
+				style: {
+					size: 30,
+					point: [
+						{
+							shape: "circle",
+							fill: "blue"
+						},
+						{
+							shape: "cross",
+							fill: "red"
+						}
+					]
+				},
+				name: "New York City"
+			},
+			{
+				type: "Point",
+				coords: [-122.33, 47.61],
+				style: {
+					point:{
+						shape:"star",
+						fill:"green",
+						size:50,
+						stroke: "red"
+					}
+				},
+				name: "Seattle"
+			},
+			{
+				type: "Point",
+				coords: [-122.42, 37.77],
+				style: {
+					shape:"cross",
+					fill:"brown"
+				},
+				name: "San Francisco"
+			},
+			{
+				type: "Point",
+				coords: [-118.24, 34.05],
+				style: {
+					shape:"triangle",
+					fill:"yellow"
+				},
+				name: "Los Angeles"
+			},
+			{
+				type: "Point",
+				coords: [-104.98, 39.74],
+				style: {
+					shape:"x",
+					fill:"red"
+				},
+				name: "Denver"
+			},
+			{
+				type: "Point",
+				coords: [-96.8, 32.78],
+				style: {
+					shape: "square"
+				},
+				name: "Dallas"
+			},
+			{
+				type: "Point",
+				coords: [-87.65, 41.85],
+				style: {
+					fill: "pink",
+					stroke: "yellow",
+					strokeWidth: 3,
+					shape: "circle"
+				},
+				name: "Chicago"
+			},
+			{
+				type: "Point",
+				coords: [-90.05, 35.15],
+				style: {
+					size: [28, 22],
+					img: "resources/icons/load.png",
+					scale: 2
+				},
+				name: "Memphis"
+			}
+		]
+	}
+];
+
+DebugUtil.timer.end("loading");
+
+var highlight, tooltip, navigation;
+var ready = function() {
+	
+    new dijit.form.ToggleButton({
+		checked: true,
+		onChange: function(value){
+			highlight.enable(value);
+		},
+		iconClass: "dijitRadioIcon"
+	}, "highlight");
+	
+    new dijit.form.ToggleButton({
+		checked: true,
+		onChange: function(value){
+			tooltip.enable(value);
+		},
+		iconClass: "dijitRadioIcon"
+	}, "tooltip");
+	
+    new dijit.form.ToggleButton({
+		checked: true,
+		onChange: function(value){
+			navigation.enable(value);
+		},
+		iconClass: "dijitRadioIcon"
+	}, "navigation");
+	
+    new dijit.form.ToggleButton({
+		checked: true,
+		onChange: function(value){
+			map.toggleVisibility("nyc");
+		},
+		iconClass: "dijitRadioIcon"
+	}, "nyc");
+	
+	DebugUtil.timer.start("render");
+    var map = new djeo.Map("map", {
+		geometries: djeo.tests.data.usa_geometries,
+		style: style,
+		features: features
+	});
+	map.ready(function() {
+		DebugUtil.timer.end("render");
+		highlight = new djeo.control.Highlight(map);
+		tooltip = new djeo.control.Tooltip(map);
+		navigation = new djeo.control.Navigation(map);
+	});
+}
+
+dojo.ready(ready);
+
+</script>
+
+</head>
+
+<body class="claro">
+
+<div id="highlight">Highlight control</div>
+<div id="tooltip">Tooltip control</div>
+<div id="navigation">Navigation control</div>
+
+<div id="nyc">New York City</div>
+
+<div id="map" style="width:800px;height:400px;"></div>
+
+</body>
+</html>

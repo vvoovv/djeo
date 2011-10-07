@@ -1,0 +1,175 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<link rel="stylesheet" href="../../dijit/themes/claro/claro.css"/>
+<link rel="stylesheet" href="../../dojox/grid/resources/Grid.css"/> 
+<link rel="stylesheet" href="../../dojox/grid/resources/claroGrid.css"/> 
+
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script src="https://www.google.com/jsapi?key=ABQIAAAA-DMAtggvLwlIYlUJiASaAxRQnCpeV9jusWIeBw0POFqU6SItGxRWZhddpS8pIkVUd2fDQhzwPUWmMA"></script>
+<script src="http://api-maps.yandex.ru/1.1/index.xml?key=AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=="></script>
+
+<script>
+    dojoConfig = {
+        isDebug: true,
+		parseOnLoad: false,
+        paths: {djeo: "../djeo"},
+		mapEngine: "gfx"
+    };
+</script>
+
+<script src="../tests/util.js"></script>
+<script src="../../dojo/dojo.js"></script>
+
+<script>
+DebugUtil.timer.start("loading");
+if (dojoConfig.mapEngine=="ge") dojo.require("djeo.ge.Engine");
+
+dojo.require("dijit.form.CheckBox");
+dojo.require("dijit.form.Select");
+
+dojo.require("dojox.grid.DataGrid");
+dojo.require("dojo.data.ItemFileReadStore");
+
+dojo.require("djeo.Map");
+
+dojo.require("djeo.control.Navigation");
+dojo.require("djeo.control.Highlight");
+dojo.require("djeo.control.Tooltip");
+dojo.require("djeo.widget.Legend");
+
+dojo.require("djeo.demo.data.airports");
+if (dojoConfig.mapEngine=="gfx") {
+	dojo.require("djeo.tests.data.usa_geometries");
+	dojo.require("djeo.tests.data.usa_features");
+}
+
+dojo.require("djeo.util.numeric");
+dojo.require("djeo.util.jenks");
+
+var map, legend, grid, store;
+var normalStyle = {
+	styleClass: "iconSizeByValue",
+	img: {src: "icons/plane_red.png", size: [50, 50]},
+	strokeWidth: 1,
+	name: "Number of enplanements",
+	styleFunction: {
+		getStyle: "djeo.util.numeric.getStyle",
+		options: {
+			numClasses: 8,
+			medianSize: 20,
+			sizeStep: 3,
+			attr: "enplanements",
+			breaks: "djeo.util.jenks.getBreaks",
+			//breaks: [0, 4000000, 10000000, 40000000],
+			calculateStyle: djeo.util.numeric.calculateSizeStyle
+		}
+	},
+	legend:  djeo._getBreaksIconLegend
+};
+var higlightStyle = {
+	theme: "highlight",
+	img: "icons/plane_blue.png"
+};
+
+
+var features = [
+	{
+		id: "airports",
+		styleClass: "iconSizeByValue",
+		features: djeo.demo.data.airports
+	}
+]
+
+DebugUtil.timer.end("loading");
+
+var ready = function() {
+	DebugUtil.timer.start("render");
+    map = new djeo.Map("map", {
+		features: features,
+		style: [normalStyle, higlightStyle],
+		layers: "HYBRID"
+	});
+	if (dojoConfig.mapEngine=="gfx") {
+		map.loadGeometries(djeo.tests.data.usa_geometries);
+		map.addFeatures(djeo.tests.data.usa_features, true);
+	}
+
+	map.ready(function(){
+		DebugUtil.timer.end("render");
+		new djeo.control.Navigation(map);
+		new djeo.control.Highlight(map, {features: "airports"});
+
+		new djeo.control.Tooltip(map, {
+			features: "airports",
+			text: function(feature) {
+				return "<span style='font-weight:bold'>"+feature.name+"</span><br>"+
+				"Number of enplanement: "+feature.get("enplanements");
+			}
+		});
+		
+		new djeo.widget.Legend({map: map}, "mapLegend");
+		
+		// setup the store and the grid
+		store = new dojo.data.ItemFileReadStore({
+			data: {
+				identifier: "id",
+				items: djeo.demo.data.airports
+			}
+		});
+		grid = new dojox.grid.DataGrid({
+			store: store,
+			query: { id: "*" },
+			sortInfo: -4,
+			structure: [
+				{ name: "Code", field: "id", width: "15%" },
+				{ name: "Name", field: "name", width: "50%" },
+				{ name: "State", field: "state", width: "10%" },
+				{ name: "Enplanements", field: "enplanements", width: "25%" }
+			]
+		}, "grid");
+		grid.startup();
+
+		// connect grid.onRowDblClick to the event handler
+		dojo.connect(grid, "onRowDblClick", function(evt) {
+			var storeItem = grid.getItem(evt.rowIndex),
+				featureId = store.getIdentity(storeItem);
+			map.zoomTo(featureId);
+		});
+		// connect grid.onRowMouseOver
+		dojo.connect(grid, "onRowMouseOver", function(evt) {
+			var storeItem = grid.getItem(evt.rowIndex),
+				feature = map.getFeatureById(store.getIdentity(storeItem));
+			feature.render(true, "highlight");
+		});
+		// connect grid.onRowMouseOut
+		dojo.connect(grid, "onRowMouseOut", function(evt) {
+			var storeItem = grid.getItem(evt.rowIndex),
+				feature = map.getFeatureById(store.getIdentity(storeItem));
+			feature.render(true);
+		});
+	});
+}
+
+dojo.ready(ready);
+</script>
+
+</head>
+
+<body class="claro">
+<h3>Number of enplanements in the largest US airports</h3>
+<table style="width:1000px;height:400px;">
+	<tr>
+		<td style="width:500px;vertical-align:top;">
+			<div id="grid"></div>
+		</td>
+		<td>
+			<div id="map" style="width:500px;height:400px;"></div>
+			<div id="mapLegend"></div>
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>

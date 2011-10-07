@@ -1,0 +1,194 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<link rel="stylesheet" href="../../dijit/themes/claro/claro.css"/>
+
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script src="https://www.google.com/jsapi?key=ABQIAAAA-DMAtggvLwlIYlUJiASaAxRQnCpeV9jusWIeBw0POFqU6SItGxRWZhddpS8pIkVUd2fDQhzwPUWmMA"></script>
+<script src="http://api-maps.yandex.ru/1.1/index.xml?key=AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=="></script>
+
+
+<script>
+    dojoConfig = {
+        isDebug: true,
+		parseOnLoad: false,
+        paths: {djeo: "../djeo"},
+		mapEngine: "gfx"
+    };
+</script>
+
+<script src="../tests/util.js"></script>
+<script src="../../dojo/dojo.js"></script>
+
+<script>
+DebugUtil.timer.start("loading");
+if (dojoConfig.mapEngine=="ge") dojo.require("djeo.ge.Engine");
+
+dojo.require("dijit.form.CheckBox");
+dojo.require("dijit.form.Select");
+
+dojo.require("djeo.Map");
+
+dojo.require("djeo.control.Navigation");
+dojo.require("djeo.control.Highlight");
+dojo.require("djeo.control.Tooltip");
+dojo.require("djeo.widget.Legend");
+
+if (dojoConfig.mapEngine!="gfx") dojo.require("djeo.demo.data.russia_geometriesEpsg4326");
+else dojo.require("djeo.demo.data.russia_geometries");
+
+dojo.require("djeo.demo.data.russia_features");
+
+dojo.require("djeo.util.numeric");
+dojo.require("djeo.util.colorbrewer");
+dojo.require("djeo.util.jenks");
+
+var map, legend;
+var mapStyle = {
+	id: "populationDensity",
+	styleClass: "populationDensity",
+	stroke: "black",
+	strokeWidth: 1,
+	name: "Population density",
+	styleFunction: {
+		getStyle: "djeo.util.numeric.getStyle",
+		options: {
+			numClasses: 7,
+			colorSchemeName: "Reds",
+			attr: "indicator1",
+			breaks: "djeo.util.jenks.getBreaks",
+			calculateStyle: djeo.util.colorbrewer.calculateStyle
+		}
+	},
+	legend: "djeo._getBreaksAreaLegend"
+}
+
+var setColorScheme = function(colorSchemeName, numClasses) {
+	var options = mapStyle.styleFunction.options;
+	if (colorSchemeName) {
+		options.colorSchemeName = colorSchemeName;
+		dojo.attr("schemeId", "innerHTML", colorSchemeName);
+	}
+	if (numClasses) {
+		options.numClasses = numClasses;
+	}
+	
+	// show colors from the selected scheme
+	var html="";
+	var colors = djeo.util.colorbrewer_data["seq"][options.numClasses][options.colorSchemeName].colors;
+	dojo.forEach(colors, function(color){
+		html += "<span style='background-color:"+ color +"'>&nbsp;&nbsp;&nbsp;&nbsp;</span>"+color+"<br>";
+	});
+	dojo.attr("selectedSchemeColors", "innerHTML", html);
+	
+	map.getStyleById("populationDensity").set(mapStyle);
+}
+
+var firstRun = true;
+var createColorSchemeGui = function(numClasses) {
+	var schemes = djeo.util.colorbrewer_data["seq"][numClasses];
+	var container = dojo.byId("colorSchemes");
+	for(var schemeName in schemes) {
+		if (firstRun) {
+			// add radio button
+			dojo.place(new dijit.form.RadioButton({
+				id: schemeName,
+				name: "colorbrewer",
+				value: schemeName,
+				onChange: function(value) {
+					if (value!==false) {
+						setColorScheme(this.id, null);
+						legend.refresh();
+					}
+				}
+			}).domNode,container);
+			dojo.place("<span id='colors"+ schemeName +"'></span><br>", container);
+		}
+		
+		// add colors
+		var html = "";
+		dojo.forEach(schemes[schemeName].colors, function(color){
+			html += "<span style='background-color:"+ color +"'>&nbsp;&nbsp;&nbsp;&nbsp;</span>";
+		});
+		dojo.attr("colors"+schemeName, "innerHTML", html);
+	}
+	firstRun = false;
+}
+
+var features = [
+	{
+		styleClass: "populationDensity",
+		features: djeo.demo.data.russia_features
+	}
+]
+
+DebugUtil.timer.end("loading");
+
+var ready = function() {
+	DebugUtil.timer.start("render");
+    map = new djeo.Map("map", {
+		geometries: djeo.demo.data.russiaGeometries,
+		features: features,
+		style: mapStyle,
+		useAttrs: true
+	});
+	map.ready(function(){
+		DebugUtil.timer.end("render");
+		new djeo.control.Navigation(map);
+		new djeo.control.Highlight(map);
+		new djeo.control.Tooltip(map, {
+			text: function(feature) {
+				return "<span style='font-weight:bold'>"+feature.name+"</span><br>"+
+				"Population density: "+feature.get("indicator1");
+			}
+		});
+		// create <number of classes> dijit.form.Select
+		var numClasses = new dijit.form.Select({options:[
+			{value:"3",label:3}, {value:"4",label:4}, {value:"5",label:5}, {value:"6",label:6}, {value:"7",label:7,selected:true}, {value:"8",label:8}, {value:"9",label:9}
+		]}, "numClasses");
+		numClasses.watch("value", function(attr, oldValue, newValue){
+			createColorSchemeGui(newValue);
+			setColorScheme(null, newValue);
+			legend.refresh();
+		})
+		createColorSchemeGui(7);
+		dijit.byId("Oranges").set("checked", true);
+		legend = new djeo.widget.Legend({map: map}, "mapLegend");
+	});
+}
+
+dojo.ready(ready);
+</script>
+
+</head>
+
+<body class="claro">
+<table>
+	<tr>
+		<td><div id="map" style="width:800px;height:400px;"></div></td>
+		<td>
+			Number of classes: <div id="numClasses"></div><br>
+			<div id="colorSchemes" style="overflow:auto; height:400px;"></div>
+		</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">
+			Color schemes from <a href="http://colorbrewer2.org/">www.ColorBrewer2.org</a> by Cynthia A. Brewer, Geography, Pennsylvania State University.<br>
+			Licensed under the Apache License, Version 2.0.
+			<p>
+			Map data (c) <a href="http://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>.
+			
+			<div id="mapLegend"></div>
+		</td>
+		<td>
+			Selected scheme:<br>
+			id:<span id="schemeId"></span><br>
+			<div id="selectedSchemeColors"></div>
+		</td>
+	</tr>
+</table>
+
+
+</body>
+</html>

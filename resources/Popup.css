@@ -1,0 +1,9 @@
+.dijitTooltip .closeText {
+    display:none;
+    /* for the onhover border in high contrast on IE: */
+    position:absolute;
+}
+
+.dijit_a11y .dijitTooltip .closeText {
+    display:inline;
+}

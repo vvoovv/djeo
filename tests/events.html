@@ -1,0 +1,231 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<link rel="stylesheet" href="../../dijit/themes/claro/claro.css"/>
+
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script src="https://www.google.com/jsapi?key=ABQIAAAA-DMAtggvLwlIYlUJiASaAxRQnCpeV9jusWIeBw0POFqU6SItGxRWZhddpS8pIkVUd2fDQhzwPUWmMA"></script>
+<script src="http://api-maps.yandex.ru/1.1/index.xml?key=AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=="></script>
+
+<script>
+    dojoConfig = {
+        isDebug: true,
+		parseOnLoad: false,
+        paths: {djeo: "../djeo"},
+		mapEngine: "gfx"
+    };
+</script>
+<script src="util.js"></script>
+<script src="../../dojo/dojo.js"></script>
+
+<script>
+DebugUtil.timer.start("loading");
+if (dojoConfig.mapEngine=="ge") dojo.require("djeo.ge.Engine");
+
+dojo.require("dijit.form.Button");
+dojo.require("djeo.Map");
+dojo.require("djeo.control.Navigation");
+
+dojo.require("djeo.tests.data.usa_geometries");
+dojo.require("djeo.tests.data.usa_features");
+dojo.require("djeo.tests.data.usa_some_railways");
+
+
+var features = [
+	{
+		id: "areas",
+		features: djeo.tests.data.usa_features
+	},
+	{
+		id: "railways",
+		style: {
+			lines: [
+				{
+					stroke: "red",
+					strokeWidth: 10
+				},
+				{
+					stroke: "yellow",
+					strokeWidth: 4
+				}
+			]
+		},
+		features: djeo.tests.data.usa_some_railways
+	},
+	{
+		features: [
+			{
+				id: "New York City",
+				type: "Point",
+				coords:[-74, 40.71],
+				style: {
+					size: 30,
+					points: [
+						{
+							shape: "circle",
+							fill: "blue"
+						},
+						{
+							type: "shape",
+							shape: "cross",
+							fill: "red"
+						}
+					]
+				},
+				name: "New York City"
+			},
+			{
+				id: "Seattle",
+				type: "Point",
+				coords: [-122.33, 47.61],
+				style: {
+					point:{
+						shape:"star",
+						fill:"green",
+						size:50,
+						stroke: "red"
+					}
+				},
+				name: "Seattle"
+			},
+			{
+				id: "Memphis",
+				type: "Point",
+				coords: [-90.05, 35.15],
+				style: {
+					size: [28, 22],
+					img: "resources/icons/load.png",
+					scale: 2
+				},
+				name: "Memphis"
+			}
+		]
+	}
+];
+
+
+var f1 = function(event){console.debug("function:US-AK, feature.id:"+event.feature.id+", event:"+event.type);},
+	f2 = function(event){ console.debug("function:US-TX, feature.id:"+event.feature.id+", event:"+event.type); },
+	f3 = function(event){ console.debug("function:railways, feature.parent.id:"+event.feature.parent.id+", event:"+event.type); },
+	f4 = function(event){ console.debug("function:Seattle, feature.id:"+event.feature.id+", event:"+event.type); },
+	f5 = function(event){ console.debug("function:New York City, feature.id:"+event.feature.id+", event:"+event.type); },
+	f6 = function(event){ console.debug("function:Memphis, feature.id:"+event.feature.id+", event:"+event.type); },
+	fMap =  function(event){ console.debug("function:Map, feature.id:"+event.feature.id+", event:"+event.type); };
+
+DebugUtil.timer.end("loading");
+
+var map, handle1, handle2, handle3, handle4;
+var ready = function() {
+
+    new dijit.form.ToggleButton({
+		checked: true,
+		onChange: function(value){
+			if (value) handle1 = connectFeature("US-AK", f1);
+			else disconnectFeature("US-AK", handle1);
+		},
+		iconClass: "dijitRadioIcon"
+	}, "1");
+	
+    new dijit.form.ToggleButton({
+		checked: true,
+		onChange: function(value){
+			if (value) handle2 = connectFeature("US-TX", f2);
+			else disconnectFeature("US-TX", handle2);
+		},
+		iconClass: "dijitRadioIcon"
+	}, "2");
+	
+    new dijit.form.ToggleButton({
+		checked: true,
+		onChange: function(value){
+			if (value) handle3 = connectFeature("railways", f3);
+			else disconnectFeature("railways", handle3);
+		},
+		iconClass: "dijitRadioIcon"
+	}, "3");
+	
+    new dijit.form.ToggleButton({
+		checked: true,
+		onChange: function(value){
+			if (value) handle4 = connectFeature("Seattle", f4);
+			else disconnectFeature("Seattle", handle4);
+		},
+		iconClass: "dijitRadioIcon"
+	}, "4");
+	
+    new dijit.form.ToggleButton({
+		checked: true,
+		onChange: function(value){
+			if (value) handle5 = connectFeature("New York City", f5);
+			else disconnectFeature("New York City", handle5);
+		},
+		iconClass: "dijitRadioIcon"
+	}, "5");
+
+    new dijit.form.ToggleButton({
+		checked: true,
+		onChange: function(value){
+			if (value) handle6 = connectFeature("Memphis", f6);
+			else disconnectFeature("Memphis", handle6);
+		},
+		iconClass: "dijitRadioIcon"
+	}, "6");
+	
+    new dijit.form.ToggleButton({
+		checked: true,
+		onChange: function(value){
+			if (value) handleMap = map.connect("onclick", fMap);
+			else map.disconnect(handleMap);
+		},
+		iconClass: "dijitRadioIcon"
+	}, "wholeMap");
+	
+	
+	DebugUtil.timer.start("render");
+    map = new djeo.Map("map", {
+		geometries: djeo.tests.data.usa_geometries,
+		features: features,
+		resizePoints: false,
+		resizeLines: false
+	});
+	map.ready(function(){
+		DebugUtil.timer.end("render");
+		new djeo.control.Navigation(map);
+		handle1 = connectFeature("US-AK", f1);
+		handle2 = connectFeature("US-TX", f2);
+		handle3 = connectFeature("railways", f3);
+		handle4 = connectFeature("Seattle", f4);
+		handle5 = connectFeature("New York City", f5);
+		handle6 = connectFeature("Memphis", f6);
+		handleMap = map.connect("onclick", fMap);
+	});
+}
+
+var connectFeature = function(id, callback) {
+	return map.getFeatureById(id).connect(["onclick", "onmouseover", "onmouseout"], callback);
+}
+
+var disconnectFeature = function(id, handle) {
+	map.getFeatureById(id).disconnect(handle);
+}
+
+
+dojo.ready(ready);
+
+</script>
+
+</head>
+
+<body class="claro">
+<div id="1">Alaska</div>
+<div id="2">Texas</div>
+<div id="3">Some US railways</div>
+<div id="4">Seattle (simple point object)</div>
+<div id="5">New York City (complex point object)</div>
+<div id="6">Memphis (image based point object)</div>
+<div id="wholeMap">The whole map</div>
+<div id="map" style="width:800px;height:400px;"></div>
+
+</body>
+</html>

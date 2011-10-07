@@ -1,0 +1,103 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<link rel="stylesheet" href="../../dijit/themes/claro/claro.css"/>
+
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script src="https://www.google.com/jsapi?key=ABQIAAAA-DMAtggvLwlIYlUJiASaAxRQnCpeV9jusWIeBw0POFqU6SItGxRWZhddpS8pIkVUd2fDQhzwPUWmMA"></script>
+<script src="http://api-maps.yandex.ru/1.1/index.xml?key=AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=="></script>
+
+<script>
+    dojoConfig = {
+        isDebug: true,
+		parseOnLoad: false,
+        paths: {djeo: "../djeo"},
+		mapEngine: "gfx"
+    };
+</script>
+<script src="util.js"></script>
+
+<script src="../../dojo/dojo.js"></script>
+
+<script>
+DebugUtil.timer.start("loading");
+if (dojoConfig.mapEngine=="ge") dojo.require("djeo.ge.Engine");
+
+dojo.require("dijit.form.Button");
+dojo.require("djeo.Map");
+dojo.require("djeo.control.Navigation");
+
+var features = [
+	{
+		features: [
+			{
+				type: "Point",
+				coords:[-74, 40.71]
+			},
+			{
+				type: "Point",
+				coords: [-122.33, 47.61]
+			},
+			{
+				type: "Point",
+				coords: [-122.42, 37.77]
+			},
+			{
+				type: "Point",
+				coords: [-118.24, 34.05]
+			},
+			{
+				type: "Point",
+				coords: [-104.98, 39.74]
+			},
+			{
+				type: "Point",
+				coords: [-96.8, 32.78]
+			},
+			{
+				type: "Point",
+				coords: [-87.65, 41.85]
+			},
+			{
+				type: "Point",
+				coords: [-90.05, 35.15]
+			}
+		]
+	}
+];
+
+DebugUtil.timer.end("loading");
+
+var ready = function() {	
+	DebugUtil.timer.start("render");
+    var map = new djeo.Map("map", {
+		layers: "HYBRID",
+		style: {
+			type: "circle",
+			fill: "red"
+		},
+		features: features
+	});
+	map.ready(function() {
+		DebugUtil.timer.end("render");
+		new djeo.control.Navigation(map);
+	});
+}
+
+dojo.ready(ready);
+
+</script>
+
+</head>
+
+<body class="claro">
+
+<div id="highlight">Highlight control</div>
+<div id="tooltip">Tooltip control</div>
+<div id="navigation">Navigation control</div>
+
+<div id="map" style="width:800px;height:400px;"></div>
+
+</body>
+</html>
