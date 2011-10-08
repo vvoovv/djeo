@@ -199,8 +199,8 @@ s.calculateStyle = function(feature, theme) {
 	return resultStyle;
 }
 
-function evaluateFilter(filter, feature) {
-	return filter.call(feature.map.useAttrs ? feature : feature.attrs);
+var evaluateFilter = function(filter, feature) {
+	return filter.call(feature.map.useAttrs ? feature.attrs : feature);
 }
 
 var appendFeatureStyle = function(feature, styles, theme) {
@@ -262,15 +262,8 @@ s.style = [
 	{
 		theme: "highlight",
 		stroke: "orange",
-		strokeWidth: 3,
+		polygon: {strokeWidth: 3},
 		rScale: 1.5
-		/*
-		point: {
-			shape: "square",
-			fill: "yellow",
-			size: 40
-		}
-		*/
 	}
 ]
 

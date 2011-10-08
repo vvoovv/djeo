@@ -108,6 +108,18 @@ var features = [
 			{
 				stroke: "red",
 				strokeWidth: 3
+			},
+			{
+				filter: "this.type=='LineString'",
+				lines: [
+					{
+						strokeWidth: 10
+					},
+					{
+						strokeWidth: 6,
+						stroke: "yellow"
+					}
+				]
 			}
 		],
 		features: djeo.tests.data.usa_some_railways

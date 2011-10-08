@@ -245,8 +245,20 @@ dojo.declare("djeo.Map", null, {
 		}
 	},
 	
-	showFeatures: function(/* Array|Object|String */features, show) {
-		if (show === undefined) show = true;
+	show: function(/* Array|Object|String|Boolean */features, /* Boolean? */show) {
+		if (features === undefined) {
+			features = this.featureContainer;
+		}
+		if (show === undefined) {
+			if (features === true || features === false) {
+				show = features;
+				features = this.featureContainer;
+			}
+			else {
+				show = true;
+			}
+		}
+
 		if (!dojo.isArray(features)) features = [features];
 		dojo.forEach(features, function(feature){
 			if (dojo.isString(feature)) feature = this.getFeatureById(feature);
