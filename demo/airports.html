@@ -3,8 +3,18 @@
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
 
 <link rel="stylesheet" href="../../dijit/themes/claro/claro.css"/>
-<link rel="stylesheet" href="../../dojox/grid/resources/Grid.css"/> 
-<link rel="stylesheet" href="../../dojox/grid/resources/claroGrid.css"/> 
+<link rel="stylesheet" href="../../dojox/grid/resources/Grid.css"/>
+<link rel="stylesheet" href="../../dojox/grid/resources/claroGrid.css"/>
+
+<style>
+html, body, #container{
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+}
+</style>
 
 <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 <script src="https://www.google.com/jsapi?key=ABQIAAAA-DMAtggvLwlIYlUJiASaAxRQnCpeV9jusWIeBw0POFqU6SItGxRWZhddpS8pIkVUd2fDQhzwPUWmMA"></script>
@@ -13,7 +23,7 @@
 <script>
     dojoConfig = {
         isDebug: true,
-		parseOnLoad: false,
+		parseOnLoad: true,
         paths: {djeo: "../djeo"},
 		mapEngine: "gfx"
     };
@@ -26,8 +36,8 @@
 DebugUtil.timer.start("loading");
 if (dojoConfig.mapEngine=="ge") dojo.require("djeo.ge.Engine");
 
-dojo.require("dijit.form.CheckBox");
-dojo.require("dijit.form.Select");
+dojo.require("dijit.layout.BorderContainer");
+dojo.require("dijit.layout.ContentPane");
 
 dojo.require("dojox.grid.DataGrid");
 dojo.require("dojo.data.ItemFileReadStore");
@@ -98,6 +108,9 @@ var ready = function() {
 
 	map.ready(function(){
 		DebugUtil.timer.end("render");
+
+		dojo.connect(dijit.byId("gridContainer"), "resize", map, "resize");
+
 		new djeo.control.Navigation(map);
 		new djeo.control.Highlight(map, {features: "airports"});
 
@@ -123,10 +136,10 @@ var ready = function() {
 			query: { id: "*" },
 			sortInfo: -4,
 			structure: [
-				{ name: "Code", field: "id", width: "15%" },
-				{ name: "Name", field: "name", width: "50%" },
-				{ name: "State", field: "state", width: "10%" },
-				{ name: "Enplanements", field: "enplanements", width: "25%" }
+				{ name: "Code", field: "id", width: "12%" },
+				{ name: "Name", field: "name", width: "45%" },
+				{ name: "State", field: "state", width: "13%" },
+				{ name: "Enplanements", field: "enplanements", width: "30%" }
 			]
 		}, "grid");
 		grid.startup();
@@ -158,18 +171,22 @@ dojo.ready(ready);
 </head>
 
 <body class="claro">
-<h3>Number of enplanements in the largest US airports</h3>
-<table style="width:1000px;height:400px;">
-	<tr>
-		<td style="width:500px;vertical-align:top;">
-			<div id="grid"></div>
-		</td>
-		<td>
-			<div id="map" style="width:500px;height:400px;"></div>
-			<div id="mapLegend"></div>
-		</td>
-	</tr>
-</table>
+
+<div id="container" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'sidebar'">
+	<div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="id:'gridContainer', region:'leading', splitter:true, style:'width:500px; padding:0; overflow: hidden;'">
+		<h3>Number of enplanements in the largest US airports</h3>
+		<ul>
+			<li>Move the cursor over the grid to highlight the respective airport on the map</li>
+			<li>A feature on the map is highlighted too if you point mouse on it</li>
+			<li>Double click on a grid row to zoom the map to the related airport</li>
+		</ul>
+		<div id="grid"></div>
+	</div>
+	<div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center', style:'padding:0'">
+		<div id="map" style="width:100%;height:500px;"></div>
+		<div id="mapLegend"></div>
+	</div>
+</div>
 
 </body>
 </html>

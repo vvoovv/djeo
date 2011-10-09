@@ -51,7 +51,7 @@ dojo.declare("djeo.widget.Legend", [dijit._Widget, dijit._TemplatedMixin], {
 	_processInlineStyle: function(featureContainer) {
 		if (featureContainer.style) this._processStyle(featureContainer.style, [featureContainer]);
 		dojo.forEach(featureContainer.features, function(feature) {
-			if (feature.isFeatureContainer) this._processInlineStyle(feature);
+			if (feature.isContainer) this._processInlineStyle(feature);
 			else if (feature.style) this._processStyle(feature.style, [feature]);
 		}, this);
 	},

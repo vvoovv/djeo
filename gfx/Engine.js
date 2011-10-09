@@ -133,14 +133,14 @@ dojo.declare("djeo.gfx.Engine", djeo.Engine, {
 		
 		if (oldScale != scale) {
 			pf.calculateLengthDenominator();
-			this.resizeFeatures(this.map.featureContainer, oldScale/scale);
+			this.resizeFeatures(this.map.document, oldScale/scale);
 		}
 	},
 	
 	resizeFeatures: function(featureContainer, scaleFactor) {
 		dojo.forEach(featureContainer.features, function(feature){
 			if (feature.isPlacemark) this._resizePlacemark(feature, scaleFactor);
-			else if (feature.isFeatureContainer) this.resizeFeatures(feature, scaleFactor);
+			else if (feature.isContainer) this.resizeFeatures(feature, scaleFactor);
 		}, this);
 	},
 	

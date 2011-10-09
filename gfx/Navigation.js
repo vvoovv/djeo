@@ -47,6 +47,6 @@ dojo.declare("djeo.gfx.Navigation",null, {
 		engine.group.applyLeftTransform({xx:scaleFactor,yy:scaleFactor, dx: x*(1-scaleFactor), dy: y*(1-scaleFactor)});
 
 		engine.factories.Placemark.calculateLengthDenominator();
-		engine.resizeFeatures(this.map.featureContainer, 1/scaleFactor);
+		engine.resizeFeatures(this.map.document, 1/scaleFactor);
 	}
 });

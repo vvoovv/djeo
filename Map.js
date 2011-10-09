@@ -50,9 +50,9 @@ dojo.declare("djeo.Map", null, {
     // geometries: Object
 	//		A registry of geometries that can be referenced by id.
 	geometries: null,
-	// featureContainer: djeo.FeatureContainer
+	// document: djeo.FeatureContainer
 	//		Top level djeo.FeatureContainer
-	featureContainer: null,
+	document: null,
 	// layers: String | Array
 	//		Specifies which additional information to display on the djeo map. Typical layers are
 	//		sattelite imagery, road map, hybrid of sattelite imagery and road map.
@@ -143,12 +143,10 @@ dojo.declare("djeo.Map", null, {
 		// load geometries that can be referenced by features
 		if (kwArgs.geometries) this.loadGeometries(kwArgs.geometries);
 		// top level instance of djeo.FeatureContainer
-		this.featureContainer = new djeo.FeatureContainer(null, {
+		this.document = new djeo.FeatureContainer(null, {
 			map: this,
 			parent: this
 		});
-		// alias for this.featureContainer
-		this.document = this.featureContainer;
 		// add default styling definition
 		this.addStyle(djeo.styling.style, /*prevent rendering*/true);
 		// add user supplied styling definition
@@ -191,13 +189,13 @@ dojo.declare("djeo.Map", null, {
 		//		If set to true prevents immediate rendering of the added features
 		// returns: Array
 		//		Array of added features or an empty array
-		return this.featureContainer.addFeatures(features, preventRendering);
+		return this.document.addFeatures(features, preventRendering);
 	},
 	
 	removeFeatures: function(/* Array|Object */features) {
 		// summary:
 		//		Removes features from the top level container of the map
-		this.featureContainer.removeFeatures(features);
+		this.document.removeFeatures(features);
 	},
 	
 	render: function(/* Boolean */stylingOnly, /* String? */theme) {
@@ -217,7 +215,7 @@ dojo.declare("djeo.Map", null, {
 		if (!this.extent) this.extent = this.getBbox();
 		this._calculateViewport();
 		this.engine.prepare();
-		this.featureContainer._render(stylingOnly, theme);
+		this.document._render(stylingOnly, theme);
 	},
 	
 	renderFeatures: function(/* Array|Object */features, /* Boolean */stylingOnly, /* String? */theme) {
@@ -247,12 +245,12 @@ dojo.declare("djeo.Map", null, {
 	
 	show: function(/* Array|Object|String|Boolean */features, /* Boolean? */show) {
 		if (features === undefined) {
-			features = this.featureContainer;
+			features = this.document;
 		}
 		if (show === undefined) {
 			if (features === true || features === false) {
 				show = features;
-				features = this.featureContainer;
+				features = this.document;
 			}
 			else {
 				show = true;
@@ -267,7 +265,7 @@ dojo.declare("djeo.Map", null, {
 	},
 	
 	toggleVisibility: function(features) {
-		if (!features) features = this.featureContainer;
+		if (!features) features = this.document;
 		if (!dojo.isArray(features)) features = [features];
 		dojo.forEach(features, function(feature){
 			if (dojo.isString(feature)) feature = this.getFeatureById(feature);
@@ -275,11 +273,11 @@ dojo.declare("djeo.Map", null, {
 		}, this);
 	},
 
-	resize: function(width, height) {
+	resize: function() {
 		// summary:
-		//		Resizes the map to the specified width and height
-		this._calculateViewport(width, height);
-		this.render();
+		//		Call it if the map container has been resized
+		this._calculateViewport();
+		//this.render();
 	},
 
 	enableLayer: function(/* String */layerId, /* Boolean? */enable) {
@@ -303,7 +301,7 @@ dojo.declare("djeo.Map", null, {
 		// tags:
 		//		private
 		var contentBox = dojo.contentBox(this.container);
-		var coords = dojo.coords(this.container);
+		var coords = dojo.position(this.container,true);
 		this.width = this.width || contentBox.w || 100;
 		this.height = this.height || contentBox.h || 100;
 		this.x = coords.x;
@@ -344,8 +342,8 @@ dojo.declare("djeo.Map", null, {
 		//		Adds styling definition.
 		// preventRendering:
 		//		If set to true prevents immediate rendering
-		this.featureContainer.addStyle(style);
-		if (!preventRendering) this.featureContainer._render(true);
+		this.document.addStyle(style);
+		if (!preventRendering) this.document._render(true);
 	},
 
 	getGeometryById: function(/* String */id) {
@@ -385,7 +383,7 @@ dojo.declare("djeo.Map", null, {
 		//		Adds a listener for an event or an array of events for all features in the map
 		// returns: Number
 		//		A handle that identifies this particular connection
-		return this.featureContainer.connect(events, context, method);
+		return this.document.connect(events, context, method);
 	},
 
 	connectWithHandle: function(/* Number */handle, /* String|Array? */events, /*Object|null*/ context, /*String|Function*/ method) {
@@ -394,13 +392,13 @@ dojo.declare("djeo.Map", null, {
 		//		The connection will be associated with the supplied handle
 		// returns: Number
 		//		The supplied handle
-		return this.featureContainer.connectWithHandle(handle, events, context, method);
+		return this.document.connectWithHandle(handle, events, context, method);
 	},
 	
 	disconnect: function(/* Number */handle) {
 		// summary:
 		//		Removes all event listeners associated with the handle for all features in the map
-		this.featureContainer.disconnect(handle);
+		this.document.disconnect(handle);
 	},
 	
 	setEngine: function(/* String|Object */engine) {
@@ -430,7 +428,7 @@ dojo.declare("djeo.Map", null, {
 		//		Calculates a 2D bounding box for the map
 		// returns: Array
 		//		[smallest horizontal coordinate, smallest vertical coordinate, largest horizontal coordinate, largest vertical coordinate]
-		return this.featureContainer.getBbox();
+		return this.document.getBbox();
 	},
 	
 	destroy: function() {

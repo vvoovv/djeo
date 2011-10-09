@@ -157,10 +157,6 @@ dojo.declare("djeo.Placemark", g.Feature, {
 			this.visible = show;
 		}
 	},
-	
-	toggleVisibility: function() {
-		this.show(!this.visible);
-	},
 
 	getBbox: function() {
 		// summary:

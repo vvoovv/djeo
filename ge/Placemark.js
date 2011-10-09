@@ -181,6 +181,10 @@ dojo.declare("djeo.ge.Placemark", djeo.common.Placemark, {
 		});
 	},
 	
+	show: function(feature, show) {
+		feature.baseShapes[0].setVisibility(show);
+	},
+	
 	createText: function(feature, textStyle) {
 		var placemark = feature.baseShapes[0],
 			label = this._getLabel(feature, textStyle);

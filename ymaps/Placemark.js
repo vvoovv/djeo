@@ -155,9 +155,12 @@ dojo.declare("djeo.ymaps.Placemark", djeo.common.Placemark, {
 	},
 	
 	remove: function(feature) {
-		dojo.forEach(feature.baseShapes, function(placemark){
-			placemark.getParentNode().getFeatures().removeChild(placemark);
-		});
+
+	},
+	
+	show: function(feature, show) {
+		if (show) this.engine.ymap.addOverlay(feature.baseShapes[0]);
+		else this.engine.ymap.removeOverlay(feature.baseShapes[0]);
 	},
 	
 	createText: function(feature, textStyle) {

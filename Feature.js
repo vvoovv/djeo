@@ -70,6 +70,10 @@ dojo.declare("djeo.Feature", null, {
 		
 	},
 	
+	toggleVisibility: function() {
+		this.show(!this.visible);
+	},
+	
 	getBbox: function() {
 		return this.bbox;
 	},

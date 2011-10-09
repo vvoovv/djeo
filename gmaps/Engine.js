@@ -29,7 +29,6 @@ dojo.declare("djeo.gmaps.Engine", djeo.Engine, {
 	constructor: function(kwArgs) {
 		// initialize basic factories
 		this._initBasicFactories(new gm.Placemark({
-			gmap: this.gmap,
 			map: this.map
 		}));
 	},

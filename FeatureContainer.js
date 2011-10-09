@@ -11,7 +11,7 @@ dojo.declare("djeo.FeatureContainer", g.Feature, {
 	
 	type: "FeatureContainer",
 	
-	isFeatureContainer: true,
+	isContainer: true,
 	
 	features: null,
 	
@@ -22,6 +22,16 @@ dojo.declare("djeo.FeatureContainer", g.Feature, {
 			this.addFeatures(features, true);
 		}
 		else this.features = [];
+	},
+	
+	show: function(show) {
+		if (show === undefined) show = true;
+		if (this.visible != show) {
+			dojo.forEach(this.features, function(feature){
+				feature.show(show);
+			}, this);
+			this.visible = show;
+		}
 	},
 	
 	addFeatures: function(/* Array */features, noRendering) {
@@ -77,7 +87,7 @@ dojo.declare("djeo.FeatureContainer", g.Feature, {
 	_render: function(stylingOnly, theme) {
 		if (!this.visible) return;
 		dojo.forEach(this.features, function(feature){
-			if (feature.isFeatureContainer || feature.visible) feature._render(stylingOnly, theme);
+			if (feature.isContainer || feature.visible) feature._render(stylingOnly, theme);
 		}, this);
 	},
 	

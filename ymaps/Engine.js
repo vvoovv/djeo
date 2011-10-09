@@ -28,8 +28,8 @@ dojo.declare("djeo.ymaps.Engine", djeo.Engine, {
 	constructor: function(kwArgs) {
 		// initialize basic factories
 		this._initBasicFactories(new y.Placemark({
-			ymap: this.ymap,
-			map: this.map
+			map: this.map,
+			engine: this
 		}));
 	},
 	
