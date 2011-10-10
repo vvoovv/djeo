@@ -16,7 +16,7 @@ var getLocationHrefParams = function(url){
 
 var hrefParams = getLocationHrefParams(window.location.href);
 if (hrefParams.gfxRenderer) dojoConfig.gfxRenderer = hrefParams.gfxRenderer;
-if (hrefParams.mapEngine) dojoConfig.mapEngine = hrefParams.mapEngine;
+if (hrefParams.djeoEngine) dojoConfig.djeoEngine = hrefParams.djeoEngine;
 
 DebugUtil = {
 	timer:{

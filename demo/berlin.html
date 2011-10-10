@@ -12,14 +12,14 @@
         isDebug: true,
 		parseOnLoad: false,
         modulePaths: {djeo: "../djeo"},
-		mapEngine: "gfx"
+		djeoEngine: "gfx"
     };
 </script>
 <script src="../tests/util.js"></script>
 <script src="../../dojo/dojo.js"></script>
 
 <script>
-if (dojoConfig.mapEngine=="ge") dojo.require("djeo.ge.Engine");
+if (dojo.config.djeoEngine=="ge") dojo.require("djeo.ge.Engine");
 
 dojo.require("dijit.form.Button");
 DebugUtil.timer.start("loading");
@@ -113,7 +113,6 @@ var addOnLoad = function() {
     map = new djeo.Map("map", {
 		coordsProjection: "EPSG:4326",
 		projection: "EPSG:3785",
-		engine: {type: dojoConfig.mapEngine},
 		style: style,
 		features: features
 	});

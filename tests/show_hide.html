@@ -23,7 +23,7 @@ html, body, #container{
         isDebug: true,
 		parseOnLoad: false,
         paths: {djeo: "../djeo"},
-		mapEngine: "gfx"
+		djeoEngine: "gfx"
     };
 </script>
 <script src="util.js"></script>
@@ -34,7 +34,7 @@ html, body, #container{
 
 <script>
 DebugUtil.timer.start("loading");
-if (dojoConfig.mapEngine=="ge") dojo.require("djeo.ge.Engine");
+if (dojo.config.djeoEngine=="ge") dojo.require("djeo.ge.Engine");
 
 dojo.require("dijit.form.CheckBox");
 dojo.require("dijit.layout.BorderContainer");

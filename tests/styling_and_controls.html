@@ -13,7 +13,7 @@
         isDebug: true,
 		parseOnLoad: false,
         paths: {djeo: "../djeo"},
-		mapEngine: "gfx"
+		djeoEngine: "gfx"
     };
 </script>
 <script src="util.js"></script>
@@ -24,7 +24,7 @@
 
 <script>
 DebugUtil.timer.start("loading");
-if (dojoConfig.mapEngine=="ge") dojo.require("djeo.ge.Engine");
+if (dojo.config.djeoEngine=="ge") dojo.require("djeo.ge.Engine");
 
 dojo.require("dijit.form.Button");
 dojo.require("djeo.Map");

@@ -14,7 +14,7 @@
         isDebug: true,
 		parseOnLoad: false,
         paths: {djeo: "../djeo"},
-		mapEngine: "gfx"
+		djeoEngine: "gfx"
     };
 </script>
 
@@ -23,7 +23,7 @@
 
 <script>
 DebugUtil.timer.start("loading");
-if (dojoConfig.mapEngine=="ge") dojo.require("djeo.ge.Engine");
+if (dojo.config.djeoEngine=="ge") dojo.require("djeo.ge.Engine");
 
 dojo.require("dijit.form.CheckBox");
 dojo.require("dijit.form.Select");
@@ -35,7 +35,7 @@ dojo.require("djeo.control.Highlight");
 dojo.require("djeo.control.Tooltip");
 dojo.require("djeo.widget.Legend");
 
-if (dojoConfig.mapEngine!="gfx") dojo.require("djeo.demo.data.russia_geometriesEpsg4326");
+if (dojo.config.djeoEngine!="gfx") dojo.require("djeo.demo.data.russia_geometriesEpsg4326");
 else dojo.require("djeo.demo.data.russia_geometries");
 
 dojo.require("djeo.demo.data.russia_features");

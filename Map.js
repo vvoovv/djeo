@@ -152,7 +152,7 @@ dojo.declare("djeo.Map", null, {
 		// add user supplied styling definition
 		if (kwArgs.style) this.addStyle(kwArgs.style, /*prevent rendering*/true);
 		// set engine
-		this.setEngine(kwArgs.engine || (dojo.config&&dojo.config.mapEngine) || defaultEngine);
+		this.setEngine(kwArgs.engine || (dojo.config&&dojo.config.djeoEngine) || defaultEngine);
 		// add features
 		if (kwArgs.features) this.addFeatures(kwArgs.features, /*prevent rendering*/true);
 	},
