@@ -388,7 +388,9 @@ dojo.declare("djeo.gfx.Placemark", djeo.common.Placemark, {
 				if (textStyle.font) {
 					textShape.setFont(textStyle.font);
 				}
-				
+				if (textStyle.stroke) {
+					textShape.setStroke(textStyle.stroke);
+				}
 			}
 		}
 		return textShape;
