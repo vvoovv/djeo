@@ -7,6 +7,7 @@ djeo
 
 ### Code Sample ###
 Place a file with the code sample in a directory next to dojo, dijit, dojox, djeo directories
+
 	<html>
 	<head>
 	<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
