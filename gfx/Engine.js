@@ -152,13 +152,6 @@ dojo.declare("djeo.gfx.Engine", djeo.Engine, {
 			dojo.forEach(feature.baseShapes, function(shape){
 				shape.applyRightTransform(dojox.gfx.matrix.scale(scaleFactor));
 			});
-			if (feature.textShapes) {
-				var factory = this.map.engine.factories.Placemark,
-					coords = feature.getCoords(),
-					x = factory.getX(coords[0]),
-					y = factory.getY(coords[1]);
-				feature.textShapes.applyRightTransform(dojox.gfx.matrix.scaleAt(scaleFactor, x, y));
-			}
 		}
 		else if ( dojox.gfx.renderer!="vml" && (
 				(this.resizeLines && (type == "LineString" || type == "MultiLineString")) ||
@@ -170,6 +163,14 @@ dojo.declare("djeo.gfx.Engine", djeo.Engine, {
 					shape.setStroke(stroke);
 				}
 			});
+		}
+		
+		if (feature.textShapes) {
+			var factory = this.map.engine.factories.Placemark,
+				center = djeo.util.center(feature),
+				x = factory.getX(center[0]),
+				y = factory.getY(center[1]);
+			feature.textShapes.applyRightTransform(dojox.gfx.matrix.scaleAt(scaleFactor, x, y));
 		}
 	}
 });
