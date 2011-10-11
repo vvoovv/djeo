@@ -167,7 +167,7 @@ dojo.declare("djeo.gmaps.Placemark", djeo.common.Placemark, {
 		});
 	},
 
-	createText: function(feature, textStyle) {
+	createText: function(feature, calculatedStyle) {
 	},
 	
 	translate: function(position, feature) {

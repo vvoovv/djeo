@@ -126,8 +126,8 @@ dojo.declare("djeo.Placemark", g.Feature, {
 			applyStyle(styleType, this, coords, style, factory);
 			
 			// add text label if the text style is specified
-			if (style.text) {
-				var textShape = factory.createText(this, style.text);
+			if (!stylingOnly) {
+				var textShape = factory.createText(this, style);
 				if (textShape) {
 					this.textShapes = textShape;
 					this.map.engine.appendChild(textShape, this);

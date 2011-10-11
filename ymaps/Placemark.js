@@ -163,7 +163,7 @@ dojo.declare("djeo.ymaps.Placemark", djeo.common.Placemark, {
 		else this.engine.ymap.removeOverlay(feature.baseShapes[0]);
 	},
 	
-	createText: function(feature, textStyle) {
+	createText: function(feature, calculatedStyle) {
 	},
 	
 	translate: function(newPoint, feature) {

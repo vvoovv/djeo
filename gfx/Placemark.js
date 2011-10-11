@@ -351,14 +351,26 @@ dojo.declare("djeo.gfx.Placemark", djeo.common.Placemark, {
 		}
 	},
 
-	createText: function(feature, textStyle) {
+	createText: function(feature, calculatedStyle) {
+		var specificStyle,
+			type = feature.getCoordsType();
+		switch (type) {
+			case "Point":
+				specificStyle = calculatedStyle.point;
+				break
+			case "Polygon":
+			case "MultiPolygon":
+				specificStyle = calculatedStyle.polygon;
+		}
+		var textStyle = cp.get("text", calculatedStyle, specificStyle);
+		if (!textStyle) return null;
+
 		var shape = feature.baseShapes[0],
 			label = this._getLabel(feature, textStyle),
 			textShape;
 
 		if (label) {
-			var coords = feature.getCoords(),
-				type = feature.getCoordsType();
+			var coords = feature.getCoords();
 			if (type == "Point") {
 				var x = this.getX(coords[0]),
 					y = this.getY(coords[1]);

@@ -185,7 +185,12 @@ dojo.declare("djeo.ge.Placemark", djeo.common.Placemark, {
 		feature.baseShapes[0].setVisibility(show);
 	},
 	
-	createText: function(feature, textStyle) {
+	createText: function(feature, calculatedStyle) {
+		// text labels are possible for point features only!
+		if (feature.getCoordsType() != "Point") return;
+		var textStyle = cp.get("text", calculatedStyle, calculatedStyle.point);
+		if (!textStyle) return;
+		
 		var placemark = feature.baseShapes[0],
 			label = this._getLabel(feature, textStyle);
 
@@ -195,8 +200,8 @@ dojo.declare("djeo.ge.Placemark", djeo.common.Placemark, {
 			if (textStyle.fill) {
 				labelStyle.getColor().set(convertColor(textStyle.fill));
 			}
-			if (textStyle.scale) {
-				labelStyle.setScale(textStyle.scale);
+			if (textStyle.geScale) {
+				labelStyle.setScale(textStyle.geScale);
 			}
 			// give a hint for the feature that it has a label now
 			feature.textShapes = true;
