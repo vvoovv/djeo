@@ -22,7 +22,7 @@ var style = [
 		filter: "this.pd<=52.38",
 		// if applied, the style attributes override the attributes from the previous style block;
 		// in this case fill="orange" overrides fill="lightgrey" from the previous style block
-		fill: "orange"
+		fill: "white"
 	},
 	{
 		// see explanations in the previous style block

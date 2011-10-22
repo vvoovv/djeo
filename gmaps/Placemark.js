@@ -95,9 +95,9 @@ dojo.declare("djeo.gmaps.Placemark", djeo.common.Placemark, {
 
 		var size = isVectorShape ? cp.getSize(calculatedStyle, specificStyle, specificShapeStyle) : cp.getImgSize(calculatedStyle, specificStyle, specificShapeStyle);
 		if (size) {
-			var anchor = isVectorShape ? [-size[0]/2, -size[1]/2] : cp.getAnchor(calculatedStyle, specificStyle, specificShapeStyle, size);
+			var anchor = isVectorShape ? [size[0]/2, size[1]/2] : cp.getAnchor(calculatedStyle, specificStyle, specificShapeStyle, size);
 			mi.size = new GM.Size(scale*size[0], scale*size[1]);
-			mi.anchor = new GM.Point(-scale*anchor[0], -scale*anchor[1]);
+			mi.anchor = new GM.Point(scale*anchor[0], scale*anchor[1]);
 			mi.scaledSize = new GM.Size(scale*size[0], scale*size[1])
 		}
 		else if (miExists) {
@@ -167,7 +167,7 @@ dojo.declare("djeo.gmaps.Placemark", djeo.common.Placemark, {
 		});
 	},
 
-	createText: function(feature, calculatedStyle) {
+	makeText: function(feature, calculatedStyle) {
 	},
 	
 	translate: function(position, feature) {

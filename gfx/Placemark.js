@@ -203,8 +203,8 @@ dojo.declare("djeo.gfx.Placemark", djeo.common.Placemark, {
 					src: this._getImageUrl(src),
 					width: size[0],
 					height: size[1],
-					x: anchor[0],
-					y: anchor[1]
+					x: -anchor[0],
+					y: -anchor[1]
 				};
 			if (shape) shape.setShape(imageDef);
 			else shape = this.points.createImage(imageDef);
@@ -224,6 +224,12 @@ dojo.declare("djeo.gfx.Placemark", djeo.common.Placemark, {
 
 		if (shape) {
 			if (applyTransform) {
+				// check if need to apply rotation
+				var state = feature.state,
+					heading = state.orientation ? state.orientation.heading : state.heading;
+				if (heading !== undefined) {
+					transform.push(dojox.gfx.matrix.rotate(heading));
+				}
 				shape.setTransform(transform);
 			}
 			if (connectEvents) {
@@ -351,7 +357,12 @@ dojo.declare("djeo.gfx.Placemark", djeo.common.Placemark, {
 		}
 	},
 
-	createText: function(feature, calculatedStyle) {
+	makeText: function(feature, calculatedStyle) {
+		if (feature.textShapes) {
+			feature.textShapes.removeShape();
+			feature.textShapes = null;
+		}
+
 		var specificStyle,
 			type = feature.getCoordsType();
 		switch (type) {
@@ -366,7 +377,7 @@ dojo.declare("djeo.gfx.Placemark", djeo.common.Placemark, {
 		if (!textStyle) return null;
 
 		var shape = feature.baseShapes[0],
-			label = this._getLabel(feature, textStyle),
+			label = textStyle.label || this._getLabel(feature, textStyle),
 			textShape;
 
 		if (label) {
@@ -426,7 +437,8 @@ dojo.declare("djeo.gfx.Placemark", djeo.common.Placemark, {
 	rotate: function(orientation, feature) {
 		var baseShapes = feature.baseShapes,
 			heading = dojo.isObject(orientation) ? orientation.heading : orientation,
-			oldHeading = feature.orientation ? feature.orientation.heading : feature.heading,
+			state = feature.state,
+			oldHeading = state.orientation ? state.orientation.heading : state.heading,
 			deltaHeading = -oldHeading + heading;
 
 		dojo.forEach(baseShapes, function(shape){

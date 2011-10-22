@@ -125,19 +125,17 @@ dojo.declare("djeo.Placemark", g.Feature, {
 			// apply style to the shape(s)
 			applyStyle(styleType, this, coords, style, factory);
 			
-			// add text label if the text style is specified
-			if (!stylingOnly) {
-				var textShape = factory.createText(this, style);
-				if (textShape) {
-					this.textShapes = textShape;
-					this.map.engine.appendChild(textShape, this);
-				}
-			}
-			
 			// add shape(s) to the map
 			dojo.forEach(this.baseShapes, function(shape) {
 				this.map.engine.appendChild(shape, this);
 			}, this);
+		}
+		
+		// add text label if the text style is specified
+		var textShape = factory.makeText(this, style);
+		if (textShape) {
+			this.textShapes = textShape;
+			this.map.engine.appendChild(textShape, this);
 		}
 	},
 	
@@ -223,11 +221,12 @@ dojo.declare("djeo.Placemark", g.Feature, {
 	rotate: function(orientation) {
 		var factory = this.factory;
 		if (factory.rotate) {
-			if (this.heading === undefined) this.heading = 0;
+			var state = this.state;
+			if (state.heading === undefined) state.heading = 0;
 			var heading = dojo.isObject(orientation) ? orientation.heading : orientation;
 			if (heading !== undefined) {
 				factory.rotate(heading, this);
-				this.heading = heading;
+				state.heading = heading;
 			}
 		}
 	}

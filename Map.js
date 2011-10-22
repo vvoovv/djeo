@@ -230,9 +230,11 @@ dojo.declare("djeo.Map", null, {
 	_renderFeatures: function(/* Array|Object */features, /* Boolean */stylingOnly, /* String? */theme) {
 		// summary:
 		//		Default implementation of the renderFeatures method
+		if (dojo.isString(features)) features = [features];
 		if (dojo.isArray(features)) {
 			dojo.forEach(features, function(feature){
-				feature._render(stylingOnly, theme);
+				if (dojo.isString(feature)) feature = this.getFeatureById(feature);
+				if (feature) feature._render(stylingOnly, theme);
 			}, this);
 		}
 		else {

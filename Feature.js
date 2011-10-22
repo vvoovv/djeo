@@ -33,7 +33,7 @@ dojo.declare("djeo.Feature", null, {
 		if (this.styleClass && !dojo.isArray(this.styleClass)) this.styleClass = [this.styleClass];
 		if (featureDef && featureDef.style) {
 			this.style = null;
-			this.addStyle(featureDef.style);
+			this.addStyle(featureDef.style, true);
 		}
 	},
 	
@@ -54,7 +54,7 @@ dojo.declare("djeo.Feature", null, {
 		return this.map.useAttrs ? (this.attrs && this.attrs[attr]!==undefined ? this.attrs[attr] : this[attr]) : this[attr];
 	},
 	
-	addStyle: function(/* Array|Object */style) {
+	addStyle: function(/* Array|Object */style, /* Boolean */noRendering) {
 		if (!dojo.isArray(style)) style = [style];
 		dojo.forEach(style, function(_style){
 			var s = new g.Style(_style, this.map);
@@ -64,6 +64,7 @@ dojo.declare("djeo.Feature", null, {
 				this.style.push(s);
 			}
 		}, this);
+		if (!noRendering) this.render(true);
 	},
 	
 	render: function() {

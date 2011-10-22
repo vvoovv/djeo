@@ -40,12 +40,12 @@ dojo.declare("djeo.ge.Model", null, {
 		}));
 	},
 	
-	translate: function(newGeometry, feature) {
+	translate: function(position, feature) {
 		if (feature.map.renderModels) {
-			if (feature.model) this.setLocation(newGeometry.coordinates, feature.model);
+			if (feature.model) this.setLocation(position, feature.model);
 		}
 		else {
-			this.engine.factories.Placemark.translate(newGeometry, feature);
+			this.engine.factories.Placemark.translate(position, feature);
 		}
 	},
 	

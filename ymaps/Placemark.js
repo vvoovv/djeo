@@ -97,9 +97,9 @@ dojo.declare("djeo.ymaps.Placemark", djeo.common.Placemark, {
 		// set size and offset
 		var size = isVectorShape ? cp.getSize(calculatedStyle, specificStyle, specificShapeStyle) : cp.getImgSize(calculatedStyle, specificStyle, specificShapeStyle);
 		if (size) {
-			var anchor = isVectorShape ? [-size[0]/2, -size[1]/2] : cp.getAnchor(calculatedStyle, specificStyle, specificShapeStyle, size);
+			var anchor = isVectorShape ? [size[0]/2, size[1]/2] : cp.getAnchor(calculatedStyle, specificStyle, specificShapeStyle, size);
 			iconStyle.size = new YMaps.Point(scale*size[0], scale*size[1]);
-			iconStyle.offset = new YMaps.Point(scale*anchor[0], scale*anchor[1]);
+			iconStyle.offset = new YMaps.Point(-scale*anchor[0], -scale*anchor[1]);
 		}
 		else if (iconStyle.href) {
 			// check if we can apply relative scale (rScale)
@@ -163,7 +163,7 @@ dojo.declare("djeo.ymaps.Placemark", djeo.common.Placemark, {
 		else this.engine.ymap.removeOverlay(feature.baseShapes[0]);
 	},
 	
-	createText: function(feature, calculatedStyle) {
+	makeText: function(feature, calculatedStyle) {
 	},
 	
 	translate: function(newPoint, feature) {

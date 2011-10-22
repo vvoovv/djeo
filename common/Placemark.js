@@ -100,7 +100,7 @@ cp.getScale = function(calculatedStyle, specificStyle, specificShapeStyle) {
 cp.getAnchor = function(calculatedStyle, specificStyle, specificShapeStyle, size) {
 	var img = cp.get("img", calculatedStyle, specificStyle, specificShapeStyle),
 		anchor = (dojo.isObject(img) && img.anchor) ? img.anchor : cp.get("anchor", calculatedStyle, specificStyle, specificShapeStyle);
-	return anchor ? anchor : [-size[0]/2, -size[1]/2];
+	return anchor ? anchor : [size[0]/2, size[1]/2];
 };
 
 cp.getImgSrc = function(calculatedStyle, specificStyle, specificShapeStyle) {
