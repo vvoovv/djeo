@@ -22,7 +22,7 @@ var style = [
 		filter: "this.pd<=52.38",
 		// if applied, the style attributes override the attributes from the previous style block;
 		// in this case fill="orange" overrides fill="lightgrey" from the previous style block
-		fill: "white"
+		fill: "orange"
 	},
 	{
 		// see explanations in the previous style block
@@ -119,7 +119,7 @@ var features = [
 				// it's possible to render several lines (e.g. to simulate line casing);
 				// in this case we get yellow line with red casing;
 				// use "lines" attribute to define multiple lines for a LineString or a MultiLineString;
-				// only gfx mapping engine supports this;
+				// only djeo native mapping engine supports this;
 				// the other mapping engines will render only one line
 				lines: [
 					{
@@ -147,7 +147,7 @@ var features = [
 					// define vector shape "cross";
 					// the other vector shapes defined are "circle", "star", "square", "triangle", "x";
 					// the size (30) of the shape is inherited from previous style blocks;
-					// only gfx mapping engine supports vector shapes;
+					// only djeo native mapping engine supports vector shapes;
 					// white bitmap images are used as proxies for the other mapping engines;
 					// however Google Earth can apply color to bitmap images
 					shape:"cross",
@@ -176,7 +176,7 @@ var features = [
 					{
 						size: 30,
 						// use "points" attribute to define multiple point shapes for a point feature;
-						// only gfx mapping engine supports this;
+						// only djeo native mapping engine supports this;
 						// see the comments above for the "lines" attribute
 						points: [
 							{

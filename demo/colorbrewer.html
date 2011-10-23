@@ -14,7 +14,7 @@
         isDebug: true,
 		parseOnLoad: false,
         paths: {djeo: "../djeo"},
-		djeoEngine: "gfx"
+		djeoEngine: "djeo"
     };
 </script>
 
@@ -35,7 +35,7 @@ dojo.require("djeo.control.Highlight");
 dojo.require("djeo.control.Tooltip");
 dojo.require("djeo.widget.Legend");
 
-if (dojo.config.djeoEngine!="gfx") dojo.require("djeo.demo.data.russia_geometriesEpsg4326");
+if (dojo.config.djeoEngine!="djeo") dojo.require("djeo.demo.data.russia_geometriesEpsg4326");
 else dojo.require("djeo.demo.data.russia_geometries");
 
 dojo.require("djeo.demo.data.russia_features");

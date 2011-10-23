@@ -25,7 +25,7 @@ html, body, #container{
         isDebug: true,
 		parseOnLoad: true,
         paths: {djeo: "../djeo"},
-		djeoEngine: "gfx"
+		djeoEngine: "djeo"
     };
 </script>
 
@@ -50,7 +50,7 @@ dojo.require("djeo.control.Tooltip");
 dojo.require("djeo.widget.Legend");
 
 dojo.require("djeo.demo.data.airports");
-if (dojo.config.djeoEngine=="gfx") {
+if (dojo.config.djeoEngine=="djeo") {
 	dojo.require("djeo.tests.data.usa_geometries");
 	dojo.require("djeo.tests.data.usa_features");
 }
@@ -101,7 +101,7 @@ var ready = function() {
 		style: [normalStyle, higlightStyle],
 		layers: "HYBRID"
 	});
-	if (dojo.config.djeoEngine=="gfx") {
+	if (dojo.config.djeoEngine=="djeo") {
 		map.loadGeometries(djeo.tests.data.usa_geometries);
 		map.addFeatures(djeo.tests.data.usa_features, true);
 	}

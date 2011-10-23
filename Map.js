@@ -6,7 +6,7 @@ var g = djeo;
 
 
 var defaultLayerID = "ROADMAP",
-	defaultEngine = {type: "gfx", options:{}};
+	defaultEngine = {type: "djeo", options:{}};
 
 var restoreMethods = function(map) {
 // summary:
@@ -29,7 +29,7 @@ dojo.declare("djeo.Map", null, {
 
 	// engine: djeo.Engine
 	//		Engine used by the map
-	//		Engine examples: gfx (dojo gfx), ge (Google Earth)
+	//		Engine examples: djeo (djeo native engine), gmaps (Google Maps), ge (Google Earth)
 	engine: null,
 	
 	//	methods: Object
@@ -405,11 +405,15 @@ dojo.declare("djeo.Map", null, {
 	
 	setEngine: function(/* String|Object */engine) {
 		// summary:
-		//		Sets an engine for the map. Engine examples: gfx (dojo gfx), ge (Google Earth)
+		//		Sets an engine for the map. Engine examples: djeo (djeo native engine), gmaps (Google Maps), ge (Google Earth)
 
 		// cheating the build util
 		var req = dojo.require;
-		if (dojo.isString(engine)) engine = {type: engine};
+		if (dojo.isString(engine)) {
+			// backward compatibility with initial versions
+			if (engine == "gfx") engine = "djeo";
+			engine = {type: engine};
+		}
 		if (!engine.declaredClass) {
 			var options = {map: this};
 			if (engine.options) dojo.mixin(options, engine.options);

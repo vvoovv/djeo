@@ -5,7 +5,7 @@ dojo.declare("djeo.Engine", null, {
 	//		The base class for engines. An engine class is supposed to be a singleton
 	
 	// type: String
-	//		Type of the engine. Example values: "gfx", "ge"
+	//		Type of the engine. Example values: "djeo", "gmaps", "ge"
 	type: '',
 	
 	// factories: Object
@@ -23,7 +23,7 @@ dojo.declare("djeo.Engine", null, {
 
 	constructor: function(kwArgs){
 		dojo.mixin(this, kwArgs);
-		// find base module (e.g djeo.gfx)
+		// find base module (e.g djeo.djeo)
 		this.baseModule = this.declaredClass.substring(0, this.declaredClass.lastIndexOf("."));
 		this.factories = {};
 	},

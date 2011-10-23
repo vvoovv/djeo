@@ -26,12 +26,12 @@ Place a file with the code sample in a directory next to dojo, dijit, dojox, dje
 	
 	<!--
 	Supported mapping engines (replace the value for djeoEngine parameter)
-	dojo.gfx - djeoEngine:'gfx'
+	djeo native mapping engine - djeoEngine:'djeo'
 	Google Maps API - djeoEngine:'gmaps'
 	Google Earth API - djeoEngine:'ge'
 	Yandex Maps API - djeoEngine:'ymaps'
 	-->
-	<script src="../dojo/dojo.js" data-dojo-config="djeoEngine:'gfx', paths:{djeo:'../djeo'}"></script>
+	<script src="../dojo/dojo.js" data-dojo-config="djeoEngine:'djeo', paths:{djeo:'../djeo'}"></script>
 	
 	<script>
 	// always include the the next line if you plan to use Google Earth browser plugin
