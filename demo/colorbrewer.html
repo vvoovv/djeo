@@ -11,9 +11,9 @@
 
 <script>
     dojoConfig = {
-        isDebug: true,
+		isDebug: true,
 		parseOnLoad: false,
-        paths: {djeo: "../djeo"},
+		paths: {djeo: "../djeo"},
 		djeoEngine: "djeo"
     };
 </script>
@@ -25,7 +25,7 @@
 DebugUtil.timer.start("loading");
 if (dojo.config.djeoEngine=="ge") dojo.require("djeo.ge.Engine");
 
-dojo.require("dijit.form.CheckBox");
+dojo.require("dijit.form.RadioButton");
 dojo.require("dijit.form.Select");
 
 dojo.require("djeo.Map");

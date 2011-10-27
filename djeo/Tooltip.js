@@ -10,10 +10,10 @@ dojo.require("dijit.Tooltip");
 var dd = djeo.djeo,
 	p = dd._pointed;
 
-var offsetX = -1,// a bit to the left
+var offsetX = 0,
 	offsetY = 2;// a bit downwards
 
-var position = ["above", "below"]
+var position = ["above-centered", "below-centered"],
 	rtl = false;
 
 // singletons!
@@ -32,7 +32,7 @@ var showTooltip = function(/*String*/ innerHTML, browserEvent, control, /*Boolea
 },
 moveTooltip = function(browserEvent) {
 	_setAroundRect(browserEvent);
-	dijit.placeOnScreenAroundElement(tooltip.domNode, aroundRect, dijit.getPopupAroundAlignment((position && position.length) ? position : dijit.Tooltip.defaultPosition, !rtl), dojo.hitch(tooltip, "orient"));
+	dijit.place.around(tooltip.domNode, aroundRect, position, !rtl, dojo.hitch(tooltip, "orient"));
 	if (dojo.isIE) tooltip.connectorNode.style.bottom = "-5px";
 },
 _setAroundRect = function(browserEvent, control) {
@@ -52,7 +52,6 @@ hideTooltip = function(){
 },
 createTooltip = function() {
 	var tooltip = new dijit._MasterTooltip();
-	_patchTooltip(tooltip);
 	dojo.connect(tooltip.domNode, "onmouseover", function() {
 		p.cancelOnpointerout = true;
 		if (onpointeroutTimeout.feature) clearOnpointeroutTimeout("feature");
@@ -79,37 +78,6 @@ createTooltip = function() {
 	});
 	return tooltip;
 },
-_patchTooltip = function(tooltip) {
-	tooltip.show = function(/*String*/ innerHTML, /*DomNode*/ aroundNode, /*String[]?*/ position, /*Boolean*/ rtl){
-		// summary:
-		//		Display tooltip w/specified contents to right of specified node
-		//		(To left if there's no space on the right, or if rtl == true)
-		/* patched
-		if(this.aroundNode && this.aroundNode === aroundNode){
-			return;
-		}
-		*/
-
-		// reset width; it may have been set by orient() on a previous tooltip show()
-		this.domNode.width = "auto";
-
-		if(this.fadeOut.status() == "playing"){
-			// previous tooltip is being hidden; wait until the hide completes then show new one
-			this._onDeck=arguments;
-			return;
-		}
-		this.containerNode.innerHTML=innerHTML;
-
-		var pos = dijit.placeOnScreenAroundElement(this.domNode, aroundNode, dijit.getPopupAroundAlignment((position && position.length) ? position : dijit.Tooltip.defaultPosition, !rtl), dojo.hitch(this, "orient"));
-		if (dojo.isIE) tooltip.connectorNode.style.bottom = "-5px";
-
-		// show it
-		dojo.style(this.domNode, "opacity", 0);
-		this.fadeIn.play();
-		this.isShowingNow = true;
-		this.aroundNode = aroundNode;
-	};
-}
 clearOnpointeroutTimeout = function(type, obj) {
 	clearTimeout(onpointeroutTimeout[type].id);
 	onpointeroutTimeout[type] = null;
