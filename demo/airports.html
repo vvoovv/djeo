@@ -29,8 +29,8 @@ html, body, #container{
     };
 </script>
 
-<script src="../tests/util.js"></script>
 <script src="../../dojo/dojo.js"></script>
+<script src="util.js"></script>
 
 <script>
 DebugUtil.timer.start("loading");
@@ -55,7 +55,6 @@ if (dojo.config.djeoEngine=="djeo") {
 	dojo.require("djeo.tests.data.usa_features");
 }
 
-dojo.require("djeo.util.numeric");
 dojo.require("djeo.util.jenks");
 
 var map, legend, grid, store;
