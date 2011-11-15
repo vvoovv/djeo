@@ -173,7 +173,9 @@ dojo.declare("djeo.djeo.Engine", djeo.Engine, {
 				center = djeo.util.center(feature),
 				x = factory.getX(center[0]),
 				y = factory.getY(center[1]);
-			feature.textShapes.applyRightTransform(matrix.scaleAt(scaleFactor, x, y));
+			dojo.forEach(feature.textShapes, function(t){
+				t.applyRightTransform(matrix.scaleAt(scaleFactor, x, y));
+			});
 		}
 	}
 });

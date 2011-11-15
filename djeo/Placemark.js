@@ -359,10 +359,14 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 	},
 
 	makeText: function(feature, calculatedStyle) {
+		// ignore VML due to problems with text scaling
+		if (dojox.gfx.renderer == "vml") return;
 		if (feature.textShapes) {
-			feature.textShapes.removeShape();
-			feature.textShapes = null;
+			dojo.forEach(feature.textShapes, function(t) {
+				t.removeShape();
+			});
 		}
+		feature.textShapes = [];
 
 		var specificStyle,
 			type = feature.getCoordsType();
@@ -375,54 +379,63 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 				specificStyle = calculatedStyle.polygon;
 		}
 		var textStyle = cp.get("text", calculatedStyle, specificStyle);
-		if (!textStyle) return null;
+		if (!textStyle) return;
 
-		var shape = feature.baseShapes[0],
-			label = textStyle.label || this._getLabel(feature, textStyle),
-			textShape;
+		var label = textStyle.label || this._getLabel(feature, textStyle);
 
 		if (label) {
-			var coords = feature.getCoords();
-			if (type == "Point") {
-				var x = this.getX(coords[0]),
-					y = this.getY(coords[1]);
-				textShape = this.text.createText({
-						x: x,
-						y: y,
-						text: label
-					}).
-					setTransform(matrix.scaleAt(1/this.lengthDenominator, x, y ));
+			var shape = feature.baseShapes[0],
+				coords = feature.getCoords(),
+				halo = textStyle.halo;
+
+			// for halo effect we need two text shapes: the lower one with stroke and the upper one without stroke
+			if (halo && halo.fill && halo.radius) {
+				this._makeTextShape(feature, type, label, null, textStyle.font, {color: halo.fill, width: 2*halo.radius});
 			}
-			else if (type == "Polygon" || type == "MultiPolygon") {
-				var center = djeo.util.center(feature),
-					x = this.getX(center[0]),
-					y = this.getY(center[1]);
-				textShape = this.text.createText({
-						x: x,
-						y: y,
-						text: label,
-						align: "middle"
-					}).
-					setTransform(matrix.scaleAt(1/this.lengthDenominator, x, y ));
-			}
-			if (textShape) {
-				if (textStyle.fill) {
-					textShape.setFill(textStyle.fill);
-				}
-				if (textStyle.font) {
-					textShape.setFont(textStyle.font);
-				}
-				if (textStyle.stroke) {
-					textShape.setStroke(textStyle.stroke);
-				}
-			}
+
+			this._makeTextShape(feature, type, label, textStyle.fill, textStyle.font);
 		}
-		return textShape;
+	},
+	
+	_makeTextShape: function(feature, type, label, fill, font, stroke) {
+		var shape = feature.baseShapes[0],
+			textDef = {},
+			textShape,
+			coords = feature.getCoords(),
+			x,
+			y;
+	
+		if (type == "Point") {
+			var x = this.getX(coords[0]),
+				y = this.getY(coords[1]);
+		}
+		else if (type == "Polygon" || type == "MultiPolygon") {
+			var center = djeo.util.center(feature),
+				x = this.getX(center[0]),
+				y = this.getY(center[1]);
+	
+			textDef.align = "middle";
+		}
+		
+		if (x!==undefined) {
+			textDef.x = x;
+			textDef.y = y;
+			textDef.text = label;
+			
+			console.debug(x,y,this.lengthDenominator);
+			textShape = this.text.createText(textDef).setTransform(matrix.scaleAt(1/this.lengthDenominator, x, y ));
+
+			if (fill) textShape.setFill(fill);
+			if (font) textShape.setFont(font);
+			if (stroke) textShape.setStroke(stroke);
+			
+			feature.textShapes.push(textShape);
+		}
 	},
 
 	translate: function(position, feature) {
 		var baseShapes = feature.baseShapes,
-			textShape = feature.textShapes,
+			textShapes = feature.textShapes,
 			oldPosition = feature.getCoords(),
 			transform = {dx:this.getX(position[0])-this.getX(oldPosition[0]), dy:this.getY(position[1])-this.getY(oldPosition[1])};
 
@@ -430,8 +443,10 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 			shape.applyLeftTransform(transform);
 		}, this);
 		
-		if (textShape) {
-			textShape.applyLeftTransform(transform);
+		if (textShapes) {
+			dojo.forEach(textShapes, function(t){
+				t.applyLeftTransform(transform);
+			});
 		}
 	},
 
