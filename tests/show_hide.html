@@ -34,16 +34,17 @@ html, body, #container{
 
 <script>
 DebugUtil.timer.start("loading");
-if (dojo.config.djeoEngine=="ge") dojo.require("djeo.ge.Engine");
 
-dojo.require("dijit.form.CheckBox");
-dojo.require("dijit.layout.BorderContainer");
-dojo.require("dijit.layout.ContentPane");
-
-dojo.require("djeo.Map");
-dojo.require("djeo.control.Highlight");
-dojo.require("djeo.control.Tooltip");
-dojo.require("djeo.control.Navigation");
+require([
+	"dijit/form/CheckBox",
+	"dijit/layout/BorderContainer",
+	"dijit/layout/ContentPane",
+	
+	"djeo/Map",
+	"djeo/control/Highlight",
+	"djeo/control/Tooltip",
+	"djeo/control/Navigation"
+]);
 
 DebugUtil.timer.end("loading");
 

@@ -22,25 +22,24 @@
 
 <script>
 DebugUtil.timer.start("loading");
-if (dojo.config.djeoEngine=="ge") dojo.require("djeo.ge.Engine");
 
-dojo.require("dijit.form.RadioButton");
-dojo.require("dijit.form.Select");
-
-dojo.require("djeo.Map");
-
-dojo.require("djeo.control.Navigation");
-dojo.require("djeo.control.Highlight");
-dojo.require("djeo.control.Tooltip");
-dojo.require("djeo.widget.Legend");
-
-if (dojo.config.djeoEngine!="djeo") dojo.require("djeo.demo.data.russia_geometriesEpsg4326");
-else dojo.require("djeo.demo.data.russia_geometries");
-
-dojo.require("djeo.demo.data.russia_features");
-
-dojo.require("djeo.util.colorbrewer");
-dojo.require("djeo.util.jenks");
+require([
+	"dijit/form/RadioButton",
+	"dijit/form/Select",
+	
+	"djeo/Map",
+	
+	"djeo/control/Navigation",
+	"djeo/control/Highlight",
+	"djeo/control/Tooltip",
+	"djeo/widget/Legend",
+	
+	"djeo/demo/data/russia_features",
+	
+	"djeo/util/colorbrewer",
+	"djeo/util/jenks",
+	"djeo/demo/data/russia_geometries" + (dojo.config.djeoEngine!="djeo" ? "Epsg4326" : "")
+]);
 
 var map, legend;
 var mapStyle = {

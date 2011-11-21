@@ -22,11 +22,12 @@
 
 <script>
 DebugUtil.timer.start("loading");
-if (dojo.config.djeoEngine=="ge") dojo.require("djeo.ge.Engine");
 
-dojo.require("dijit.form.Button");
-dojo.require("djeo.Map");
-dojo.require("djeo.control.Navigation");
+require([
+	"dijit/form/Button",
+	"djeo/Map",
+	"djeo/control/Navigation"
+]);
 
 var features = [
 	{
@@ -92,10 +93,6 @@ dojo.ready(ready);
 </head>
 
 <body class="claro">
-
-<div id="highlight">Highlight control</div>
-<div id="tooltip">Tooltip control</div>
-<div id="navigation">Navigation control</div>
 
 <div id="map" style="width:800px;height:400px;"></div>
 

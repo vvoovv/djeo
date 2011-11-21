@@ -21,16 +21,16 @@
 
 <script>
 DebugUtil.timer.start("loading");
-if (dojo.config.djeoEngine=="ge") dojo.require("djeo.ge.Engine");
 
-dojo.require("dijit.form.Button");
-dojo.require("djeo.Map");
-dojo.require("djeo.control.Navigation");
-
-dojo.require("djeo.tests.data.usa_geometries");
-dojo.require("djeo.tests.data.usa_features");
-dojo.require("djeo.tests.data.usa_some_railways");
-
+require([
+	"dijit/form/Button",
+	"djeo/Map",
+	"djeo/control/Navigation",
+	
+	"djeo/tests/data/usa_geometries",
+	"djeo/tests/data/usa_features",
+	"djeo/tests/data/usa_some_railways"
+]);
 
 var features = [
 	{

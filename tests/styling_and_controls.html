@@ -24,13 +24,14 @@
 
 <script>
 DebugUtil.timer.start("loading");
-if (dojo.config.djeoEngine=="ge") dojo.require("djeo.ge.Engine");
 
-dojo.require("dijit.form.Button");
-dojo.require("djeo.Map");
-dojo.require("djeo.control.Highlight");
-dojo.require("djeo.control.Tooltip");
-dojo.require("djeo.control.Navigation");
+require([
+	"dijit/form/Button",
+	"djeo/Map",
+	"djeo/control/Highlight",
+	"djeo/control/Tooltip",
+	"djeo/control/Navigation"
+]);
 
 DebugUtil.timer.end("loading");
 

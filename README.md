@@ -34,13 +34,12 @@ Place a file with the code sample in a directory next to dojo, dijit, dojox, dje
 	<script src="../dojo/dojo.js" data-dojo-config="djeoEngine:'djeo', paths:{djeo:'../djeo'}"></script>
 	
 	<script>
-	// always include the the next line if you plan to use Google Earth browser plugin
-	if (dojo.config.djeoEngine=="ge") dojo.require("djeo.ge.Engine");
-	
-	dojo.require("djeo.Map");
-	dojo.require("djeo.control.Navigation");
-	dojo.require("djeo.control.Highlight");
-	dojo.require("djeo.control.Tooltip");
+	require([
+		"djeo/Map",
+		"djeo/control/Navigation",
+		"djeo/control/Highlight",
+		"djeo/control/Tooltip"
+	]);
 	
 	var features = [
 		{
@@ -64,12 +63,12 @@ Place a file with the code sample in a directory next to dojo, dijit, dojox, dje
 			}
 		},
 		{
-			name: "Dojo Toolkit",
+			name: "Hello world!",
 			type: "Point",
 			coords: [-30, 30],
 			style: {
-				size: [123,56],
-				img: "http://dojotoolkit.org/images/logo.png"
+				size: [49, 60],
+				img: "http://vvoovv.github.com/ship.png"
 			}
 		}
 	];

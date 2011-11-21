@@ -34,28 +34,32 @@ html, body, #container{
 
 <script>
 DebugUtil.timer.start("loading");
-if (dojo.config.djeoEngine=="ge") dojo.require("djeo.ge.Engine");
 
-dojo.require("dijit.layout.BorderContainer");
-dojo.require("dijit.layout.ContentPane");
+require([
+	"dijit/layout/BorderContainer",
+	"dijit/layout/ContentPane",
+	
+	"dojox/grid/DataGrid",
+	"dojo/data/ItemFileReadStore",
+	
+	"djeo/Map",
+	
+	"djeo/control/Navigation",
+	"djeo/control/Highlight",
+	"djeo/control/Tooltip",
+	"djeo/widget/Legend",
+	
+	"djeo/util/jenks",
+	
+	"djeo/demo/data/airports"
+]);
 
-dojo.require("dojox.grid.DataGrid");
-dojo.require("dojo.data.ItemFileReadStore");
-
-dojo.require("djeo.Map");
-
-dojo.require("djeo.control.Navigation");
-dojo.require("djeo.control.Highlight");
-dojo.require("djeo.control.Tooltip");
-dojo.require("djeo.widget.Legend");
-
-dojo.require("djeo.demo.data.airports");
 if (dojo.config.djeoEngine=="djeo") {
-	dojo.require("djeo.tests.data.usa_geometries");
-	dojo.require("djeo.tests.data.usa_features");
+	require([
+		"djeo/tests/data/usa_geometries",
+		"djeo/tests/data/usa_features"
+	]);
 }
-
-dojo.require("djeo.util.jenks");
 
 var map, legend, grid, store;
 var normalStyle = {

@@ -5,7 +5,7 @@ dojo.require("djeo.util");
 
 (function(){
 	
-google.load("earth", "1");
+//google.load("earth", "1");
 
 var g = djeo,
 	u = g.util,
@@ -59,6 +59,8 @@ dojo.declare("djeo.ge.Engine", djeo.Engine, {
 	},
 	
 	initialize: function(/* Function */readyFunction) {
+		google.load("earth", "1", {callback: dojo.hitch(this, function(){
+			
 		google.earth.createInstance(this.map.container, dojo.hitch(this, function(instance){
 			this.map.projection = "EPSG:4326";
 			this.ge = instance;
@@ -70,6 +72,8 @@ dojo.declare("djeo.ge.Engine", djeo.Engine, {
 			this.initialized = true;
 			readyFunction();
 		}), function(){/*failure*/});
+		
+		})});
 	},
 
 	createContainer: function(feature) {
