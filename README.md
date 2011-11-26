@@ -14,24 +14,19 @@ Place a file with the code sample in a directory next to dojo, dijit, dojox, dje
 	
 	<link rel="stylesheet" href="../dijit/themes/claro/claro.css"/>
 	
-	<!-- uncomment it if you plan to use Google Maps
-	<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
-	-->
-	<!-- uncomment it if you plan to use Google Earth browser plugin and copy your own key; apply for a key at http://code.google.com/apis/maps/signup.html
-	<script src="https://www.google.com/jsapi?key=ABQIAAAA-DMAtggvLwlIYlUJiASaAxRQnCpeV9jusWIeBw0POFqU6SItGxRWZhddpS8pIkVUd2fDQhzwPUWmMA"></script>
-	-->
-	<!-- uncomment it if you plan to use Yandex Maps and copy your own key; apply for a key at http://api.yandex.ru/maps/form.xml
-	<script src="http://api-maps.yandex.ru/1.1/index.xml?key=AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=="></script>
-	-->
-	
 	<!--
 	Supported mapping engines (replace the value for djeoEngine parameter)
 	djeo native mapping engine - djeoEngine:'djeo'
 	Google Maps API - djeoEngine:'gmaps'
-	Google Earth API - djeoEngine:'ge'
-	Yandex Maps API - djeoEngine:'ymaps'
+	Google Earth API - djeoEngine:'ge' - apply for a key at http://code.google.com/apis/maps/signup.html
+	Yandex Maps API - djeoEngine:'ymaps' - apply for a key at http://api.yandex.ru/maps/form.xml
 	-->
-	<script src="../dojo/dojo.js" data-dojo-config="djeoEngine:'djeo', paths:{djeo:'../djeo'}"></script>
+	<script src="../dojo/dojo.js" data-dojo-config="
+		djeoEngine: 'djeo',
+		geKey: 'ABQIAAAA-DMAtggvLwlIYlUJiASaAxRQnCpeV9jusWIeBw0POFqU6SItGxRWZhddpS8pIkVUd2fDQhzwPUWmMA',
+		ymapsKey: 'AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A==',
+		paths: {djeo:'../djeo'}">
+	</script>
 	
 	<script>
 	require([
