@@ -3,9 +3,9 @@ dojo.provide("djeo.ge.Engine");
 dojo.require("djeo.Engine");
 dojo.require("djeo.util");
 
+dojo.require("dojo.io.script");
+
 (function(){
-	
-//google.load("earth", "1");
 
 var g = djeo,
 	u = g.util,
@@ -42,6 +42,8 @@ e.methods = {
 	}
 }
 
+var initializing;
+
 dojo.declare("djeo.ge.Engine", djeo.Engine, {
 	
 	type: "ge",
@@ -59,21 +61,42 @@ dojo.declare("djeo.ge.Engine", djeo.Engine, {
 	},
 	
 	initialize: function(/* Function */readyFunction) {
-		google.load("earth", "1", {callback: dojo.hitch(this, function(){
-			
-		google.earth.createInstance(this.map.container, dojo.hitch(this, function(instance){
-			this.map.projection = "EPSG:4326";
-			this.ge = instance;
-			this.ge.getOptions().setMouseNavigationEnabled(false);
-			this.ge.getWindow().setVisibility(true);
-			
-			this.patchMethods();
-			
-			this.initialized = true;
-			readyFunction();
-		}), function(){/*failure*/});
-		
-		})});
+		if (window.google) {
+			google.load("earth", "1", {callback: dojo.hitch(this, function(){
+				google.earth.createInstance(this.map.container, dojo.hitch(this, function(instance){
+					this.map.projection = "EPSG:4326";
+					this.ge = instance;
+					this.ge.getOptions().setMouseNavigationEnabled(false);
+					this.ge.getWindow().setVisibility(true);
+					
+					this.patchMethods();
+					
+					this.initialized = true;
+					readyFunction();
+				}), function(){/*failure*/});
+			})});
+		}
+		else if (initializing) {
+			// Google JsAPI is being loaded
+			// wait till initializing function is called
+			dojo.connect(initializing, dojo.hitch(this, function(){
+				this.initialize(readyFunction);
+			}));
+		}
+		else {
+			initializing = function(){};
+			dojo.io.script.get({
+				url: "https://www.google.com/jsapi",
+				content: {
+					key: this.map.geKey || dojo.config.geKey
+				},
+				load: dojo.hitch(this, function() {
+					initializing();
+					initializing = null;
+					this.initialize(readyFunction);
+				})
+			});
+		}
 	},
 
 	createContainer: function(feature) {

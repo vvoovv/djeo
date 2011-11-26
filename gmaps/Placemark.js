@@ -8,7 +8,7 @@ var g = djeo,
 	cp = g.common.Placemark,
 	u = g.util,
 	gm = g.gmaps,
-	GM = google.maps;
+	GM = window.google && google.maps;
 
 dojo.declare("djeo.gmaps.Placemark", djeo.common.Placemark, {
 
@@ -179,9 +179,13 @@ dojo.declare("djeo.gmaps.Placemark", djeo.common.Placemark, {
 	}
 });
 
+gm.Placemark.init = function() {
+	GM = google.maps;
+};
+
 var getColor = function(c) {
 	// Google Maps API doesn't support CSS3 colors for IE
 	return dojo.isIE ? (new dojo.Color(c)).toHex() : c;
-}
+};
 
 }());

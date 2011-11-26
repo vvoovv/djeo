@@ -3,13 +3,14 @@ dojo.provide("djeo.ymaps.Engine");
 dojo.require("djeo.Engine");
 dojo.require("djeo.ymaps.Placemark");
 
+dojo.require("dojo.io.script");
 
 (function(){
 
 var g = djeo,
 	u = g.util,
 	y = g.ymaps,
-	Y = YMaps;
+	Y = window.YMaps;
 
 var engineEvents = {onclick: "Click", onmouseover: "MouseEnter", onmouseout: "MouseLeave"};
 
@@ -18,6 +19,8 @@ var supportedLayers = {
 	SATELLITE: "SATELLITE",
 	HYBRID: "HYBRID"
 };
+
+var initializing;
 
 dojo.declare("djeo.ymaps.Engine", djeo.Engine, {
 	
@@ -34,20 +37,46 @@ dojo.declare("djeo.ymaps.Engine", djeo.Engine, {
 	},
 	
 	initialize: function(/* Function */readyFunction) {
-		this.map.projection = "EPSG:4326";
-		var ymap = new Y.Map(dojo.byId(this.map.container));
-		ymap.disableDblClickZoom();
-		ymap.disableDragging();
-		this.ymap = ymap;
-		
-		this.initialized = true;
-		readyFunction();
+		if (Y) {
+			// the first case: Yandex Maps API is completely loaded
+			this.map.projection = "EPSG:4326";
+			var ymap = new Y.Map(dojo.byId(this.map.container));
+			ymap.disableDblClickZoom();
+			ymap.disableDragging();
+			this.ymap = ymap;
+			
+			this.initialized = true;
+			readyFunction();
+		}
+		else if (initializing) {
+			// the second case: Yandex Maps API is being loaded
+			// wait till initializing function is called
+			dojo.connect(initializing, dojo.hitch(this, function(){
+				this.initialize(readyFunction);
+			}));
+		}
+		else {
+			initializing = function(){};
+			dojo.io.script.get({
+				url: "http://api-maps.yandex.ru/1.1/index.xml",
+				content: {
+					loadByRequire: 1,
+					key: this.map.ymapsKey || dojo.config.ymapsKey
+				},
+				load: dojo.hitch(this, function() {
+					YMaps.load(dojo.hitch(this, function(){
+						y.Placemark.init();
+						Y = YMaps;
+						initializing();
+						initializing = null;
+						this.initialize(readyFunction);
+					}));
+				})
+			});
+		}
 	},
 
 	createContainer: function(feature) {
-		var container = this.ge.createFolder('');
-		this.appendChild(container, feature);
-		return container;
 	},
 	
 	prepare: function() {

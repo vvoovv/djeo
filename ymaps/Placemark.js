@@ -8,7 +8,7 @@ var g = djeo,
 	cp = g.common.Placemark,
 	u = g.util,
 	y = g.ymaps,
-	Y = YMaps;
+	Y = window.YMaps;
 
 dojo.declare("djeo.ymaps.Placemark", djeo.common.Placemark, {
 
@@ -174,6 +174,10 @@ dojo.declare("djeo.ymaps.Placemark", djeo.common.Placemark, {
 
 	}
 });
+
+y.Placemark.init = function() {
+	Y = YMaps;
+};
 
 var convertColor = function(c, a) {
 	rgba = new dojo.Color(c).toRgba();
