@@ -29,18 +29,11 @@ Place a file with the code sample in a directory next to dojo, dijit, dojox, dje
 	</script>
 	
 	<script>
-	require([
-		"djeo/Map",
-		"djeo/control/Navigation",
-		"djeo/control/Highlight",
-		"djeo/control/Tooltip"
-	]);
-	
 	var features = [
 		{
 			name: "Bermuda triangle",
 			type: "Polygon",
-			coords: [[[-64.89,32.24], [-80.15,25.7], [-66.07,18.46], [-64.89,32.24]]],
+			coords: [ [ [-64.89,32.24], [-80.15,25.7], [-66.07,18.46], [-64.89,32.24] ] ],
 			style: {
 				fill: "lime",
 				fillOpacity: 0.6,
@@ -51,7 +44,7 @@ Place a file with the code sample in a directory next to dojo, dijit, dojox, dje
 		{
 			name: "Paris-London railway",
 			type: "LineString",
-			coords: [[2.36,48.88], [3.08,50.64], [1.81,50.90], [0.87,51.14], [-0.13,51.53]],
+			coords: [ [2.36,48.88], [3.08,50.64], [1.81,50.90], [0.87,51.14], [-0.13,51.53] ],
 			style: {
 				stroke: "red",
 				strokeWidth: 2
@@ -68,8 +61,15 @@ Place a file with the code sample in a directory next to dojo, dijit, dojox, dje
 		}
 	];
 	
-	dojo.ready(function(){
-		map = new djeo.Map("map", {
+	require([
+		"djeo/Map",
+		"djeo/control/Navigation",
+		"djeo/control/Highlight",
+		"djeo/control/Tooltip",
+		"dojo/domReady!"
+	],
+	function(){
+		var map = new djeo.Map("map", {
 			features: features
 		});
 		map.ready(function(){

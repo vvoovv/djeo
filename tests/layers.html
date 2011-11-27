@@ -18,14 +18,6 @@
 <script src="../../dojo/dojo.js"></script>
 
 <script>
-DebugUtil.timer.start("loading");
-
-require([
-	"dijit/form/Button",
-	"djeo/Map",
-	"djeo/control/Navigation"
-]);
-
 var features = [
 	{
 		features: [
@@ -65,9 +57,16 @@ var features = [
 	}
 ];
 
-DebugUtil.timer.end("loading");
+DebugUtil.timer.start("loading");
 
-var ready = function() {	
+require([
+	"dijit/form/Button",
+	"djeo/Map",
+	"djeo/control/Navigation",
+	"dojo/domReady!"
+],
+function() {
+	DebugUtil.timer.end("loading");
 	DebugUtil.timer.start("render");
     var map = new djeo.Map("map", {
 		layers: "HYBRID",
@@ -81,9 +80,7 @@ var ready = function() {
 		DebugUtil.timer.end("render");
 		new djeo.control.Navigation(map);
 	});
-}
-
-dojo.ready(ready);
+});
 
 </script>
 

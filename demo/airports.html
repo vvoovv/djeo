@@ -19,7 +19,7 @@ html, body, #container{
 <script>
 	dojoConfig = {
 		isDebug: true,
-		parseOnLoad: true,
+		//parseOnLoad: true,
 		paths: {djeo: "../djeo"},
 		djeoEngine: "djeo",
 		geKey: "ABQIAAAA-DMAtggvLwlIYlUJiASaAxQY-Fz4NzEHZIQrBIZBoOQoqd-uzBRkVt7VEildDaCi2BXe96yx38L65A",
@@ -32,7 +32,8 @@ html, body, #container{
 <script>
 DebugUtil.timer.start("loading");
 
-require([
+var requireModules = [
+	"dojo/parser",
 	"dijit/layout/BorderContainer",
 	"dijit/layout/ContentPane",
 	
@@ -48,53 +49,52 @@ require([
 	
 	"djeo/util/jenks",
 	
-	"djeo/demo/data/airports"
-]);
+	"djeo/demo/data/airports",
+	
+	"dojo/domReady!"
+];
 
 if (dojo.config.djeoEngine=="djeo") {
-	require([
-		"djeo/tests/data/usa_geometries",
-		"djeo/tests/data/usa_features"
-	]);
+	requireModules.push("djeo/tests/data/usa_geometries", "djeo/tests/data/usa_features");
 }
 
-var map, legend, grid, store;
-var normalStyle = {
-	styleClass: "iconSizeByValue",
-	img: {src: "icons/plane_red.png", size: [50, 50]},
-	strokeWidth: 1,
-	name: "Number of enplanements",
-	styleFunction: {
-		getStyle: "djeo.util.numeric.getStyle",
-		options: {
-			numClasses: 8,
-			medianSize: 20,
-			sizeStep: 3,
-			attr: "enplanements",
-			breaks: "djeo.util.jenks.getBreaks",
-			//breaks: [0, 4000000, 10000000, 40000000],
-			calculateStyle: djeo.util.numeric.calculateSizeStyle
-		}
-	},
-	legend:  djeo._getBreaksIconLegend
-};
-var higlightStyle = {
-	theme: "highlight",
-	img: "icons/plane_blue.png"
-};
+var ready = function(parser) {
+	DebugUtil.timer.end("loading");
 
+	parser.parse();
 
-var features = [
-	{
-		id: "airports",
+	var map, legend, grid, store;
+	var normalStyle = {
 		styleClass: "iconSizeByValue",
-		features: djeo.demo.data.airports
-	}
-]
-
-DebugUtil.timer.end("loading");
-
-var ready = function() {
+		img: {src: "icons/plane_red.png", size: [50, 50]},
+		strokeWidth: 1,
+		name: "Number of enplanements",
+		styleFunction: {
+			getStyle: "djeo.util.numeric.getStyle",
+			options: {
+				numClasses: 8,
+				medianSize: 20,
+				sizeStep: 3,
+				attr: "enplanements",
+				breaks: "djeo.util.jenks.getBreaks",
+				//breaks: [0, 4000000, 10000000, 40000000],
+				calculateStyle: djeo.util.numeric.calculateSizeStyle
+			}
+		},
+		legend:  djeo._getBreaksIconLegend
+	};
+	var higlightStyle = {
+		theme: "highlight",
+		img: "icons/plane_blue.png"
+	};
+	var features = [
+		{
+			id: "airports",
+			styleClass: "iconSizeByValue",
+			features: djeo.demo.data.airports
+		}
+	];
+	
 	DebugUtil.timer.start("render");
     map = new djeo.Map("map", {
 		features: features,
@@ -165,7 +165,7 @@ var ready = function() {
 	});
 }
 
-dojo.ready(ready);
+require(requireModules, ready);
 </script>
 
 </head>

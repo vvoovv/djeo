@@ -30,62 +30,10 @@ html, body, #container{
 <script src="data/usa_features_style.js"></script>
 
 <script>
-DebugUtil.timer.start("loading");
-
-require([
-	"dijit/form/CheckBox",
-	"dijit/layout/BorderContainer",
-	"dijit/layout/ContentPane",
-	
-	"djeo/Map",
-	"djeo/control/Highlight",
-	"djeo/control/Tooltip",
-	"djeo/control/Navigation"
-]);
-
-DebugUtil.timer.end("loading");
-
 var treeCp;
-var ready = function() {
-	
-	var bc = new dijit.layout.BorderContainer({
-		design: "sidebar"
-	}, "container");
-	
-	treeCp = new dijit.layout.ContentPane({
-		region: "leading",
-		style: "width: 250px",
-		splitter: true
-	});
-	bc.addChild(treeCp);
-	
-	var mapCp = new dijit.layout.ContentPane({
-		region: "center",
-		style: "padding: 0",
-		content: "<div id='map' style='width:100%; height:100%;'></div>"
-	});
-	bc.addChild(mapCp);
-	
-	bc.startup();
-
-	DebugUtil.timer.start("render");
-    var map = new djeo.Map("map", {
-		geometries: djeo.tests.data.usa_geometries,
-		style: style,
-		features: features
-	});
-	map.ready(function() {
-		dojo.connect(mapCp, "resize", map, "resize");
-		DebugUtil.timer.end("render");
-		new djeo.control.Highlight(map);
-		new djeo.control.Tooltip(map);
-		new djeo.control.Navigation(map);
-		
-		makeFeatureTree(map.document, 0);
-	});
-}
 
 var paddingStep = 20;
+
 var makeFeatureTree = function(featureContainer, paddingLeft) {
 	_makeTreeLeaf(featureContainer, paddingLeft);
 
@@ -124,8 +72,58 @@ var _makeTreeLeaf = function(feature, paddingLeft) {
 	dojo.place(container, treeCp.domNode);
 }
 
-dojo.ready(ready);
+DebugUtil.timer.start("loading");
 
+require([
+	"dijit/form/CheckBox",
+	"dijit/layout/BorderContainer",
+	"dijit/layout/ContentPane",
+	
+	"djeo/Map",
+	"djeo/control/Highlight",
+	"djeo/control/Tooltip",
+	"djeo/control/Navigation",
+	"dojo/domReady!"
+],
+function() {
+	DebugUtil.timer.end("loading");
+	
+	var bc = new dijit.layout.BorderContainer({
+		design: "sidebar"
+	}, "container");
+	
+	treeCp = new dijit.layout.ContentPane({
+		region: "leading",
+		style: "width: 250px",
+		splitter: true
+	});
+	bc.addChild(treeCp);
+	
+	var mapCp = new dijit.layout.ContentPane({
+		region: "center",
+		style: "padding: 0",
+		content: "<div id='map' style='width:100%; height:100%;'></div>"
+	});
+	bc.addChild(mapCp);
+	
+	bc.startup();
+
+	DebugUtil.timer.start("render");
+	var map = new djeo.Map("map", {
+		geometries: djeo.tests.data.usa_geometries,
+		style: style,
+		features: features
+	});
+	map.ready(function() {
+		dojo.connect(mapCp, "resize", map, "resize");
+		DebugUtil.timer.end("render");
+		new djeo.control.Highlight(map);
+		new djeo.control.Tooltip(map);
+		new djeo.control.Navigation(map);
+		
+		makeFeatureTree(map.document, 0);
+	});
+});
 </script>
 
 </head>

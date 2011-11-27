@@ -18,91 +18,6 @@
 <script src="../../dojo/dojo.js"></script>
 
 <script>
-DebugUtil.timer.start("loading");
-
-require([
-	"dijit/form/Button",
-	"djeo/Map",
-	"djeo/control/Navigation",
-	
-	"djeo/tests/data/usa_geometries",
-	"djeo/tests/data/usa_features",
-	"djeo/tests/data/usa_some_railways"
-]);
-
-var features = [
-	{
-		id: "areas",
-		features: djeo.tests.data.usa_features
-	},
-	{
-		id: "railways",
-		style: {
-			lines: [
-				{
-					stroke: "red",
-					strokeWidth: 10
-				},
-				{
-					stroke: "yellow",
-					strokeWidth: 4
-				}
-			]
-		},
-		features: djeo.tests.data.usa_some_railways
-	},
-	{
-		features: [
-			{
-				id: "New York City",
-				type: "Point",
-				coords:[-74, 40.71],
-				style: {
-					size: 30,
-					points: [
-						{
-							shape: "circle",
-							fill: "blue"
-						},
-						{
-							type: "shape",
-							shape: "cross",
-							fill: "red"
-						}
-					]
-				},
-				name: "New York City"
-			},
-			{
-				id: "Seattle",
-				type: "Point",
-				coords: [-122.33, 47.61],
-				style: {
-					point:{
-						shape:"star",
-						fill:"green",
-						size:50,
-						stroke: "red"
-					}
-				},
-				name: "Seattle"
-			},
-			{
-				id: "Memphis",
-				type: "Point",
-				coords: [-90.05, 35.15],
-				style: {
-					size: [28, 22],
-					img: "resources/icons/load.png",
-					scale: 2
-				},
-				name: "Memphis"
-			}
-		]
-	}
-];
-
-
 var f1 = function(event){console.debug("function:US-AK, feature.id:"+event.feature.id+", event:"+event.type);},
 	f2 = function(event){ console.debug("function:US-TX, feature.id:"+event.feature.id+", event:"+event.type); },
 	f3 = function(event){ console.debug("function:railways, feature.parent.id:"+event.feature.parent.id+", event:"+event.type); },
@@ -111,10 +26,83 @@ var f1 = function(event){console.debug("function:US-AK, feature.id:"+event.featu
 	f6 = function(event){ console.debug("function:Memphis, feature.id:"+event.feature.id+", event:"+event.type); },
 	fMap =  function(event){ console.debug("function:Map, feature.id:"+event.feature.id+", event:"+event.type); };
 
-DebugUtil.timer.end("loading");
+DebugUtil.timer.start("loading");
 
 var map, handle1, handle2, handle3, handle4;
 var ready = function() {
+	DebugUtil.timer.end("loading");
+	
+	var features = [
+		{
+			id: "areas",
+			features: djeo.tests.data.usa_features
+		},
+		{
+			id: "railways",
+			style: {
+				lines: [
+					{
+						stroke: "red",
+						strokeWidth: 10
+					},
+					{
+						stroke: "yellow",
+						strokeWidth: 4
+					}
+				]
+			},
+			features: djeo.tests.data.usa_some_railways
+		},
+		{
+			features: [
+				{
+					id: "New York City",
+					type: "Point",
+					coords:[-74, 40.71],
+					style: {
+						size: 30,
+						points: [
+							{
+								shape: "circle",
+								fill: "blue"
+							},
+							{
+								type: "shape",
+								shape: "cross",
+								fill: "red"
+							}
+						]
+					},
+					name: "New York City"
+				},
+				{
+					id: "Seattle",
+					type: "Point",
+					coords: [-122.33, 47.61],
+					style: {
+						point:{
+							shape:"star",
+							fill:"green",
+							size:50,
+							stroke: "red"
+						}
+					},
+					name: "Seattle"
+				},
+				{
+					id: "Memphis",
+					type: "Point",
+					coords: [-90.05, 35.15],
+					style: {
+						size: [28, 22],
+						img: "resources/icons/load.png",
+						scale: 2
+					},
+					name: "Memphis"
+				}
+			]
+		}
+	];
 
     new dijit.form.ToggleButton({
 		checked: true,
@@ -209,7 +197,16 @@ var disconnectFeature = function(id, handle) {
 }
 
 
-dojo.ready(ready);
+require([
+	"dijit/form/ToggleButton",
+	"djeo/Map",
+	"djeo/control/Navigation",
+	
+	"djeo/tests/data/usa_geometries",
+	"djeo/tests/data/usa_features",
+	"djeo/tests/data/usa_some_railways",
+	"dojo/domReady!"
+], ready);
 
 </script>
 

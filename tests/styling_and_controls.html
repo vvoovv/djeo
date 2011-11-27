@@ -20,21 +20,21 @@
 <script src="data/usa_features_style.js"></script>
 
 <script>
+var highlight, tooltip, navigation;
+
 DebugUtil.timer.start("loading");
 
 require([
-	"dijit/form/Button",
+	"dijit/form/ToggleButton",
 	"djeo/Map",
 	"djeo/control/Highlight",
 	"djeo/control/Tooltip",
-	"djeo/control/Navigation"
-]);
+	"djeo/control/Navigation",
+	"dojo/domReady!"
+],
+function(){
+	DebugUtil.timer.end("loading");
 
-DebugUtil.timer.end("loading");
-
-var highlight, tooltip, navigation;
-var ready = function() {
-	
     new dijit.form.ToggleButton({
 		checked: true,
 		onChange: function(value){
@@ -71,10 +71,7 @@ var ready = function() {
 		tooltip = new djeo.control.Tooltip(map);
 		navigation = new djeo.control.Navigation(map);
 	});
-}
-
-dojo.ready(ready);
-
+});
 </script>
 
 </head>
