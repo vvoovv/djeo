@@ -1,11 +1,14 @@
 djeo
 ====
 
-### Install ###
+### Demos
+Please see [Demos]
+
+### Install
 * Download dojo 1.7 from http://download.dojotoolkit.org/ and unpack it
 * Download djeo and unpack it to the same directory where dojo, dijit, dojox reside. Rename the top level directory vvoovv-djeo-xxxxxxx to djeo. At the end you should get 4 directories at the same level: dojo, dijit, dojox, djeo.
 
-### Code Sample ###
+### Code Sample
 Place a file with the code sample in a directory next to dojo, dijit, dojox, djeo directories
 
 	<html>
@@ -90,7 +93,7 @@ Place a file with the code sample in a directory next to dojo, dijit, dojox, dje
 	</html>
 
 
-### Licensing Information ###
+### Licensing Information
 All the code in the **master** branch is released under Dojo Toolkit licensing terms (The "New" BSD License or The Academic Free License, v. 2.1) with some exceptions listed below.
 All contributors have signed and submitted Contributors License Agreement (CLA) as required by Dojo Toolkit licensing procedure.
 See <http://dojotoolkit.org/license> for the details.
