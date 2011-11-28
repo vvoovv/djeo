@@ -2,7 +2,7 @@ djeo
 ====
 
 ### Demos
-Please see [[Demos]]
+Please see [Demos wiki page](https://github.com/vvoovv/djeo/wiki/demos)
 
 ### Install
 * Download dojo 1.7 from http://download.dojotoolkit.org/ and unpack it
