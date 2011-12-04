@@ -27,8 +27,6 @@ html, body, #container{
 <script src="util.js"></script>
 <script src="../../dojo/dojo.js"></script>
 
-<script src="data/usa_features_style.js"></script>
-
 <script>
 var treeCp;
 
@@ -75,6 +73,7 @@ var _makeTreeLeaf = function(feature, paddingLeft) {
 DebugUtil.timer.start("loading");
 
 require([
+	"djeo/tests/data/usa_features_style",
 	"dijit/form/CheckBox",
 	"dijit/layout/BorderContainer",
 	"dijit/layout/ContentPane",
@@ -85,7 +84,7 @@ require([
 	"djeo/control/Navigation",
 	"dojo/domReady!"
 ],
-function() {
+function(mapConfig) {
 	DebugUtil.timer.end("loading");
 	
 	var bc = new dijit.layout.BorderContainer({
@@ -109,11 +108,7 @@ function() {
 	bc.startup();
 
 	DebugUtil.timer.start("render");
-	var map = new djeo.Map("map", {
-		geometries: djeo.tests.data.usa_geometries,
-		style: style,
-		features: features
-	});
+	var map = new djeo.Map("map", mapConfig);
 	map.ready(function() {
 		dojo.connect(mapCp, "resize", map, "resize");
 		DebugUtil.timer.end("render");

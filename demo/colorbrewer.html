@@ -17,7 +17,7 @@
 <script src="util.js"></script>
 
 <script>
-var ready = function() {
+var ready = function(russiaFeatures, russiaGeometries) {
 	DebugUtil.timer.end("loading");
 
 	var map, legend;
@@ -95,13 +95,13 @@ var ready = function() {
 	var features = [
 		{
 			styleClass: "populationDensity",
-			features: djeo.demo.data.russia_features
+			features: russiaFeatures
 		}
 	];
 	
 	DebugUtil.timer.start("render");
 	map = new djeo.Map("map", {
-		geometries: djeo.demo.data.russiaGeometries,
+		geometries: russiaGeometries,
 		features: features,
 		style: mapStyle,
 		useAttrs: true
@@ -134,6 +134,9 @@ var ready = function() {
 DebugUtil.timer.start("loading");
 
 require([
+	"djeo/demo/data/russia_features",
+	"djeo/demo/data/russia_geometries" + (dojo.config.djeoEngine!="djeo" ? "Epsg4326" : ""),
+	
 	"dijit/form/RadioButton",
 	"dijit/form/Select",
 	
@@ -144,11 +147,8 @@ require([
 	"djeo/control/Tooltip",
 	"djeo/widget/Legend",
 	
-	"djeo/demo/data/russia_features",
-	
 	"djeo/util/colorbrewer",
 	"djeo/util/jenks",
-	"djeo/demo/data/russia_geometries" + (dojo.config.djeoEngine!="djeo" ? "Epsg4326" : ""),
 	
 	"dojo/domReady!"
 ], ready);

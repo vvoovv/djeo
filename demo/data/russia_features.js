@@ -1,5 +1,4 @@
-dojo.provide("djeo.demo.data.russia_features");
-djeo.demo.data.russia_features = [
+define([],[
 	{
 		"id": "RU-MOW", 
 		"attrs": {
@@ -10,7 +9,7 @@ djeo.demo.data.russia_features = [
 	{
 		"id": "RU-SPE", 
 		"attrs": {
-			"indicator1": 7768.6999999999998
+			"indicator1": 7768.7
 		}, 
 		"name": "Saint Petersburg City"
 	}, 
@@ -31,154 +30,154 @@ djeo.demo.data.russia_features = [
 	{
 		"id": "RU-SE", 
 		"attrs": {
-			"indicator1": 88.780000000000001
+			"indicator1": 88.78
 		}, 
 		"name": "Republic of North Ossetia-Alania"
 	}, 
 	{
 		"id": "RU-CE", 
 		"attrs": {
-			"indicator1": 73.579999999999998
+			"indicator1": 73.58
 		}, 
 		"name": "Chechen Republic"
 	}, 
 	{
 		"id": "RU-KB", 
 		"attrs": {
-			"indicator1": 72.120000000000005
+			"indicator1": 72.12
 		}, 
 		"name": "Kabardino-Balkar Republic"
 	}, 
 	{
 		"id": "RU-CU", 
 		"attrs": {
-			"indicator1": 71.790000000000006
+			"indicator1": 71.79
 		}, 
 		"name": "Chuvash Republic"
 	}, 
 	{
 		"id": "RU-KDA", 
 		"attrs": {
-			"indicator1": 67.439999999999998
+			"indicator1": 67.44
 		}, 
 		"name": "Krasnodar Region"
 	}, 
 	{
 		"id": "RU-TUL", 
 		"attrs": {
-			"indicator1": 65.200000000000003
+			"indicator1": 65.2
 		}, 
 		"name": "Tula Region"
 	}, 
 	{
 		"id": "RU-KGD", 
 		"attrs": {
-			"indicator1": 63.259999999999998
+			"indicator1": 63.26
 		}, 
 		"name": "Kaliningrad Region"
 	}, 
 	{
 		"id": "RU-SAM", 
 		"attrs": {
-			"indicator1": 60.439999999999998
+			"indicator1": 60.44
 		}, 
 		"name": "Samara Region"
 	}, 
 	{
 		"id": "RU-AD", 
 		"attrs": {
-			"indicator1": 58.829999999999998
+			"indicator1": 58.83
 		}, 
 		"name": "Republic of Adygea"
 	}, 
 	{
 		"id": "RU-BEL", 
 		"attrs": {
-			"indicator1": 55.780000000000001
+			"indicator1": 55.78
 		}, 
 		"name": "Belgorod Region"
 	}, 
 	{
 		"id": "RU-TA", 
 		"attrs": {
-			"indicator1": 55.579999999999998
+			"indicator1": 55.58
 		}, 
 		"name": "Republic of Tatarstan"
 	}, 
 	{
 		"id": "RU-VLA", 
 		"attrs": {
-			"indicator1": 52.549999999999997
+			"indicator1": 52.55
 		}, 
 		"name": "Vladimir Region"
 	}, 
 	{
 		"id": "RU-DA", 
 		"attrs": {
-			"indicator1": 51.219999999999999
+			"indicator1": 51.22
 		}, 
 		"name": "Republic of Dagestan"
 	}, 
 	{
 		"id": "RU-LIP", 
 		"attrs": {
-			"indicator1": 50.350000000000001
+			"indicator1": 50.35
 		}, 
 		"name": "Lipetsk Region"
 	}, 
 	{
 		"id": "RU-IVA", 
 		"attrs": {
-			"indicator1": 48.049999999999997
+			"indicator1": 48.05
 		}, 
 		"name": "Ivanovo Region"
 	}, 
 	{
 		"id": "RU-NIZ", 
 		"attrs": {
-			"indicator1": 47.109999999999999
+			"indicator1": 47.11
 		}, 
 		"name": "Nizhny Novgorod Region"
 	}, 
 	{
 		"id": "RU-VOR", 
 		"attrs": {
-			"indicator1": 45.399999999999999
+			"indicator1": 45.4
 		}, 
 		"name": "Voronezh Region"
 	}, 
 	{
 		"id": "RU-ROS", 
 		"attrs": {
-			"indicator1": 43.689999999999998
+			"indicator1": 43.69
 		}, 
 		"name": "Rostov Region"
 	}, 
 	{
 		"id": "RU-KRS", 
 		"attrs": {
-			"indicator1": 41.450000000000003
+			"indicator1": 41.45
 		}, 
 		"name": "Kursk Region"
 	}, 
 	{
 		"id": "RU-STA", 
 		"attrs": {
-			"indicator1": 41.130000000000003
+			"indicator1": 41.13
 		}, 
 		"name": "Stavropol Region"
 	}, 
 	{
 		"id": "RU-CHE", 
 		"attrs": {
-			"indicator1": 40.990000000000002
+			"indicator1": 40.99
 		}, 
 		"name": "Chelyabinsk Region"
 	}, 
 	{
 		"id": "RU-BRY", 
 		"attrs": {
-			"indicator1": 39.509999999999998
+			"indicator1": 39.51
 		}, 
 		"name": "Bryansk Region"
 	}, 
@@ -192,7 +191,7 @@ djeo.demo.data.russia_features = [
 	{
 		"id": "RU-UD", 
 		"attrs": {
-			"indicator1": 37.299999999999997
+			"indicator1": 37.3
 		}, 
 		"name": "Udmurt Republic"
 	}, 
@@ -206,105 +205,105 @@ djeo.demo.data.russia_features = [
 	{
 		"id": "RU-KLU", 
 		"attrs": {
-			"indicator1": 34.840000000000003
+			"indicator1": 34.84
 		}, 
 		"name": "Kaluga Region"
 	}, 
 	{
 		"id": "RU-ORL", 
 		"attrs": {
-			"indicator1": 34.829999999999998
+			"indicator1": 34.83
 		}, 
 		"name": "Oryol Region"
 	}, 
 	{
 		"id": "RU-TAM", 
 		"attrs": {
-			"indicator1": 34.359999999999999
+			"indicator1": 34.36
 		}, 
 		"name": "Tambov Region"
 	}, 
 	{
 		"id": "RU-MO", 
 		"attrs": {
-			"indicator1": 33.920000000000002
+			"indicator1": 33.92
 		}, 
 		"name": "Republic of Mordovia"
 	}, 
 	{
 		"id": "RU-PNZ", 
 		"attrs": {
-			"indicator1": 33.630000000000003
+			"indicator1": 33.63
 		}, 
 		"name": "Penza Region"
 	}, 
 	{
 		"id": "RU-ME", 
 		"attrs": {
-			"indicator1": 31.379999999999999
+			"indicator1": 31.38
 		}, 
 		"name": "Mari El Republic"
 	}, 
 	{
 		"id": "RU-KC", 
 		"attrs": {
-			"indicator1": 31.170000000000002
+			"indicator1": 31.17
 		}, 
 		"name": "Karachay-Cherkess Republic"
 	}, 
 	{
 		"id": "RU-RYA", 
 		"attrs": {
-			"indicator1": 31.010000000000002
+			"indicator1": 31.01
 		}, 
 		"name": "Ryazan Region"
 	}, 
 	{
 		"id": "RU-KEM", 
 		"attrs": {
-			"indicator1": 30.359999999999999
+			"indicator1": 30.36
 		}, 
 		"name": "Kemerovo Region"
 	}, 
 	{
 		"id": "RU-BA", 
 		"attrs": {
-			"indicator1": 28.579999999999998
+			"indicator1": 28.58
 		}, 
 		"name": "Republic of Bashkortostan"
 	}, 
 	{
 		"id": "RU-SAR", 
 		"attrs": {
-			"indicator1": 26.629999999999999
+			"indicator1": 26.63
 		}, 
 		"name": "Saratov Region"
 	}, 
 	{
 		"id": "RU-VGG", 
 		"attrs": {
-			"indicator1": 23.699999999999999
+			"indicator1": 23.7
 		}, 
 		"name": "Volgograd Region"
 	}, 
 	{
 		"id": "RU-SVE", 
 		"attrs": {
-			"indicator1": 23.030000000000001
+			"indicator1": 23.03
 		}, 
 		"name": "Sverdlovsk Region"
 	}, 
 	{
 		"id": "RU-AST", 
 		"attrs": {
-			"indicator1": 22.800000000000001
+			"indicator1": 22.8
 		}, 
 		"name": "Astrakhan Region"
 	}, 
 	{
 		"id": "RU-SMO", 
 		"attrs": {
-			"indicator1": 21.079999999999998
+			"indicator1": 21.08
 		}, 
 		"name": "Smolensk Region"
 	}, 
@@ -318,14 +317,14 @@ djeo.demo.data.russia_features = [
 	{
 		"id": "RU-ORE", 
 		"attrs": {
-			"indicator1": 17.579999999999998
+			"indicator1": 17.58
 		}, 
 		"name": "Orenburg Region"
 	}, 
 	{
 		"id": "RU-PER", 
 		"attrs": {
-			"indicator1": 17.559999999999999
+			"indicator1": 17.56
 		}, 
 		"name": "Perm Region"
 	}, 
@@ -346,21 +345,21 @@ djeo.demo.data.russia_features = [
 	{
 		"id": "RU-NVS", 
 		"attrs": {
-			"indicator1": 15.109999999999999
+			"indicator1": 15.11
 		}, 
 		"name": "Novosibirsk Region"
 	}, 
 	{
 		"id": "RU-OMS", 
 		"attrs": {
-			"indicator1": 14.880000000000001
+			"indicator1": 14.88
 		}, 
 		"name": "Omsk Region"
 	}, 
 	{
 		"id": "RU-KGN", 
 		"attrs": {
-			"indicator1": 14.359999999999999
+			"indicator1": 14.36
 		}, 
 		"name": "Kurgan Region"
 	}, 
@@ -388,7 +387,7 @@ djeo.demo.data.russia_features = [
 	{
 		"id": "RU-KIR", 
 		"attrs": {
-			"indicator1": 12.449999999999999
+			"indicator1": 12.45
 		}, 
 		"name": "Kirov Region"
 	}, 
@@ -402,77 +401,77 @@ djeo.demo.data.russia_features = [
 	{
 		"id": "RU-KK", 
 		"attrs": {
-			"indicator1": 8.8200000000000003
+			"indicator1": 8.82
 		}, 
 		"name": "Republic of Khakassia"
 	}, 
 	{
 		"id": "RU-VLG", 
 		"attrs": {
-			"indicator1": 8.7100000000000009
+			"indicator1": 8.71
 		}, 
 		"name": "Vologda Region"
 	}, 
 	{
 		"id": "RU-TYU", 
 		"attrs": {
-			"indicator1": 8.1899999999999995
+			"indicator1": 8.19
 		}, 
 		"name": "Tyumen Region"
 	}, 
 	{
 		"id": "RU-SAK", 
 		"attrs": {
-			"indicator1": 6.2800000000000002
+			"indicator1": 6.28
 		}, 
 		"name": "Sakhalin Region"
 	}, 
 	{
 		"id": "RU-MUR", 
 		"attrs": {
-			"indicator1": 6.1600000000000001
+			"indicator1": 6.16
 		}, 
 		"name": "Murmansk Region"
 	}, 
 	{
 		"id": "RU-YEV", 
 		"attrs": {
-			"indicator1": 5.2999999999999998
+			"indicator1": 5.3
 		}, 
 		"name": " Jewish Autonomous Region"
 	}, 
 	{
 		"id": "RU-KR", 
 		"attrs": {
-			"indicator1": 4.1500000000000004
+			"indicator1": 4.15
 		}, 
 		"name": "Republic of Karelia"
 	}, 
 	{
 		"id": "RU-KL", 
 		"attrs": {
-			"indicator1": 3.8399999999999999
+			"indicator1": 3.84
 		}, 
 		"name": "Republic of Kalmykia"
 	}, 
 	{
 		"id": "RU-TOM", 
 		"attrs": {
-			"indicator1": 3.2999999999999998
+			"indicator1": 3.3
 		}, 
 		"name": "Tomsk Region"
 	}, 
 	{
 		"id": "RU-IRK", 
 		"attrs": {
-			"indicator1": 3.2799999999999998
+			"indicator1": 3.28
 		}, 
 		"name": "Irkutsk Region"
 	}, 
 	{
 		"id": "RU-ARK", 
 		"attrs": {
-			"indicator1": 3.1499999999999999
+			"indicator1": 3.15
 		}, 
 		"name": "Arkhangelsk Region"
 	}, 
@@ -486,14 +485,14 @@ djeo.demo.data.russia_features = [
 	{
 		"id": "RU-KHM", 
 		"attrs": {
-			"indicator1": 2.7400000000000002
+			"indicator1": 2.74
 		}, 
 		"name": "Khanty-Mansi Autonomous District"
 	}, 
 	{
 		"id": "RU-ZAB", 
 		"attrs": {
-			"indicator1": 2.6299999999999999
+			"indicator1": 2.63
 		}, 
 		"name": "Zabaykalsky Region"
 	}, 
@@ -507,14 +506,14 @@ djeo.demo.data.russia_features = [
 	{
 		"id": "RU-KO", 
 		"attrs": {
-			"indicator1": 2.4500000000000002
+			"indicator1": 2.45
 		}, 
 		"name": "Komi Republic"
 	}, 
 	{
 		"id": "RU-AL", 
 		"attrs": {
-			"indicator1": 2.1899999999999999
+			"indicator1": 2.19
 		}, 
 		"name": "Altai Republic"
 	}, 
@@ -528,7 +527,7 @@ djeo.demo.data.russia_features = [
 	{
 		"id": "RU-KHA", 
 		"attrs": {
-			"indicator1": 1.8200000000000001
+			"indicator1": 1.82
 		}, 
 		"name": "Khabarovsk Region"
 	}, 
@@ -549,14 +548,14 @@ djeo.demo.data.russia_features = [
 	{
 		"id": "RU-YAN", 
 		"attrs": {
-			"indicator1": 0.68000000000000005
+			"indicator1": 0.68
 		}, 
 		"name": "Yamalo-Nenets Autonomous District"
 	}, 
 	{
 		"id": "RU-MAG", 
 		"attrs": {
-			"indicator1": 0.40000000000000002
+			"indicator1": 0.4
 		}, 
 		"name": "Magadan Region"
 	}, 
@@ -570,16 +569,16 @@ djeo.demo.data.russia_features = [
 	{
 		"id": "RU-NEN", 
 		"attrs": {
-			"indicator1": 0.23999999999999999
+			"indicator1": 0.24
 		}, 
 		"name": "Nenets Autonomous District"
 	}, 
 	{
 		"id": "RU-CHU", 
 		"attrs": {
-			"indicator1": 0.070000000000000007
+			"indicator1": 0.07
 		}, 
 		"name": "Chukotka Autonomous District",
 		"tooltip":  "Chukotka Autonomous District.<br>Pay special attention to it since it's crossed by 180/-180 longitude"
 	}
-]
+]);

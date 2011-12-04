@@ -29,13 +29,13 @@ var f1 = function(event){console.debug("function:US-AK, feature.id:"+event.featu
 DebugUtil.timer.start("loading");
 
 var map, handle1, handle2, handle3, handle4;
-var ready = function() {
+var ready = function(usaGeometries, usaFeatures, usaSomeRailways) {
 	DebugUtil.timer.end("loading");
 	
 	var features = [
 		{
 			id: "areas",
-			features: djeo.tests.data.usa_features
+			features: usaFeatures
 		},
 		{
 			id: "railways",
@@ -51,7 +51,7 @@ var ready = function() {
 					}
 				]
 			},
-			features: djeo.tests.data.usa_some_railways
+			features: usaSomeRailways
 		},
 		{
 			features: [
@@ -170,7 +170,7 @@ var ready = function() {
 	
 	DebugUtil.timer.start("render");
     map = new djeo.Map("map", {
-		geometries: djeo.tests.data.usa_geometries,
+		geometries: usaGeometries,
 		features: features,
 		resizePoints: false,
 		resizeLines: false
@@ -198,13 +198,14 @@ var disconnectFeature = function(id, handle) {
 
 
 require([
-	"dijit/form/ToggleButton",
-	"djeo/Map",
-	"djeo/control/Navigation",
-	
 	"djeo/tests/data/usa_geometries",
 	"djeo/tests/data/usa_features",
 	"djeo/tests/data/usa_some_railways",
+
+	"dijit/form/ToggleButton",
+	"djeo/Map",
+	"djeo/control/Navigation",
+
 	"dojo/domReady!"
 ], ready);
 

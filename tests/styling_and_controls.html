@@ -17,14 +17,13 @@
 <script src="util.js"></script>
 <script src="../../dojo/dojo.js"></script>
 
-<script src="data/usa_features_style.js"></script>
-
 <script>
 var highlight, tooltip, navigation;
 
 DebugUtil.timer.start("loading");
 
 require([
+	"djeo/tests/data/usa_features_style",
 	"dijit/form/ToggleButton",
 	"djeo/Map",
 	"djeo/control/Highlight",
@@ -32,10 +31,10 @@ require([
 	"djeo/control/Navigation",
 	"dojo/domReady!"
 ],
-function(){
+function(mapConfig){
 	DebugUtil.timer.end("loading");
-
-    new dijit.form.ToggleButton({
+	
+	new dijit.form.ToggleButton({
 		checked: true,
 		onChange: function(value){
 			highlight.enable(value);
@@ -43,7 +42,7 @@ function(){
 		iconClass: "dijitRadioIcon"
 	}, "highlight");
 	
-    new dijit.form.ToggleButton({
+	new dijit.form.ToggleButton({
 		checked: true,
 		onChange: function(value){
 			tooltip.enable(value);
@@ -51,7 +50,7 @@ function(){
 		iconClass: "dijitRadioIcon"
 	}, "tooltip");
 	
-    new dijit.form.ToggleButton({
+	new dijit.form.ToggleButton({
 		checked: true,
 		onChange: function(value){
 			navigation.enable(value);
@@ -60,11 +59,7 @@ function(){
 	}, "navigation");
 	
 	DebugUtil.timer.start("render");
-    var map = new djeo.Map("map", {
-		geometries: djeo.tests.data.usa_geometries,
-		style: style,
-		features: features
-	});
+	var map = new djeo.Map("map", mapConfig);
 	map.ready(function() {
 		DebugUtil.timer.end("render");
 		highlight = new djeo.control.Highlight(map);

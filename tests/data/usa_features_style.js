@@ -1,8 +1,12 @@
-dojo.require("djeo.tests.data.usa_geometries");
-dojo.require("djeo.tests.data.usa_features");
-dojo.require("djeo.tests.data.usa_some_railways");
+define([
+	"djeo/tests/data/usa_geometries",
+	"djeo/tests/data/usa_features",
+	"djeo/tests/data/usa_some_railways"
+], function(usaGeometries, usaFeatures, usaSomeRailways){return {
 
-var style = [
+geometries: usaGeometries,
+
+style: [
 	{
 		// all style attributes from this style block are applied to all map features;
 		// some attributes may be overriden by next style blocks
@@ -54,14 +58,14 @@ var style = [
 			stroke: "cyan"
 		}
 	}
-]
+],
 
-var features = [
+features: [
 	{
 		id: "areas",
 		// define styleClass for the feature
 		styleClass: "styleForAreas",
-		features: djeo.tests.data.usa_features,
+		features: usaFeatures,
 		style: {
 			// it's possible to define styling themes for map features;
 			// if "theme" attribute is not set for a style block, a default theme is assumed;
@@ -135,7 +139,7 @@ var features = [
 				]
 			}
 		],
-		features: djeo.tests.data.usa_some_railways
+		features: usaSomeRailways
 	},
 	{
 		// define point map features in this feature container
@@ -265,4 +269,6 @@ var features = [
 			}
 		]
 	}
-];
+]
+
+}});

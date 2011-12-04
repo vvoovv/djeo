@@ -1,5 +1,4 @@
-dojo.provide("djeo.tests.data.usa_features");
-djeo.tests.data.usa_features = [
+define([],[
 {id:'US-AK',name:'Alaska',pd:1.1},
 {id:'US-AL',name:'Alabama',pd:87.64},
 {id:'US-AR',name:'Arkansas',pd:51.34},
@@ -50,4 +49,4 @@ djeo.tests.data.usa_features = [
 {id:'US-WI',name:'Wisconsin',pd:98.76},
 {id:'US-WV',name:'West Virginia',pd:75.1},
 {id:'US-WY',name:'Wyoming',pd:5.09}
-]
+]);
