@@ -28,12 +28,6 @@ e.methods = {
 			}));
 		},
 
-		render: function(stylingOnly, theme, features) {
-			google.earth.executeBatch(this.engine.ge, dojo.hitch(this, function(){
-				this._render(stylingOnly, theme, features);
-			}));
-		},
-
 		renderFeatures: function(features, stylingOnly, theme) {
 			google.earth.executeBatch(this.engine.ge, dojo.hitch(this, function(){
 				this._renderFeatures(features, stylingOnly, theme);
@@ -194,6 +188,19 @@ dojo.declare("djeo.ge.Engine", djeo.Engine, {
 				lr.enableLayerById(ge.LAYER_TERRAIN, enabled);
 				break;
 		}
+	},
+	
+	render: function(/* Boolean */stylingOnly, /* String? */theme) {
+		// summary:
+		//		Implementation of the render method of djeo.Map
+		// stylingOnly:
+		//		See description in the render method of djeo.Map
+		// theme:
+		//		See description in the render method of djeo.Map
+		var args = arguments;
+		google.earth.executeBatch(this.ge, dojo.hitch(this, function(){
+			this.inherited("render", args);
+		}));
 	}
 });
 

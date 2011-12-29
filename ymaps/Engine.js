@@ -40,7 +40,9 @@ dojo.declare("djeo.ymaps.Engine", djeo.Engine, {
 		if (Y) {
 			// the first case: Yandex Maps API is completely loaded
 			this.map.projection = "EPSG:4326";
-			var ymap = new Y.Map(dojo.byId(this.map.container));
+			var ymap = new Y.Map(this.map.container, {
+				propagateEvents: true
+			});
 			ymap.disableDblClickZoom();
 			ymap.disableDragging();
 			this.ymap = ymap;
@@ -123,7 +125,7 @@ dojo.declare("djeo.ymaps.Engine", djeo.Engine, {
 		// summary:
 		//		Normalizes callback function for events
 		if (method) {
-			if (dojo.isString(method)) method = context[method];
+			method = dojo.hitch(context, method);
 		}
 		else method = context;
 		return function(shape, nativeEvent){

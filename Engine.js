@@ -116,6 +116,20 @@ dojo.declare("djeo.Engine", null, {
 		};
 	},
 	
+	render: function(/* Boolean */stylingOnly, /* String? */theme) {
+		// summary:
+		//		Default implementation of the render method of djeo.Map
+		// stylingOnly:
+		//		See description in the render method of djeo.Map
+		// theme:
+		//		See description in the render method of djeo.Map
+		var map = this.map;
+		if (!map.extent) map.extent = map.getBbox();
+		map._calculateViewport();
+		this.prepare();
+		map.document._render(stylingOnly, theme);
+	},
+	
 	patchMethods: function() {
 		// summary:
 		//		Patches some methods (e.g. render) of the basic classes (djeo.Map, djeo.Placemark)

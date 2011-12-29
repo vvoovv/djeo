@@ -4,7 +4,7 @@ dojo.require("djeo.control.Base");
 
 dojo.declare("djeo.control.Highlight", djeo.control.Base, {
 	//	summary:
-	//		Creates a highlighting action for the map
+	//		A basic highlighting control for the map
 	
 	factoryType: "control.Highlight",
 	

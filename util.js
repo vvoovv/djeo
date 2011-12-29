@@ -5,7 +5,7 @@ dojo.provide("djeo.util");
 var u = djeo.util,
 	idCounter = 0;
 
-u.baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/')+1);
+u.baseUrl = dojo.isBrowser ? window.location.href.substring(0, window.location.href.lastIndexOf('/')+1) : "";
 
 u.uid = function() {
 	idCounter += 1;

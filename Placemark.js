@@ -107,7 +107,7 @@ dojo.declare("djeo.Placemark", g.Feature, {
 		if (type == "Polygon" || type == "MultiPolygon") styleType = "polygon";
 		else if (type == "LineString" || type == "MultiLineString") styleType = "line";
 		if (stylingOnly) {
-			applyStyle(styleType, this, coords, style, factory);
+			factory.applyStyle(this, style, styleType, coords);
 		}
 		else {
 			// create shape(s)
@@ -123,7 +123,7 @@ dojo.declare("djeo.Placemark", g.Feature, {
 			}
 			
 			// apply style to the shape(s)
-			applyStyle(styleType, this, coords, style, factory);
+			factory.applyStyle(this, style, styleType, coords);
 			
 			// add shape(s) to the map
 			dojo.forEach(this.baseShapes, function(shape) {
@@ -232,28 +232,12 @@ dojo.declare("djeo.Placemark", g.Feature, {
 	}
 });
 
-
 // default methods;
 var p = g.Placemark.prototype;
 if (!g.methods) g.methods = {};
 g.methods.Placemark = {
 	render: p._render
 }
-
-
-var applyStyle = function(styleType, feature, coords, style, factory) {
-	switch(styleType) {
-		case "point":
-			factory.applyPointStyle(feature, style, coords);
-			break;
-		case "line":
-			factory.applyLineStyle(feature, style, coords);
-			break;
-		case "polygon":
-			factory.applyPolygonStyle(feature, style, coords);
-			break;
-	}
-};
 
 // register the constructor
 var gp = g.Placemark,

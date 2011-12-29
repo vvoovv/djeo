@@ -4,7 +4,6 @@ dojo.provide("djeo.Map");
 	
 var g = djeo;
 
-
 var defaultLayerID = "ROADMAP",
 	defaultEngine = {type: "djeo", options:{}};
 
@@ -131,7 +130,9 @@ dojo.declare("djeo.Map", null, {
 
 		restoreMethods(this);
 
-		this.container = container;
+		if (dojo.isBrowser) {
+			this.container = dojo.byId(container);
+		}
 
 		if(!kwArgs) kwArgs = {};
 		dojo.mixin(this, kwArgs);
@@ -152,7 +153,7 @@ dojo.declare("djeo.Map", null, {
 		// add user supplied styling definition
 		if (kwArgs.style) this.addStyle(kwArgs.style, /*prevent rendering*/true);
 		// set engine
-		this.setEngine(kwArgs.engine || (dojo.config&&dojo.config.djeoEngine) || defaultEngine);
+		this.setEngine(kwArgs.engine || require.rawConfig.djeoEngine || defaultEngine);
 		// add features
 		if (kwArgs.features) this.addFeatures(kwArgs.features, /*prevent rendering*/true);
 	},
@@ -206,16 +207,8 @@ dojo.declare("djeo.Map", null, {
 		// theme:
 		//		Specifies which theme to use for map rendering.
 		//		If theme is not set, the map will be rendered with the theme set for the "normal" map mode
-		this.methods.Map.render.call(this, stylingOnly, theme);
-	},
-	
-	_render: function(/* Boolean */stylingOnly, /* String? */theme) {
-		// summary:
-		//		Default implementation of the render method
-		if (!this.extent) this.extent = this.getBbox();
-		this._calculateViewport();
-		this.engine.prepare();
-		this.document._render(stylingOnly, theme);
+		//this.methods.Map.render.call(this, stylingOnly, theme);
+		this.engine.render(stylingOnly, theme);
 	},
 	
 	renderFeatures: function(/* Array|Object */features, /* Boolean */stylingOnly, /* String? */theme) {
@@ -506,7 +499,6 @@ g.setDependency = function(dependency) {
 var p = g.Map.prototype;
 if (!g.methods) g.methods = {};
 g.methods.Map = {
-	render: p._render,
 	renderFeatures: p._renderFeatures
 }
 

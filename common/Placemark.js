@@ -33,6 +33,20 @@ dojo.declare("djeo.common.Placemark", null, {
 		return shape;
 	},
 	
+	applyStyle: function(feature, style, styleType, coords) {
+		switch(styleType) {
+			case "point":
+				this.applyPointStyle(feature, style, coords);
+				break;
+			case "line":
+				this.applyLineStyle(feature, style, coords);
+				break;
+			case "polygon":
+				this.applyPolygonStyle(feature, style, coords);
+				break;
+		}
+	},
+	
 	_getLabel: function(feature, textStyle) {
 		return textStyle.attr ? feature.get(textStyle.attr) : feature.get("label") || feature.get("name");
 	},
