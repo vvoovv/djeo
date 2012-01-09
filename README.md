@@ -100,29 +100,3 @@ Place a file with the code sample in a directory next to dojo, dijit, dojox, dje
 All the code in the **master** branch is released under Dojo Toolkit licensing terms (The "New" BSD License or The Academic Free License, v. 2.1) with some exceptions listed below.
 All contributors have signed and submitted Contributors License Agreement (CLA) as required by Dojo Toolkit licensing procedure.
 See <http://dojotoolkit.org/license> for the details.
-
-The question remains open how to release Google Maps API, Google Earth Javascript API and Yandex Maps API code? It is not possible to develop a code for them without studing official documentation with code samples.
-
-Exceptions:
-
-1) The folder **djeo/demo/data**  
-Description: Map geometries based on OpenStreetMap data.  
-Original license: CC-BY-SA
-
-2) The file **djeo/util/proj4js.js** and the folder **djeo/util/proj4js**  
-Description: The library performs projection transformations; based on [Proj4js](http://trac.osgeo.org/proj4js/) library.  
-Original license: LGPL
-
-3) The file **djeo/util/jenks.js**  
-Description: Javascript port of Jenks Natural Breaks Optimization in Java (Geotools library).  
-Given an array of values this function splits the array into the specified number of classes in a nice way. Ported from [here](https://stat.ethz.ch/pipermail/r-sig-geo/2006-March/000811.html).  
-Original license: LGPL
-
-4) The function **zoomTo(extent)** in the file **djeo/ge/Engine.js**  
-Description: Code to zoom Google Earth plugin on a specific region. The related code was derived from [earth-api-utility-library](http://code.google.com/p/earth-api-utility-library/) and [geojs library](http://code.google.com/p/geojs/).  
-Both libraries are backed by Google.  
-Original license: Apache License 2.0
-
-5) The file **djeo/util/colorbrewer_data.js**  
-Description: Color schemes by Cynthia A. Brewer, Geography, Pennsylvania State University. Source: <http://www.ColorBrewer2.org>  
-Original license: Apache License, Version 2.0

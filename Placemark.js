@@ -1,15 +1,14 @@
-dojo.provide("djeo.Placemark");
+define([
+	"dojo/_base/declare", // declare
+	"dojo/_base/lang", // isString, isObject
+	"dojo/_base/array", // forEach
+	"djeo/_base",
+	"djeo/Feature",
+	"djeo/util/_base",
+	"djeo/util/bbox"
+], function(declare, lang, array, djeo, Feature, u, bbox) {
 
-dojo.require("djeo.Feature");
-dojo.require("djeo.styling");
-
-(function() {
-
-var g = djeo,
-	u = g.util,
-	s = g.styling;
-
-dojo.declare("djeo.Placemark", g.Feature, {
+var p = declare("djeo.Placemark", [Feature], {
 	
 	type: "",
 
@@ -31,12 +30,6 @@ dojo.declare("djeo.Placemark", g.Feature, {
 		this.handles = {};
 		this.baseShapes = [];
 		this.state = {};
-		
-		this.setFactory();
-	},
-	
-	setFactory: function() {
-		this.factory = this.map.engine.factories.Placemark;
 	},
 	
 	getType: function() {
@@ -67,81 +60,21 @@ dojo.declare("djeo.Placemark", g.Feature, {
 	},
 	
 	setCoords: function(coords) {
-		delete this._coords, this._bbox;
+		delete this._coords, this._bb;
 		this.coords = coords;
 	},
 	
 	render: function(stylingOnly, theme) {
-		this.map.methods.Placemark.render.call(this, stylingOnly, theme);
+		this.map.engine.factories.Placemark.render(this, stylingOnly, theme);
 	},
 
 	_render: function(stylingOnly, theme) {
-		if (!this.visible) return;
-		//TODO: disconnect connections and then reconnect them
-		var coords = this.getCoords();
-		if (!coords) {
-			this.invalid = true;
-			return;
-		}
-
-		var factory = this.factory;
-
-		// TODO: disconnect
-		if (!stylingOnly) {
-			// destroy base shapes
-			for (var i=this.baseShapes.length-1; i>=0; i--) {
-				this.map.engine.destroy(this.baseShapes.pop(), this);
-			}
-		}
-		// destroy extra shapes
-		// extra shapes are destroyed in an case (also if stylingOnly == true)
-		if (this.extraShapes) for (var i=this.extraShapes.length-1; i>=0; i--) {
-			this.map.engine.destroy(this.extraShapes.pop(), this);
-		}
-		
-		var style = s.calculateStyle(this, theme);
-
-		// apply style to the base geometry
-		var type = this.getCoordsType(),
-			styleType = "point";
-		if (type == "Polygon" || type == "MultiPolygon") styleType = "polygon";
-		else if (type == "LineString" || type == "MultiLineString") styleType = "line";
-		if (stylingOnly) {
-			factory.applyStyle(this, style, styleType, coords);
-		}
-		else {
-			// create shape(s)
-			if (factory.multipleSymbolizers && style[styleType]) { // we have a specific style
-				dojo.forEach(style[styleType], function(_style) {
-					var shape = factory.createShape(this, coords);
-					if (shape) this.baseShapes.push(shape);
-				}, this);
-			}
-			else {
-				var shape = factory.createShape(this, coords);
-				if (shape) this.baseShapes.push(shape);
-			}
-			
-			// apply style to the shape(s)
-			factory.applyStyle(this, style, styleType, coords);
-			
-			// add shape(s) to the map
-			dojo.forEach(this.baseShapes, function(shape) {
-				this.map.engine.appendChild(shape, this);
-			}, this);
-		}
-		
-		// add text label if the text style is specified
-		var textShape = factory.makeText(this, style);
-		if (textShape) {
-			this.textShapes = textShape;
-			this.map.engine.appendChild(textShape, this);
-		}
+		this.map.engine.factories.Placemark._render(this, stylingOnly, theme);
 	},
 	
 	remove: function() {
-		this.factory.remove(this);
-		dojo.publish("djeo.placemark.remove", [this]);
+		this.map.engine.factories.Placemark.remove(this);
+		// FIXME publish("djeo.placemark.remove", [this]);
 		// remove feature from the feature container
 		// remove from the registry of features
 		// remove from style dependence
@@ -151,7 +84,7 @@ dojo.declare("djeo.Placemark", g.Feature, {
 	show: function(show) {
 		if (show === undefined) show = true;
 		if (this.visible != show) {
-			this.factory.show(this, show);
+			this.map.engine.factories.Placemark.show(this, show);
 			this.visible = show;
 		}
 	},
@@ -159,20 +92,20 @@ dojo.declare("djeo.Placemark", g.Feature, {
 	getBbox: function() {
 		// summary:
 		//		Returns the feature boundings box in the current map projection
-		var bbox = this.bbox || this._bbox;
-		if (!bbox) bbox = u.bbox.get(this);
-		return bbox;
+		var bb = this.bbox || this._bbox;
+		if (!bb) bb = bbox.get(this);
+		return bb;
 	},
 
 	connectWithHandle: function(handle, /* String|Array? */events, /*Object|null*/ context, /*String|Function*/ method) {
 		if (this.invalid) return handle;
-		events = dojo.isString(events) ? [events] : events;
+		events = lang.isString(events) ? [events] : events;
 		
 		// disconnect existing events for this handle
 		var handleObj = this.handles[handle];
 		if (handleObj) {
 			var eventConnections = handleObj[3];
-			dojo.forEach(eventConnections, function(eventConnection){
+			array.forEach(eventConnections, function(eventConnection){
 				if (eventConnection) this.map.engine.disconnect(eventConnection);
 			}, this);
 		}
@@ -181,8 +114,8 @@ dojo.declare("djeo.Placemark", g.Feature, {
 		var handleObj = [events, context, method, eventConnections];
 
 		var numEvents = 0; // number of connected events
-		dojo.forEach(events, function(event) {
-			if (g.events[event]) {
+		array.forEach(events, function(event) {
+			if (djeo.events[event]) {
 				eventConnections.push(
 					this.map.engine.connect(this, event, context, method)
 				);
@@ -200,7 +133,7 @@ dojo.declare("djeo.Placemark", g.Feature, {
 		var handleObj = this.handles[handle];
 		if (handleObj) {
 			var eventConnections = handleObj[3];
-			dojo.forEach(eventConnections, function(eventConnection){
+			array.forEach(eventConnections, function(eventConnection){
 				this.map.engine.disconnect(eventConnection);
 			}, this);
 			delete this.handles[handle];
@@ -208,22 +141,22 @@ dojo.declare("djeo.Placemark", g.Feature, {
 	},
 	
 	translate: function(position) {
-		var factory = this.factory;
+		var factory = this.map.engine.factories.Placemark;
 		if (factory.translate) {
 			// convert coordinates to the map projection if it is relevant here
 			position = this.map.getCoords(position, "Point");
 			factory.translate(position, this);
 			this.setCoords(position);
-			dojo.publish("djeo.placemark.translate", [this, position]);
+			//FIXME publish("djeo.placemark.translate", [this, position]);
 		}
 	},
 
 	rotate: function(orientation) {
-		var factory = this.factory;
+		var factory = this.map.engine.factories.Placemark;
 		if (factory.rotate) {
 			var state = this.state;
 			if (state.heading === undefined) state.heading = 0;
-			var heading = dojo.isObject(orientation) ? orientation.heading : orientation;
+			var heading = lang.isObject(orientation) ? orientation.heading : orientation;
 			if (heading !== undefined) {
 				factory.rotate(heading, this);
 				state.heading = heading;
@@ -232,20 +165,14 @@ dojo.declare("djeo.Placemark", g.Feature, {
 	}
 });
 
-// default methods;
-var p = g.Placemark.prototype;
-if (!g.methods) g.methods = {};
-g.methods.Placemark = {
-	render: p._render
-}
-
 // register the constructor
-var gp = g.Placemark,
-	ft = g.featureTypes;
-ft.Placemark = gp;
-ft.Point = gp;
-ft.LineString = gp;
-ft.Polygon = gp;
-ft.MultiLineString = gp;
-ft.MultiPolygon = gp;
-}());
+var ft = djeo.featureTypes;
+ft.Placemark = p;
+ft.Point = p;
+ft.LineString = p;
+ft.Polygon = p;
+ft.MultiLineString = p;
+ft.MultiPolygon = p;
+
+return p;
+});

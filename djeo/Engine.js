@@ -1,17 +1,16 @@
-dojo.provide("djeo.djeo.Engine");
+define([
+	"require",
+	"dojo/_base/declare", // declare
+	"dojo/_base/lang", // mixin
+	"dojo/_base/array", // forEach
+	"dojox/gfx",
+	"dojox/gfx/matrix",
+	"djeo/Engine",
+	"./Placemark",
+	"djeo/util/geometry"
+], function(require, declare, lang, array, gfx, matrix, Engine, Placemark, geom) {
 
-dojo.require("djeo.Engine");
-dojo.require("dojox.gfx");
-dojo.require("djeo.djeo.Placemark");
-
-(function(){
-
-var gfx = dojox.gfx,
-	matrix = gfx.matrix;
-
-dojo.declare("djeo.djeo.Engine", djeo.Engine, {
-	
-	type: "djeo",
+return declare([Engine], {
 	
 	correctionScale: 1000,
 	
@@ -24,8 +23,11 @@ dojo.declare("djeo.djeo.Engine", djeo.Engine, {
 	correctScale: false,
 	
 	constructor: function(kwArgs) {
+		this._require = require;
+		// set ignored dependencies
+		lang.mixin(this.ignoredDependencies, {"Highlight": 1, "Tooltip": 1});
 		// initialize basic factories
-		this._initBasicFactories(new djeo.djeo.Placemark({
+		this._initBasicFactories(new Placemark({
 			map: this.map,
 			engine: this
 		}));
@@ -75,14 +77,14 @@ dojo.declare("djeo.djeo.Engine", djeo.Engine, {
 		var connections = [];
 		// normalize the callback function
 		method = this.normalizeCallback(feature, event, context, method);
-		dojo.forEach(feature.baseShapes, function(shape){
+		array.forEach(feature.baseShapes, function(shape){
 			connections.push([shape, shape.connect(event, method)]);
 		});
 		return connections;
 	},
 	
 	disconnect: function(connections) {
-		dojo.forEach(connections, function(connection){
+		array.forEach(connections, function(connection){
 			connection[0].disconnect(connection[1]);
 		});
 	},
@@ -141,7 +143,7 @@ dojo.declare("djeo.djeo.Engine", djeo.Engine, {
 	},
 	
 	resizeFeatures: function(featureContainer, scaleFactor) {
-		dojo.forEach(featureContainer.features, function(feature){
+		array.forEach(featureContainer.features, function(feature){
 			if (feature.isPlacemark) this._resizePlacemark(feature, scaleFactor);
 			else if (feature.isContainer) this.resizeFeatures(feature, scaleFactor);
 		}, this);
@@ -152,14 +154,14 @@ dojo.declare("djeo.djeo.Engine", djeo.Engine, {
 		var type = feature.getCoordsType();
 
 		if (this.resizePoints && type == "Point") {
-			dojo.forEach(feature.baseShapes, function(shape){
+			array.forEach(feature.baseShapes, function(shape){
 				shape.applyRightTransform(matrix.scale(scaleFactor));
 			});
 		}
 		else if ( gfx.renderer!="vml" && (
 				(this.resizeLines && (type == "LineString" || type == "MultiLineString")) ||
 				(this.resizePolygons && (type == "Polygon" || type == "MultiPolygon")) )) {
-			dojo.forEach(feature.baseShapes, function(shape){
+			array.forEach(feature.baseShapes, function(shape){
 				var stroke = shape.getStroke();
 				if (stroke) {
 					stroke.width *= scaleFactor;
@@ -170,14 +172,14 @@ dojo.declare("djeo.djeo.Engine", djeo.Engine, {
 		
 		if (feature.textShapes) {
 			var factory = this.map.engine.factories.Placemark,
-				center = djeo.util.center(feature),
+				center = geom.center(feature),
 				x = factory.getX(center[0]),
 				y = factory.getY(center[1]);
-			dojo.forEach(feature.textShapes, function(t){
+			array.forEach(feature.textShapes, function(t){
 				t.applyRightTransform(matrix.scaleAt(scaleFactor, x, y));
 			});
 		}
 	}
 });
 
-}());
+});

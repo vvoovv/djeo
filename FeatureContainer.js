@@ -1,13 +1,14 @@
-dojo.provide("djeo.FeatureContainer");
+define([
+	"dojo/_base/declare", // declare
+	"dojo/_base/lang", // isString, isArray
+	"dojo/_base/array", // forEach
+	"djeo/_base",
+	"djeo/Feature",
+	"djeo/util/_base",
+	"djeo/util/bbox"
+], function(declare, lang, array, djeo, Feature, u, bbox){
 
-dojo.require("djeo.Feature");
-
-(function() {
-
-var g = djeo,
-	u = g.util;
-
-dojo.declare("djeo.FeatureContainer", g.Feature, {
+var fc = declare("djeo.FeatureContainer", [Feature], {
 	
 	type: "FeatureContainer",
 	
@@ -27,7 +28,7 @@ dojo.declare("djeo.FeatureContainer", g.Feature, {
 	show: function(show) {
 		if (show === undefined) show = true;
 		if (this.visible != show) {
-			dojo.forEach(this.features, function(feature){
+			array.forEach(this.features, function(feature){
 				feature.show(show);
 			}, this);
 			this.visible = show;
@@ -35,9 +36,9 @@ dojo.declare("djeo.FeatureContainer", g.Feature, {
 	},
 	
 	addFeatures: function(/* Array */features, noRendering) {
-		if (!dojo.isArray(features)) features = [features];
+		if (!lang.isArray(features)) features = [features];
 		var addedFeatures = [];
-		dojo.forEach(features, function(feature){
+		array.forEach(features, function(feature){
 			if (feature.declaredClass) { // derived from djeo.Feature
 				feature.setMap(this.map);
 				feature.setParent(this);
@@ -45,7 +46,7 @@ dojo.declare("djeo.FeatureContainer", g.Feature, {
 			}
 			else {
 				var featureType = feature.type ? feature.type : ( feature.features ? "FeatureContainer" : "Placemark" );
-				var ctor = g.featureTypes[featureType];
+				var ctor = djeo.featureTypes[featureType];
 				if (ctor) {
 					feature = new ctor(feature, {map: this.map, parent: this});
 					this.features.push(feature);
@@ -63,9 +64,9 @@ dojo.declare("djeo.FeatureContainer", g.Feature, {
 	},
 	
 	removeFeatures: function(features) {
-		if (!dojo.isArray(features)) features = [features];
+		if (!lang.isArray(features)) features = [features];
 		var removedFeatures = [];
-		dojo.forEach(features, function(feature){
+		array.forEach(features, function(feature){
 			feature = feature.declaredClass ? feature : this.map.getFeatureById(feature);
 			if (feature) feature.remove();
 		}, this);
@@ -77,18 +78,19 @@ dojo.declare("djeo.FeatureContainer", g.Feature, {
 	},
 	
 	getBbox: function() {
-		var bbox = [Infinity,Infinity,-Infinity,-Infinity];
-		dojo.forEach(this.features, function(feature){
-			u.bbox.extend(bbox, feature.getBbox());
+		var bb = [Infinity,Infinity,-Infinity,-Infinity];
+		array.forEach(this.features, function(feature){
+			bbox.extend(bb, feature.getBbox());
 		}, this);
-		return bbox;
+		return bb;
+	},
+	
+	render: function(stylingOnly, theme) {
+		this.map.engine.renderContainer(this, stylingOnly, theme);
 	},
 	
 	_render: function(stylingOnly, theme) {
-		if (!this.visible) return;
-		dojo.forEach(this.features, function(feature){
-			if (feature.isContainer || feature.visible) feature._render(stylingOnly, theme);
-		}, this);
+		this.map.engine._renderContainer(this, stylingOnly, theme);
 	},
 	
 	getContainer: function() {
@@ -100,9 +102,9 @@ dojo.declare("djeo.FeatureContainer", g.Feature, {
 	
 	connectWithHandle: function(handle, /* String|Array? */events, /*Object|null*/ context, /*String|Function*/ method) {
 		if (!this.features.length) return handle;
-		events = dojo.isString(events) ? [events] : events;
+		events = lang.isString(events) ? [events] : events;
 		handle = handle || u.uid();
-		dojo.forEach(this.features, function(feature) {
+		array.forEach(this.features, function(feature) {
 			feature.connectWithHandle(handle, events, context, method);
 		});
 		return handle;
@@ -110,14 +112,15 @@ dojo.declare("djeo.FeatureContainer", g.Feature, {
 	
 	disconnect: function(handle) {
 		if (!this.features.length) return;
-		dojo.forEach(this.features, function(feature) {
+		array.forEach(this.features, function(feature) {
 			feature.disconnect(handle);
 		});
 	}
 });
 
 // register the constructor
-g.featureTypes.FeatureContainer = g.FeatureContainer;
-g.featureTypes.FeatureCollection = g.FeatureContainer;
+djeo.featureTypes.FeatureContainer = fc;
+djeo.featureTypes.FeatureCollection = fc;
 
-}());
+return fc;
+});

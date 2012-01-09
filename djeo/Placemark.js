@@ -1,22 +1,20 @@
-dojo.provide("djeo.djeo.Placemark");
+define([
+	"dojo/_base/declare", // declare
+	"dojo/_base/lang", // mixin, isObject
+	"dojo/_base/array", // forEach
+	"dojox/gfx/matrix",
+	"djeo/_base",
+	"djeo/common/Placemark",
+	"djeo/util/geometry",
+	"djeo/gfx"
+], function(declare, lang, array, matrix, djeo, P, geom, dx) {
 
-dojo.require("djeo.common.Placemark");
-dojo.require("djeo.gfx");
-
-(function() {
-
-var d = djeo,
-	dx = d.gfx,
-	cp = d.common.Placemark,
-	s = d.styling,
-	matrix = dojox.gfx.matrix;
-
-dojo.declare("djeo.djeo.Placemark", cp, {
+return declare([P], {
 	
 	multipleSymbolizers: true,
 	
 	constructor: function(kwArgs) {
-		dojo.mixin(this, kwArgs);
+		lang.mixin(this, kwArgs);
 	},
 	
 	init: function() {
@@ -79,7 +77,7 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 		if (specificShapeStyles) {
 			this._updateShapes(feature, coords, calculatedStyle, specificShapeStyles, true);
 			var recreateShapes = false;
-			dojo.forEach(specificShapeStyles, function(specificShapeStyle, i){
+			array.forEach(specificShapeStyles, function(specificShapeStyle, i){
 				var currentShape = baseShapes[i];
 				if (currentShape && recreateShapes) {
 					// disconnect events and remove the shape
@@ -102,7 +100,7 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 		else {
 			if (numBaseShapes > 1) {
 				// apply the same style to all shapes
-				dojo.forEach(baseShapes, function(shape, i) {
+				array.forEach(baseShapes, function(shape, i) {
 					var resultShape = this._applyPointStyle(coords, calculatedStyle, specificStyle, null, feature, shape);
 					if (numBaseShapes == 0 || /* shape has been replaced*/resultShape != shape) {
 						feature.baseShapes[i] = resultShape;
@@ -120,25 +118,25 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 	},
 	
 	_applyPointStyle: function(coords, calculatedStyle, specificStyle, specificShapeStyle, feature, shape) {
-		var shapeType = cp.get("shape", calculatedStyle, specificStyle, specificShapeStyle),
-			src = cp.getImgSrc(calculatedStyle, specificStyle, specificShapeStyle),
+		var shapeType = P.get("shape", calculatedStyle, specificStyle, specificShapeStyle),
+			src = P.getImgSrc(calculatedStyle, specificStyle, specificShapeStyle),
 			isVectorShape,
 			size,
 			rScale,
-			scale = cp.getScale(calculatedStyle, specificStyle, specificShapeStyle),
+			scale = P.getScale(calculatedStyle, specificStyle, specificShapeStyle),
 			transform = [matrix.translate(this.getX(coords[0]), this.getY(coords[1]))],
 			applyTransform = true,
 			// if we alreade have a shape, we don't need to connect events: the events are already connected to the shape
 			connectEvents = !shape ? true : false;
 
 		if (shapeType) {
-			if (!d.shapes[shapeType]) shapeType = cp.defaultShapeType;
+			if (!djeo.shapes[shapeType]) shapeType = P.defaultShapeType;
 			isVectorShape = true;
 		}
 		else if (src) isVectorShape = false;
 
 		if (isVectorShape !== undefined) {
-			size = isVectorShape ? cp.getSize(calculatedStyle, specificStyle, specificShapeStyle) : cp.getImgSize(calculatedStyle, specificStyle, specificShapeStyle);
+			size = isVectorShape ? P.getSize(calculatedStyle, specificStyle, specificShapeStyle) : P.getImgSize(calculatedStyle, specificStyle, specificShapeStyle);
 		}
 		if (size) {
 			// store the size and the scale for possible future reference
@@ -147,7 +145,7 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 		}
 		else if (shape) {
 			// check if we can apply relative scale (rScale)
-			rScale = cp.get("rScale", calculatedStyle, specificStyle, specificShapeStyle);
+			rScale = P.get("rScale", calculatedStyle, specificStyle, specificShapeStyle);
 			if (isVectorShape !== undefined && rScale !== undefined) {
 				size = feature.state.size;
 				scale = rScale * feature.state.scale;
@@ -155,7 +153,7 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 		}
 
 		if (isVectorShape) {
-			var shapeDef = d.shapes[shapeType],
+			var shapeDef = djeo.shapes[shapeType],
 				shapeSize = shapeType=="circle" ? 2 : Math.max(shapeDef.size[0], shapeDef.size[1]),
 				_scale = scale/this.lengthDenominator/shapeSize;
 
@@ -198,7 +196,7 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 				connectEvents = true;
 				shape = null;
 			}
-			var anchor = cp.getAnchor(calculatedStyle, specificStyle, specificShapeStyle, size),
+			var anchor = P.getAnchor(calculatedStyle, specificStyle, specificShapeStyle, size),
 				imageDef = {
 					type: "image",
 					src: this._getImageUrl(src),
@@ -248,14 +246,14 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 
 		if (specificShapeStyles) {
 			this._updateShapes(feature, coords, calculatedStyle, specificShapeStyles);
-			dojo.forEach(specificShapeStyles, function(specificShapeStyle, i){
+			array.forEach(specificShapeStyles, function(specificShapeStyle, i){
 				// index of specificShapeStyles corresponds to the index of feature.baseShapes
 				this._applyLineStyle(baseShapes[i], calculatedStyle, specificStyle, specificShapeStyle);
 			}, this);
 		}
 		else {
 			// apply the same style to all shapes
-			dojo.forEach(baseShapes, function(shape) {
+			array.forEach(baseShapes, function(shape) {
 				this._applyLineStyle(shape, calculatedStyle, specificStyle)
 			}, this);
 		}
@@ -309,7 +307,7 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 				context = handles[handle][1],
 				method = handles[handle][2],
 				eventConnections = handles[handle][3];
-			dojo.forEach(events, function(event, eventIndex){
+			array.forEach(events, function(event, eventIndex){
 				eventConnections[eventIndex].push( [shape, shape.connect(event, this.engine.normalizeCallback(feature, event, context, method))] );
 			}, this);
 		}
@@ -322,7 +320,7 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 		for (var handle in handles) {
 			var events = handles[handle][0],
 				eventConnections = handles[handle][3];
-			dojo.forEach(events, function(event, eventIndex){
+			array.forEach(events, function(event, eventIndex){
 				shape.disconnect( eventConnections[eventIndex].pop()[1] );
 			});
 		}
@@ -330,7 +328,7 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 	
 	remove: function(feature) {
 		if (feature.visible) {
-			dojo.forEach(feature.baseShapes, function(shape){
+			array.forEach(feature.baseShapes, function(shape){
 				this._removeShape(shape, feature);
 			}, this);
 		}
@@ -342,7 +340,7 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 			// we don't need the container anymore
 			delete feature.state.gfxContainer;
 
-			dojo.forEach(feature.baseShapes, function(shape){
+			array.forEach(feature.baseShapes, function(shape){
 				container.add(shape);
 			}, this);
 		}
@@ -352,7 +350,7 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 				// all base shapes are supposed to be in the same gfx container
 				feature.state.gfxContainer = feature.baseShapes[0].getParent();
 			}
-			dojo.forEach(feature.baseShapes, function(shape){
+			array.forEach(feature.baseShapes, function(shape){
 				shape.removeShape();
 			});
 		}
@@ -362,7 +360,7 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 		// ignore VML due to problems with text scaling
 		if (dojox.gfx.renderer == "vml") return;
 		if (feature.textShapes) {
-			dojo.forEach(feature.textShapes, function(t) {
+			array.forEach(feature.textShapes, function(t) {
 				t.removeShape();
 			});
 		}
@@ -378,7 +376,7 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 			case "MultiPolygon":
 				specificStyle = calculatedStyle.polygon;
 		}
-		var textStyle = cp.get("text", calculatedStyle, specificStyle);
+		var textStyle = P.get("text", calculatedStyle, specificStyle);
 		if (!textStyle) return;
 
 		var label = textStyle.label || this._getLabel(feature, textStyle);
@@ -410,7 +408,7 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 				y = this.getY(coords[1]);
 		}
 		else if (type == "Polygon" || type == "MultiPolygon") {
-			var center = djeo.util.center(feature),
+			var center = geom.center(feature),
 				x = this.getX(center[0]),
 				y = this.getY(center[1]);
 	
@@ -439,12 +437,12 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 			oldPosition = feature.getCoords(),
 			transform = {dx:this.getX(position[0])-this.getX(oldPosition[0]), dy:this.getY(position[1])-this.getY(oldPosition[1])};
 
-		dojo.forEach(baseShapes, function(shape){
+		array.forEach(baseShapes, function(shape){
 			shape.applyLeftTransform(transform);
 		}, this);
 		
 		if (textShapes) {
-			dojo.forEach(textShapes, function(t){
+			array.forEach(textShapes, function(t){
 				t.applyLeftTransform(transform);
 			});
 		}
@@ -452,12 +450,12 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 
 	rotate: function(orientation, feature) {
 		var baseShapes = feature.baseShapes,
-			heading = dojo.isObject(orientation) ? orientation.heading : orientation,
+			heading = lang.isObject(orientation) ? orientation.heading : orientation,
 			state = feature.state,
 			oldHeading = state.orientation ? state.orientation.heading : state.heading,
 			deltaHeading = -oldHeading + heading;
 
-		dojo.forEach(baseShapes, function(shape){
+		array.forEach(baseShapes, function(shape){
 			shape.applyRightTransform(matrix.rotate(deltaHeading));
 		}, this);
 	},
@@ -471,7 +469,7 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 			}
 		}
 		else {
-			dojo.forEach(entities, function(entity){
+			array.forEach(entities, function(entity){
 				pathString += this.makePathString(entity, depth-1);
 			}, this);
 		}
@@ -479,4 +477,4 @@ dojo.declare("djeo.djeo.Placemark", cp, {
 	}
 });
 
-}());
+});

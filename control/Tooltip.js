@@ -1,10 +1,17 @@
-dojo.provide("djeo.control.Tooltip");
+define([
+	"dojo/_base/declare", // declare
+	"dojo/_base/lang", // hitch
+	"dojo/on",
+	"dojo/dom-geometry", // position
+	"dijit/Tooltip",
+	"dijit/place",
+	"djeo/_base",
+	"./Base"
+], function(declare, lang, on, domGeom, Tooltip, place, djeo, Base){
 
-dojo.require("djeo.control.Base");
+var dependency = "Tooltip";
+djeo.registerDependency("Tooltip");
 
-dojo.require("dijit.Tooltip");
-
-(function(){
 var DEFAULT_TEXT = function(feature){
 	return feature.tooltip || feature.name || feature.id;
 };
@@ -16,9 +23,7 @@ var tooltip,
 
 var timeoutId, timeoutFeature;
 
-dojo.declare("djeo.control.Tooltip", djeo.control.Base, {
-
-	factoryType: "control.Tooltip",
+declare("djeo.control.Tooltip", Base, {
 	
 	// current tooltip feature
 	feature: null,
@@ -34,6 +39,8 @@ dojo.declare("djeo.control.Tooltip", djeo.control.Base, {
 	onpointeroutDelay: 200, // milliseconds
 
 	constructor: function(map, kwArgs) {
+		this._dependency = dependency;
+
 		this.text = kwArgs && kwArgs.text ? kwArgs.text : DEFAULT_TEXT;
 		
 		this.attachFactory(this.enabled);
@@ -41,19 +48,19 @@ dojo.declare("djeo.control.Tooltip", djeo.control.Base, {
 
 	init: function() {
 		if (!tooltip) {
-			tooltip = new dijit._MasterTooltip();
+			tooltip = new Tooltip._MasterTooltip();
 			tooltipControl = this;
-			dojo.connect(tooltip.domNode, "onmousemove", this, function(domEvent){
+			on(tooltip.domNode, "mousemove", lang.hitch(this, function(domEvent){
 				this.clientX = domEvent.clientX;
 				this.clientY = domEvent.clientY;
 				if (tooltipControl) tooltipControl.moveTooltip(domEvent.clientX, domEvent.clientY);
-			});
+			}));
 		}
-		dojo.connect(this.map.container, "onmousemove", this, function(domEvent){
+		on(this.map.container, "mousemove", lang.hitch(this, function(domEvent){
 			this.clientX = domEvent.clientX;
 			this.clientY = domEvent.clientY;
 			if (!timeoutId) this.moveTooltip(domEvent.clientX, domEvent.clientY);
-		});
+		}));
 	},
 	
 	process: function(event){
@@ -73,7 +80,7 @@ dojo.declare("djeo.control.Tooltip", djeo.control.Base, {
 		else if (event.type == "onmouseout"){
 			timeoutFeature = feature;
 			timeoutId = setTimeout(
-				dojo.hitch(this, this._onpointerout),
+				lang.hitch(this, this._onpointerout),
 				this.onpointeroutDelay
 			)
 		}
@@ -92,21 +99,20 @@ dojo.declare("djeo.control.Tooltip", djeo.control.Base, {
 	},
 	
 	hideTooltip: function() {
-		console.debug("hide tooltip");
 		tooltip.hide(aroundRect);
 	},
 	
 	moveTooltip: function(x, y) {
 		if (this.feature) {
 			this._setAroundRect(x, y);
-			dijit.place.around(tooltip.domNode, aroundRect, this.position, !this.rtl, dojo.hitch(tooltip, "orient"));
+			place.around(tooltip.domNode, aroundRect, this.position, !this.rtl, lang.hitch(tooltip, "orient"));
 		}
 	},
 	
 	_setAroundRect: function(x, y) {
 		// adjust relative coordinates to absolute, and remove fractions
-		var p1 = dojo.position(this.map.container, true),
-			p2 = dojo.position(this.map.container, false)
+		var p1 = domGeom.position(this.map.container, true),
+			p2 = domGeom.position(this.map.container, false)
 		;
 		if (x=== undefined) {
 			x = this.clientX;
@@ -117,4 +123,4 @@ dojo.declare("djeo.control.Tooltip", djeo.control.Base, {
 	}
 });
 
-})();
+});

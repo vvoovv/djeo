@@ -1,8 +1,11 @@
-dojo.provide("djeo.control.Base");
+define([
+	"dojo/_base/declare", // declare
+	"dojo/_base/lang", // mixin, isArray, isString
+	"dojo/_base/array", // forEach
+	"djeo/util/_base"
+], function(declare, lang, array, u){
 
-dojo.require("djeo.util");
-
-dojo.declare("djeo.control.Base", null, {
+return declare(null, {
 
 	// array of features, featureContainers or the whole map
 	features: null,
@@ -19,28 +22,28 @@ dojo.declare("djeo.control.Base", null, {
 		this.events = ["onmouseover", "onmouseout"];
 
 		if(!kwArgs) kwArgs = {};
-		dojo.mixin(this, kwArgs);
+		lang.mixin(this, kwArgs);
 
-		this.handle = djeo.util.uid();
+		this.handle = u.uid();
 		
 		// process features
 		// if features kwArg is not specified all map features are considered as targets for the control
 		var features = kwArgs.features ? kwArgs.features : [map];
-		if (!dojo.isArray(features)) features = [features];
+		if (!lang.isArray(features)) features = [features];
 		this.features = [];
-		dojo.forEach(features, function(feature){
-			if (dojo.isString(feature)) feature = this.map.getFeatureById(feature);
+		array.forEach(features, function(feature){
+			if (lang.isString(feature)) feature = this.map.getFeatureById(feature);
 			if (feature) this.features.push(feature);
 		}, this);
 	},
 
 	attachFactory: function() {
-		var factory = this.map.engine.getFactory(this.factoryType);
+		var factory = this.map.engine.getFactory(this._dependency);
 		if (factory) {
-			dojo.mixin(this, factory);
-			this.init();
-			if (this.enabled) this.enable();
+			lang.mixin(this, factory);
 		}
+		this.init();
+		if (this.enabled) this.enable();
 	},
 
 	enable: function(enable){
@@ -51,13 +54,13 @@ dojo.declare("djeo.control.Base", null, {
 	},
 	
 	_connectEvents: function() {
-		dojo.forEach(this.features, function(feature){
+		array.forEach(this.features, function(feature){
 			feature.connectWithHandle(this.handle, this.events, this, "process");
 		}, this);
 	},
 
 	_disconnectEvents: function() {
-		dojo.forEach(this.features, function(feature){
+		array.forEach(this.features, function(feature){
 			feature.disconnect(this.handle);
 		}, this);
 	},
@@ -72,3 +75,4 @@ dojo.declare("djeo.control.Base", null, {
 	}
 });
 
+});

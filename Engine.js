@@ -1,6 +1,10 @@
-dojo.provide("djeo.Engine");
+define([
+	"dojo/_base/declare", // declare
+	"dojo/_base/lang", // mixin, hitch, isArray, isString, isObject
+	"dojo/_base/array" // forEach
+], function(declare, lang, array){
 
-dojo.declare("djeo.Engine", null, {
+return declare(null, {
 	// summary:
 	//		The base class for engines. An engine class is supposed to be a singleton
 	
@@ -20,12 +24,19 @@ dojo.declare("djeo.Engine", null, {
 	// canRenderModels: Boolean
 	//		Specifies if the engine can render 3D models
 	canRenderModels: false,
+	
+	// _require: Function
+	//		Reference to the context-sensitive require of the actual Engine instance
+	_require: null,
+	
+	// ignoredDependencies: Object
+	//		Ignored dependencies (e.g default implementation is used)
+	ignoredDependencies: null,
 
 	constructor: function(kwArgs){
-		dojo.mixin(this, kwArgs);
-		// find base module (e.g djeo.djeo)
-		this.baseModule = this.declaredClass.substring(0, this.declaredClass.lastIndexOf("."));
+		lang.mixin(this, kwArgs);
 		this.factories = {};
+		this.ignoredDependencies = {};
 	},
 
 	initialize: function(/* Function */readyFunction) {
@@ -42,6 +53,12 @@ dojo.declare("djeo.Engine", null, {
 		f.Polygon = placemarkFactory;
 		f.MultiLineString = placemarkFactory;
 		f.MultiPolygon = placemarkFactory;
+	},
+	
+	matchModuleId: function(dependency) {
+		if (this.ignoredDependencies[dependency]) return null;
+		var moduleId = this._require.toAbsMid("./") + dependency;
+		return moduleId;
 	},
 
 	createContainer: function(parentContainer, featureType) {
@@ -60,30 +77,20 @@ dojo.declare("djeo.Engine", null, {
 		//		Should be implemented in the inherited class
 	},
 	
-	getFactory: function(/* String */type) {
+	getFactory: function(/* String */dependency) {
 		// summary:
 		//		Looks up a factory for the given type.
 		//		If the factory is not found, tries to load the factory class and instantiate it
-		if (!this.factories[type]) {
-			// cheating build util
-			var req = dojo.require;
-			var lastDot = type.lastIndexOf("."),
-				module = lastDot>=0 ? type.substring(lastDot+1) : type;
-			// type can have one of the following forms: 1)Placemark 2)control.Highlight
-			// in the case 1) we try the type as is, in the case of 2) we try Highlight
-			module = this.baseModule + "." + module;
-			req(module, true);
-			var cstr = dojo.getObject(module);
-			if (cstr) this.factories[type] = new (cstr)({engine: this});
-			else if (lastDot>0) {
-				// in the case 2) we try control.Highlight, i.e. type as is
-				module = this.baseModule + "." + type;
-				req(module, true);
-				var cstr = dojo.getObject(module);
-				if (cstr) this.factories[type] = new (cstr)({engine: this});
+		if (!dependency || this.ignoredDependencies[dependency]) return null;
+		var factories = this.factories;
+		if (!factories[dependency]) {
+			var moduleId = this.matchModuleId(dependency);
+			if (moduleId) {
+				var factoryClass = require(moduleId);
+				factories[dependency] = new factoryClass({engine: this});
 			}
 		}
-		return this.factories[type];
+		return factories[dependency];
 	},
 	
 	getTopContainer: function() {
@@ -106,7 +113,7 @@ dojo.declare("djeo.Engine", null, {
 		// summary:
 		//		Normalizes callback function for events
 		//		A particular map engine may provide different implementation of the function
-		method = method ? dojo.hitch(context, method) : context;
+		method = method ? lang.hitch(context, method) : context;
 		return function(nativeEvent){
 			method({
 				type: event,
@@ -127,12 +134,37 @@ dojo.declare("djeo.Engine", null, {
 		if (!map.extent) map.extent = map.getBbox();
 		map._calculateViewport();
 		this.prepare();
-		map.document._render(stylingOnly, theme);
+		map.document.render(stylingOnly, theme);
 	},
 	
-	patchMethods: function() {
+	renderFeatures: function(/* Array|Object */features, /* Boolean */stylingOnly, /* String? */theme) {
 		// summary:
-		//		Patches some methods (e.g. render) of the basic classes (djeo.Map, djeo.Placemark)
-		//		Should be implemented in the inherited class
+		//		Default implementation of the renderFeatures method of djeo.Map
+		if (lang.isString(features)) features = [features];
+		if (lang.isArray(features)) {
+			array.forEach(features, function(feature){
+				if (lang.isString(feature)) feature = this.getFeatureById(feature);
+				if (feature) feature._render(stylingOnly, theme);
+			}, this);
+		}
+		else {
+			for(var fid in features) {
+				// TODO: avoid double rendering
+				features[fid]._render(stylingOnly, theme);
+			}
+		}
+	},
+
+	renderContainer: function(container, stylingOnly, theme) {
+		this._renderContainer(container, stylingOnly, theme);
+	},
+
+	_renderContainer: function(container, stylingOnly, theme) {
+		if (!container.visible) return;
+		array.forEach(container.features, function(feature){
+			if (feature.isContainer || feature.visible) feature._render(stylingOnly, theme);
+		}, container);
 	}
+});
+
 });

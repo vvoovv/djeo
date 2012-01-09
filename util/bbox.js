@@ -1,30 +1,6 @@
-dojo.provide("djeo.util");
+define(["dojo/_base/array"], function(array){
 
-(function(){
-	
-var u = djeo.util,
-	idCounter = 0;
-
-u.baseUrl = dojo.isBrowser ? window.location.href.substring(0, window.location.href.lastIndexOf('/')+1) : "";
-
-u.uid = function() {
-	idCounter += 1;
-	return idCounter;
-}
-
-u.degToRad = function(degree){
-	return Math.PI * degree / 180;
-};
-
-u.radToDeg = function(radian){
-	return radian / Math.PI * 180;
-};
-
-u.isRelativeUrl = function(url) {
-	return url.substr(0,4)=="http" ? false : true;
-};
-
-u.bbox = {
+var bb = {
 	extend: function(extendWhat, extendWith) {
 		if (extendWith) {
 			// left
@@ -75,15 +51,6 @@ u.bbox = {
 		return bbox;
 	}	
 };
-
-u.center = function(feature) {
-	var bbox = u.bbox.get(feature),
-		center;
-	if (bbox) {
-		center = [ (bbox[0]+bbox[2])/2, (bbox[1]+bbox[3])/2 ];
-	}
-	return center;
-};
 	
 // calculate bbox for:
 // a single point (depth == 1)
@@ -93,13 +60,14 @@ u.center = function(feature) {
 	
 var _calculateBbox = function(depth, /* Array */entities, bbox) {
 	if (depth == 1) {
-		u.bbox.extend(bbox, entities);
+		bb.extend(bbox, entities);
 	}
 	else {
-		dojo.forEach(entities, function(entity){
+		array.forEach(entities, function(entity){
 			_calculateBbox(depth-1, entity, bbox);
 		});
 	}
 }
 
-}());
+return bb;
+});

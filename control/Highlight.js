@@ -1,12 +1,15 @@
-dojo.provide("djeo.control.Highlight");
+define([
+	"dojo/_base/declare", // declare
+	"djeo/_base",
+	"./Base"
+], function(declare, djeo, Base) {
 
-dojo.require("djeo.control.Base");
+var dependency = "Highlight";
+djeo.registerDependency("Highlight");
 
-dojo.declare("djeo.control.Highlight", djeo.control.Base, {
+return declare("djeo.control.Highlight", [Base], {
 	//	summary:
 	//		A basic highlighting control for the map
-	
-	factoryType: "control.Highlight",
 	
 	theme: "highlight",
 	
@@ -38,4 +41,6 @@ dojo.declare("djeo.control.Highlight", djeo.control.Base, {
 			}
 		}
 	}
+});
+
 });

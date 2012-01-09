@@ -1,18 +1,20 @@
-dojo.provide("djeo.control.Navigation");
+define([
+	"dojo/_base/declare", // declare
+	"dojo/_base/lang", // mixin
+	"djeo/_base"
+], function(declare, lang, djeo){
 
+var dependency = "Navigation";
+djeo.registerDependency("Navigation");
 
-(function(){
-
-dojo.declare("djeo.control.Navigation", null, {
-	
-	factoryType: "control.Navigation",
+return declare("djeo.control.Navigation", null, {
 	
 	constructor: function(map, kwArgs) {
 		this.map = map;
-		var factory = this.map.engine.getFactory(this.factoryType);
+		var factory = this.map.engine.getFactory(dependency);
 		if (factory) {
-			dojo.mixin(this, factory);
-			if (kwArgs) dojo.mixin(this, kwArgs);
+			lang.mixin(this, factory);
+			if (kwArgs) lang.mixin(this, kwArgs);
 			this.enable(true);
 		}
 	},
@@ -22,4 +24,4 @@ dojo.declare("djeo.control.Navigation", null, {
 	}
 });
 
-})();
+});

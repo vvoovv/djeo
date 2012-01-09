@@ -1,16 +1,12 @@
-dojo.provide("djeo.gfx");
-
-dojo.require("dojox.gfx");
-dojo.require("djeo.common.Placemark");
-
-(function() {
-
-var g = djeo,
-	dx = g.gfx,
-	cp = g.common.Placemark;
+define([
+	"dojo/_base/Color",
+	"dojox/gfx",
+	"djeo/_base",
+	"djeo/common/Placemark"
+], function(Color, gfx, djeo, P){
 
 // center of each shape must be 0,0
-g.shapes = {
+djeo.shapes = {
 	circle: 1, // a dummy value
 	star: {
 		size: [1000,1000],
@@ -34,43 +30,44 @@ g.shapes = {
 	}
 };
 
-dx.applyFill = function(shape, calculatedStyle, specificStyle, specificShapeStyle) {
-	var fill = cp.get("fill", calculatedStyle, specificStyle, specificShapeStyle),
-		fillOpacity = cp.get("fillOpacity", calculatedStyle, specificStyle, specificShapeStyle);
-
-	if (fill || fillOpacity !== undefined) {
-		var gfxFill = shape.getFill(),
-			gfxFillOpacity = gfxFill && gfxFill.a;
-		if (fill) gfxFill = new dojo.Color(fill);
-		if (gfxFill) {
-			if (fillOpacity !== undefined) gfxFill.a = fillOpacity;
-			else if (gfxFillOpacity !== undefined) gfxFill.a = gfxFillOpacity;
-			shape.setFill(gfxFill);
+return {
+	applyFill: function(shape, calculatedStyle, specificStyle, specificShapeStyle) {
+		var fill = P.get("fill", calculatedStyle, specificStyle, specificShapeStyle),
+			fillOpacity = P.get("fillOpacity", calculatedStyle, specificStyle, specificShapeStyle);
+	
+		if (fill || fillOpacity !== undefined) {
+			var gfxFill = shape.getFill(),
+				gfxFillOpacity = gfxFill && gfxFill.a;
+			if (fill) gfxFill = new Color(fill);
+			if (gfxFill) {
+				if (fillOpacity !== undefined) gfxFill.a = fillOpacity;
+				else if (gfxFillOpacity !== undefined) gfxFill.a = gfxFillOpacity;
+				shape.setFill(gfxFill);
+			}
+		}
+	},
+	applyStroke: function(shape, calculatedStyle, specificStyle, specificShapeStyle, widthMultiplier) {
+		if (gfx.renderer == "vml") widthMultiplier=1;
+		var stroke = P.get("stroke", calculatedStyle, specificStyle, specificShapeStyle),
+			strokeWidth = P.get("strokeWidth", calculatedStyle, specificStyle, specificShapeStyle),
+			strokeOpacity = P.get("strokeOpacity", calculatedStyle, specificStyle, specificShapeStyle);
+	
+		if (stroke || strokeWidth!==undefined || strokeOpacity!==undefined) {
+			if (strokeWidth === 0) shape.setStroke(null);
+			else {
+				var gfxStroke = shape.getStroke();
+				if (stroke) {
+					if (!gfxStroke) gfxStroke = {join: "round", cap: "round"};
+					gfxStroke.color = new Color(stroke);
+				}
+				if (gfxStroke) {
+					if (strokeOpacity !== undefined) gfxStroke.color.a = strokeOpacity;
+					if (strokeWidth) gfxStroke.width = strokeWidth*widthMultiplier;
+					shape.setStroke(gfxStroke);
+				}
+			}
 		}
 	}
 };
 
-dx.applyStroke = function(shape, calculatedStyle, specificStyle, specificShapeStyle, widthMultiplier) {
-	if (dojox.gfx.renderer == "vml") widthMultiplier=1;
-	var stroke = cp.get("stroke", calculatedStyle, specificStyle, specificShapeStyle),
-		strokeWidth = cp.get("strokeWidth", calculatedStyle, specificStyle, specificShapeStyle),
-		strokeOpacity = cp.get("strokeOpacity", calculatedStyle, specificStyle, specificShapeStyle);
-
-	if (stroke || strokeWidth!==undefined || strokeOpacity!==undefined) {
-		if (strokeWidth === 0) shape.setStroke(null);
-		else {
-			var gfxStroke = shape.getStroke();
-			if (stroke) {
-				if (!gfxStroke) gfxStroke = {join: "round", cap: "round"};
-				gfxStroke.color = new dojo.Color(stroke);
-			}
-			if (gfxStroke) {
-				if (strokeOpacity !== undefined) gfxStroke.color.a = strokeOpacity;
-				if (strokeWidth) gfxStroke.width = strokeWidth*widthMultiplier;
-				shape.setStroke(gfxStroke);
-			}
-		}
-	}
-};
-
-}());
+});

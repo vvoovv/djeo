@@ -1,17 +1,16 @@
-dojo.provide("djeo.styling");
+define([
+	"dojo/_base/declare", // declare
+	"dojo/_base/lang", // isString, isArray, getObject
+	"dojo/_base/array", // forEach
+	"djeo/_base",
+	"dojo/colors"
+], function(declare, lang, array, djeo){
 
-dojo.require("dojo.colors");
-
-(function() {
-	
-var g = djeo,
-	s = g.styling;
-	
 var symbolizers = ["points", "lines"],
 	styleAttributes = {theme:1, name: 1, legend: 1},
-	noStyleMixin = {id:1, filter:1, styleClass:1, fid:1,  styleFunction:1};
+	noStyleMixin = {id:1, filter:1, styleClass:1, fid:1, styleFunction:1};
 
-dojo.declare("djeo.Style", null, {
+var Style = declare("djeo.Style", null, {
 	
 	// json style definition
 	def: null,
@@ -31,10 +30,10 @@ dojo.declare("djeo.Style", null, {
 		var affectedFeatures = this.styleClass || this.fid ? {} : this._features;
 		// remove the style from styleByClassAndFid, styleByFid, styleByClass
 		if (this.styleClass) {
-			dojo.forEach(this.styleClass, function(_class){
+			array.forEach(this.styleClass, function(_class){
 				// remove the style from styleByClassAndFid
 				if (this.fid) {
-					dojo.forEach(this.fid, function(_fid){
+					array.forEach(this.fid, function(_fid){
 						var entry = m.styleByClassAndFid[_class][_fid],
 							entryLength = entry.length;
 						for(var i=0; i<entryLength;i++) {
@@ -64,16 +63,18 @@ dojo.declare("djeo.Style", null, {
 					if (i<entryLength) {
 						entry.splice(i,1);
 						var features = m.featuresByClass[_class];
-						if (features) dojo.forEach(features, function(f){
-							if (!affectedFeatures[f.id]) affectedFeatures[f.id] = f;
-						});
+						if (features) {
+							array.forEach(features, function(f){
+								if (!affectedFeatures[f.id]) affectedFeatures[f.id] = f;
+							});
+						}
 					}
 				}
 			}, this);
 		}
 		else if (this.fid) {
 			// remove the style from styleByFid
-			dojo.forEach(this.fid, function(_fid){
+			array.forEach(this.fid, function(_fid){
 				var entry = m.styleByFid[_fid],
 					entryLength = entry.length;
 				for(var i=0; i<entryLength;i++) {
@@ -103,19 +104,19 @@ dojo.declare("djeo.Style", null, {
 
 		// prepare filter function
 		var filter = def.filter;
-		if (filter) this.filter = dojo.isString(filter) ? eval("_=function(){return "+filter+";}" ) : filter;
+		if (filter) this.filter = lang.isString(filter) ? eval("_=function(){return "+filter+";}" ) : filter;
 
 		// prepare styleClass and fid
 		var styleClass = def.styleClass;
 		var fid = def.fid;
-		if (fid && !dojo.isArray(fid)) fid = [fid];
+		if (fid && !lang.isArray(fid)) fid = [fid];
 		if (styleClass) {
-			if (!dojo.isArray(styleClass)) styleClass = [styleClass];
-			dojo.forEach(styleClass, function(_class){
+			if (!lang.isArray(styleClass)) styleClass = [styleClass];
+			array.forEach(styleClass, function(_class){
 				// styleClass and fid simultaneously
 				if (fid) {
 					var byClassAndFid = m.styleByClassAndFid;
-					dojo.forEach(fid, function(_fid){
+					array.forEach(fid, function(_fid){
 						if (!byClassAndFid[_class]) byClassAndFid[_class] = {};
 						if (!byClassAndFid[_class][_fid]) byClassAndFid[_class][_fid] = [];
 						byClassAndFid[_class][_fid].push(this);
@@ -130,7 +131,7 @@ dojo.declare("djeo.Style", null, {
 		}
 		else if (fid) {
 			// fid only
-			dojo.forEach(fid, function(_fid){
+			array.forEach(fid, function(_fid){
 				if (!m.styleByFid[_fid]) m.styleByFid[_fid] = [];
 				m.styleByFid[_fid].push(this);
 			}, this);
@@ -146,7 +147,7 @@ dojo.declare("djeo.Style", null, {
 				updated: (new Date()).getTime()
 			};
 			var getStyle = styleFunction.getStyle;
-			getStyle = dojo.isString(getStyle) ? dojo.getObject(getStyle) : getStyle;
+			getStyle = lang.isString(getStyle) ? lang.getObject(getStyle) : getStyle;
 			for(var attr in styleFunction) {
 				this.styleFunction[attr] = (attr == "getStyle") ? getStyle : styleFunction[attr];
 			}
@@ -164,7 +165,7 @@ dojo.declare("djeo.Style", null, {
 	}
 });
 
-s.calculateStyle = function(feature, theme) {
+djeo.calculateStyle = function(feature, theme) {
 	var styles = [];
 	// find all features participating in the style calculation
 	// features = feature itself + all its parents
@@ -182,7 +183,7 @@ s.calculateStyle = function(feature, theme) {
 	
 	// now do actual style calculation
 	var resultStyle = {};
-	dojo.forEach(styles, function(style) {
+	array.forEach(styles, function(style) {
 		var applyStyle = style.filter ? evaluateFilter(style.filter, feature) : true;
 		if (applyStyle) {
 			styleMixin(resultStyle, style.def);
@@ -191,10 +192,10 @@ s.calculateStyle = function(feature, theme) {
 	});
 	
 	// final adjustments
-	dojo.forEach(symbolizers, function(styleType){
+	array.forEach(symbolizers, function(styleType){
 		// ensure that specific style is defined as array
 		var s = resultStyle[styleType];
-		if (s && !dojo.isArray(s)) resultStyle[styleType] = [s];
+		if (s && !lang.isArray(s)) resultStyle[styleType] = [s];
 	})
 	return resultStyle;
 }
@@ -209,7 +210,7 @@ var appendFeatureStyle = function(feature, styles, theme) {
 		styleClass = feature.styleClass,
 		fid = feature.id;
 	if (styleClass) {
-		dojo.forEach(styleClass, function(_styleClass){
+		array.forEach(styleClass, function(_styleClass){
 			var byClassAndFid = m.styleByClassAndFid;
 			if (byClassAndFid[_styleClass] && byClassAndFid[_styleClass][fid]) {
 				append(byClassAndFid[_styleClass][fid], styles, theme);
@@ -223,7 +224,7 @@ var appendFeatureStyle = function(feature, styles, theme) {
 }
 
 var append = function(/*Array*/what, /*Array*/to, theme) {
-	dojo.forEach(what, function(element){
+	array.forEach(what, function(element){
 		if ( ( (!element.theme||element.theme=="normal") && (!theme||theme=="normal") ) || (element.theme==theme) ) {
 			if (element.def.reset) {
 				// clear all entries in the destination
@@ -249,22 +250,6 @@ var styleMixin = function(styleDef, styleAttrs) {
 	return styleDef;
 }
 
-s.style = [
-	{
-		stroke: "black",
-		strokeWidth: 0.5,
-		strokeOpacity: 1,
-		fill: "#B7B7B7",
-		fillOpacity: 0.8,
-		shape: "square", // circle, square, triangle, star, cross, or x
-		size: 10
-	},
-	{
-		theme: "highlight",
-		stroke: "orange",
-		polygon: {strokeWidth: 3},
-		rScale: 1.5
-	}
-]
+return Style;
 
-}())
+});

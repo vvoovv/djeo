@@ -1,16 +1,12 @@
-dojo.provide("djeo.Feature");
+define([
+	"dojo/_base/declare", // declare
+	"dojo/_base/lang", // mixin, isArray
+	"dojo/_base/array", // forEach
+	"djeo/Style",
+	"djeo/util/_base"
+], function(declare, lang, array, Style, u){
 
-dojo.require("djeo.util");
-
-(function() {
-
-var g = djeo,
-	u = g.util;
-
-// supported events
-g.events = {onmouseover: 1, onmouseout: 1, onclick: 1, onmousemove: 1};
-
-dojo.declare("djeo.Feature", null, {
+return declare("djeo.Feature", null, {
 	// summary:
 	//		The base class for all map features.
 	
@@ -27,10 +23,10 @@ dojo.declare("djeo.Feature", null, {
 	map: null,
 
 	constructor: function(featureDef, kwArgs) {
-		if (kwArgs) dojo.mixin(this, kwArgs);
-		if (featureDef) dojo.mixin(this, featureDef);
+		if (kwArgs) lang.mixin(this, kwArgs);
+		if (featureDef) lang.mixin(this, featureDef);
 		if (!this.id) this.id = "_geo_"+u.uid();
-		if (this.styleClass && !dojo.isArray(this.styleClass)) this.styleClass = [this.styleClass];
+		if (this.styleClass && !lang.isArray(this.styleClass)) this.styleClass = [this.styleClass];
 		if (featureDef && featureDef.style) {
 			this.style = null;
 			this.addStyle(featureDef.style, true);
@@ -39,11 +35,13 @@ dojo.declare("djeo.Feature", null, {
 	
 	setMap: function(map) {
 		this.map = map;
-		if (this.styleClass) dojo.forEach(this.styleClass, function(_class){
-			var featuresByClass = map.featuresByClass;
-			if (!featuresByClass[_class]) featuresByClass[_class] = [];
-			featuresByClass[_class].push(this);
-		}, this);
+		if (this.styleClass) {
+			array.forEach(this.styleClass, function(_class){
+				var featuresByClass = map.featuresByClass;
+				if (!featuresByClass[_class]) featuresByClass[_class] = [];
+				featuresByClass[_class].push(this);
+			}, this);
+		}
 	},
 	
 	setParent: function(parent) {
@@ -54,17 +52,17 @@ dojo.declare("djeo.Feature", null, {
 		return this.map.useAttrs ? (this.attrs && this.attrs[attr]!==undefined ? this.attrs[attr] : this[attr]) : this[attr];
 	},
 	
-	addStyle: function(/* Array|Object */style, /* Boolean */noRendering) {
-		if (!dojo.isArray(style)) style = [style];
-		dojo.forEach(style, function(_style){
-			var s = new g.Style(_style, this.map);
+	addStyle: function(/* Array|Object */style, /* Boolean */preventRendering) {
+		if (!lang.isArray(style)) style = [style];
+		array.forEach(style, function(_style){
+			var s = new Style(_style, this.map);
 			if (!s.styleClass && !s.fid) {
 				s._features[this.id] = this;
 				if (!this.style) this.style = [];
 				this.style.push(s);
 			}
 		}, this);
-		if (!noRendering) this.render(true);
+		if (!preventRendering) this.render(true);
 	},
 	
 	render: function() {
@@ -92,8 +90,4 @@ dojo.declare("djeo.Feature", null, {
 	}
 });
 
-
-// registry of feature constructors
-g.featureTypes = {};
-
-}());
+});

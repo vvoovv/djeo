@@ -1,14 +1,15 @@
-dojo.provide("djeo.util.numeric");
+define([
+	"dojo/_base/lang", // isArray, isString, getObject
+	"dojo/_base/array", // forEach
+	"djeo/common/Placemark"
+], function(lang, array, P){
 
-dojo.require("djeo.common.Placemark");
-
-(function(){
-
-var n = djeo.util.numeric;
+// module object
+var n = {};
 
 n.composeArray = function(featureContainer, attr, performSort, ascendingSort) {
 	var values = [];
-	dojo.forEach(featureContainer.features, function(feature){
+	array.forEach(featureContainer.features, function(feature){
 		var value = feature.get(attr);
 		if (!isNaN(value)) values.push(value);
 	});
@@ -36,15 +37,15 @@ n.getStyle = function(feature, style, styleFunctionDef) {
 	
 	if (attrValue === undefined) return;
 	
-	var calculateStyle = dojo.isString(kwArgs.calculateStyle) ? dojo.getObject(kwArgs.calculateStyle) : kwArgs.calculateStyle,
+	var calculateStyle = lang.isString(kwArgs.calculateStyle) ? lang.getObject(kwArgs.calculateStyle) : kwArgs.calculateStyle,
 		breaks, numClasses;
 
-	if (dojo.isArray(kwArgs.breaks)) {
+	if (lang.isArray(kwArgs.breaks)) {
 		breaks = kwArgs.breaks;
 		numClasses = breaks.length - 1;
 	}
 	else {
-		var getBreaks = dojo.isString(kwArgs.breaks) ? dojo.getObject(kwArgs.breaks) : kwArgs.breaks,
+		var getBreaks = lang.isString(kwArgs.breaks) ? lang.getObject(kwArgs.breaks) : kwArgs.breaks,
 			featureContainer = feature.parent;
 		breaks = featureContainer._breaks;
 		if (!breaks || styleFunctionDef.updated > featureContainer._breaksTimestamp) {
@@ -61,15 +62,15 @@ n.getStyle = function(feature, style, styleFunctionDef) {
 	if (breakIndex < numClasses) calculateStyle(style, breakIndex, kwArgs);
 };
 
-var cp = djeo.common.Placemark;
 n.calculateSizeStyle = function(style, breakIndex, kwArgs) {
-	var numClasses = dojo.isArray(kwArgs.breaks) ? kwArgs.breaks.length - 1 : kwArgs.numClasses,
+	var numClasses = lang.isArray(kwArgs.breaks) ? kwArgs.breaks.length - 1 : kwArgs.numClasses,
 		iconSize = kwArgs.medianSize + kwArgs.sizeStep*( breakIndex - parseInt(numClasses/2) + (numClasses%2 ? 0 : 0.5) ),
-		src = cp.getImgSrc(style),
-		size = src ? cp.getImgSize(style) : cp.getSize(style);
+		src = P.getImgSrc(style),
+		size = src ? P.getImgSize(style) : P.getSize(style);
 
 	if (size) style.scale = (size[0]>size[1]) ? iconSize/size[0] : iconSize/size[1]
 	else style.size = iconSize;
 };
 
-}());
+return n;
+});

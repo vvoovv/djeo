@@ -1,12 +1,81 @@
-dojo.provide("djeo.common.Placemark");
-
-(function() {
+define([
+	"dojo/_base/declare", // declare
+	"dojo/_base/lang", // isArray, isObject
+	"dojo/_base/array", // forEach
+	"djeo/_base",
+	"djeo/util/_base",
+	"djeo/Style"
+], function(declare, lang, array, djeo, u) {
 	
-var u = djeo.util;
-
-dojo.declare("djeo.common.Placemark", null, {
+var P = declare(null, {
 	
 	specificStyleIndex: -1, // -1 means: use the last specific style in the array
+	
+	render: function(feature, stylingOnly, theme) {
+		this._render(feature, stylingOnly, theme);
+	},
+	
+	_render: function(feature, stylingOnly, theme) {
+		if (!feature.visible) return;
+		//TODO: disconnect connections and then reconnect them
+		var coords = feature.getCoords();
+		if (!coords) {
+			feature.invalid = true;
+			return;
+		}
+
+		// TODO: disconnect
+		if (!stylingOnly) {
+			// destroy base shapes
+			for (var i=feature.baseShapes.length-1; i>=0; i--) {
+				this.map.engine.destroy(feature.baseShapes.pop(), feature);
+			}
+		}
+		// destroy extra shapes
+		// extra shapes are destroyed in an case (also if stylingOnly == true)
+		if (feature.extraShapes) for (var i=feature.extraShapes.length-1; i>=0; i--) {
+			this.map.engine.destroy(feature.extraShapes.pop(), feature);
+		}
+		
+		var style = djeo.calculateStyle(feature, theme);
+
+		// apply style to the base geometry
+		var type = feature.getCoordsType(),
+			styleType = "point";
+		if (type == "Polygon" || type == "MultiPolygon") styleType = "polygon";
+		else if (type == "LineString" || type == "MultiLineString") styleType = "line";
+		if (stylingOnly) {
+			this.applyStyle(feature, style, styleType, coords);
+		}
+		else {
+			// create shape(s)
+			if (this.multipleSymbolizers && style[styleType]) { // we have a specific style
+				array.forEach(style[styleType], function(_style) {
+					var shape = this.createShape(feature, coords);
+					if (shape) feature.baseShapes.push(shape);
+				}, this);
+			}
+			else {
+				var shape = this.createShape(feature, coords);
+				if (shape) feature.baseShapes.push(shape);
+			}
+			
+			// apply style to the shape(s)
+			this.applyStyle(feature, style, styleType, coords);
+			
+			// add shape(s) to the map
+			array.forEach(feature.baseShapes, function(shape) {
+				this.map.engine.appendChild(shape, feature);
+			}, this);
+		}
+		
+		// add text label if the text style is specified
+		var textShape = this.makeText(feature, style);
+		if (textShape) {
+			feature.textShapes = textShape;
+			this.map.engine.appendChild(textShape, feature);
+		}
+	},
 	
 	createShape: function(feature, coords) {
 		var shape;
@@ -53,7 +122,7 @@ dojo.declare("djeo.common.Placemark", null, {
 	
 	_getIconUrl: function(isVectorShape, shapeType, src) {
 		var url;
-		if (shapeType && isVectorShape) url = cp.shapeIconsUrl + cp.shapes[shapeType];
+		if (shapeType && isVectorShape) url = P.shapeIconsUrl + P.shapes[shapeType];
 		else if (src) url = u.isRelativeUrl(src) ? u.baseUrl+this.map.iconBasePath+src : src;
 		return url;
 	},
@@ -63,13 +132,11 @@ dojo.declare("djeo.common.Placemark", null, {
 	}
 });
 
-var cp = djeo.common.Placemark;
+P.defaultShapeType = "square";
 
-cp.defaultShapeType = "square";
+P.shapeIconsUrl = require.toUrl("djeo/resources/icons/");
 
-cp.shapeIconsUrl = dojo.moduleUrl("djeo", "resources/icons/");
-
-cp.shapes = {
+P.shapes = {
 	circle: "circle.png",
 	star: "star.png",
 	cross: "cross.png",
@@ -78,7 +145,7 @@ cp.shapes = {
 	triangle: "triangle.png"
 };
 
-cp.get = function(attr, calculatedStyle, specificStyle, specificShapeStyle) {
+P.get = function(attr, calculatedStyle, specificStyle, specificShapeStyle) {
 	var result;
 	if (specificShapeStyle && specificShapeStyle[attr] !== undefined) result = specificShapeStyle[attr];
 	else if (specificStyle && specificStyle[attr] !== undefined) result = specificStyle[attr];
@@ -86,7 +153,7 @@ cp.get = function(attr, calculatedStyle, specificStyle, specificShapeStyle) {
 	return result;
 };
 
-cp.getSpecificShapeStyle = function(specificStyles, specificStyleIndex) {
+P.getSpecificShapeStyle = function(specificStyles, specificStyleIndex) {
 	if (!specificStyles) return null;
 	var specificStyle,
 		numStyles = specificStyles.length;
@@ -99,32 +166,34 @@ cp.getSpecificShapeStyle = function(specificStyles, specificStyleIndex) {
 	return specificStyle;
 };
 
-cp.getSize = function(calculatedStyle, specificStyle, specificShapeStyle) {
-	var size = cp.get("size", calculatedStyle, specificStyle, specificShapeStyle);
-	if (size !==undefined && !dojo.isArray(size)) size = [size, size];
+P.getSize = function(calculatedStyle, specificStyle, specificShapeStyle) {
+	var size = P.get("size", calculatedStyle, specificStyle, specificShapeStyle);
+	if (size !==undefined && !lang.isArray(size)) size = [size, size];
 	return size;
 };
 
-cp.getScale = function(calculatedStyle, specificStyle, specificShapeStyle) {
-	var scale = cp.get("scale", calculatedStyle, specificStyle, specificShapeStyle);
+P.getScale = function(calculatedStyle, specificStyle, specificShapeStyle) {
+	var scale = P.get("scale", calculatedStyle, specificStyle, specificShapeStyle);
 	if (!scale) scale = 1;
 	return scale;
 };
 
-cp.getAnchor = function(calculatedStyle, specificStyle, specificShapeStyle, size) {
-	var img = cp.get("img", calculatedStyle, specificStyle, specificShapeStyle),
-		anchor = (dojo.isObject(img) && img.anchor) ? img.anchor : cp.get("anchor", calculatedStyle, specificStyle, specificShapeStyle);
+P.getAnchor = function(calculatedStyle, specificStyle, specificShapeStyle, size) {
+	var img = P.get("img", calculatedStyle, specificStyle, specificShapeStyle),
+		anchor = (lang.isObject(img) && img.anchor) ? img.anchor : P.get("anchor", calculatedStyle, specificStyle, specificShapeStyle);
 	return anchor ? anchor : [size[0]/2, size[1]/2];
 };
 
-cp.getImgSrc = function(calculatedStyle, specificStyle, specificShapeStyle) {
-	var img = cp.get("img", calculatedStyle, specificStyle, specificShapeStyle);
-	return dojo.isObject(img) ? img.src : img;
+P.getImgSrc = function(calculatedStyle, specificStyle, specificShapeStyle) {
+	var img = P.get("img", calculatedStyle, specificStyle, specificShapeStyle);
+	return lang.isObject(img) ? img.src : img;
 };
 
-cp.getImgSize = function(calculatedStyle, specificStyle, specificShapeStyle) {
-	var img = cp.get("img", calculatedStyle, specificStyle, specificShapeStyle);
-	return (dojo.isObject(img) && img.size) ? img.size : cp.getSize(calculatedStyle, specificStyle, specificShapeStyle);
+P.getImgSize = function(calculatedStyle, specificStyle, specificShapeStyle) {
+	var img = P.get("img", calculatedStyle, specificStyle, specificShapeStyle);
+	return (lang.isObject(img) && img.size) ? img.size : P.getSize(calculatedStyle, specificStyle, specificShapeStyle);
 };
 
-}());
+return P;
+
+});

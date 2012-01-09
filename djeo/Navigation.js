@@ -1,8 +1,13 @@
-dojo.provide("djeo.djeo.Navigation");
+define([
+	"dojo/_base/declare", // declare
+	"dojo/has", // has
+	"dojo/_base/event", // stop
+	"dojox/gfx",
+	"./Moveable",
+	"dojo/_base/sniff"
+], function(declare, has, event, gfx, Moveable) {
 
-dojo.require("djeo.djeo.Moveable");
-
-dojo.declare("djeo.djeo.Navigation",null, {
+return declare(null, {
 
 	moveable: null,
 	wheelConnection: null,
@@ -10,11 +15,11 @@ dojo.declare("djeo.djeo.Navigation",null, {
 	enable: function(enable) {
 		if (enable === undefined) enable = true;
 		if (enable) {
-			this.moveable = new djeo.djeo.Moveable(this.map.engine.surface);
-			if (dojox.gfx.renderer!="silverlight") this.enableZoom(true);
+			this.moveable = new Moveable(this.map.engine.surface);
+			if (gfx.renderer!="silverlight") this.enableZoom(true);
 		}
 		else {
-			if (dojox.gfx.renderer!="silverlight") this.enableZoom(false);
+			if (gfx.renderer!="silverlight") this.enableZoom(false);
 			this.moveable.destroy();
 			this.moveable = null;
 		}
@@ -22,7 +27,7 @@ dojo.declare("djeo.djeo.Navigation",null, {
 
 	enableZoom: function(enable) {
 		if (enable) {
-			var wheelEventName = !dojo.isMozilla ? "onmousewheel" : "DOMMouseScroll";
+			var wheelEventName = !has("mozilla") ? "onmousewheel" : "DOMMouseScroll";
 			this.wheelConnection = this.map.engine.surface.connect(wheelEventName, this, this._onWheel);
 		}
 		else {
@@ -33,14 +38,14 @@ dojo.declare("djeo.djeo.Navigation",null, {
 
 	_onWheel: function(mouseEvent) {
 		// prevent browser interaction
-		dojo.stopEvent(mouseEvent);
+		event.stop(mouseEvent);
 		
 		// position relative to map container
 		var x = mouseEvent.pageX - this.map.x,
 			y = mouseEvent.pageY - this.map.y;
 		
 		// zoom increment power 
-		var power = mouseEvent[ dojo.isMozilla ? "detail" : "wheelDelta" ] / (dojo.isMozilla ? -3 : 120),
+		var power = mouseEvent[ has("mozilla") ? "detail" : "wheelDelta" ] / (has("mozilla") ? -3 : 120),
 			scaleFactor = Math.pow(1.2, power);
 
 		var engine = this.map.engine;
@@ -49,4 +54,6 @@ dojo.declare("djeo.djeo.Navigation",null, {
 		engine.factories.Placemark.calculateLengthDenominator();
 		engine.resizeFeatures(this.map.document, 1/scaleFactor);
 	}
+});
+
 });
