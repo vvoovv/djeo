@@ -8,7 +8,7 @@ return declare(null, {
 
 	renderedText: "",
 	
-	output: "toFile",
+	output: "toConsole",
 	
 	provideOutput: function() {
 		if (this.output) {

@@ -164,6 +164,10 @@ return declare(null, {
 		array.forEach(container.features, function(feature){
 			if (feature.isContainer || feature.visible) feature._render(stylingOnly, theme);
 		}, container);
+	},
+	
+	enableLayer: function(layerId, enabled) {
+
 	}
 });
 

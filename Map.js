@@ -202,7 +202,7 @@ return declare("djeo.Map", null, {
 			else this.enableLayer(djeo.defaultLayerID);
 
 			// perform rendering
-			this.render();
+			if (this.document.features.length) this.render();
 
 			this._ready = true;
 		}));
