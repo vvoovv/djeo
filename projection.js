@@ -188,11 +188,10 @@ lang.extend(Map, {
 	getProjection: function() {
 		return this.coordsProjection || this.projection;
 	},
-	getCoords: function(feature) {
+	getCoords: function(coords, type) {
 		var userProjection = this.userProjection || this.coordsProjection || this.projection;
 		if (this.projection && userProjection != this.projection) {
-			coords = proj.transform(userProjection, this.projection, geometry);
-			//geometry.projection = this.projection;
+			coords = proj.transform(userProjection, this.projection, coords, type || "Point");
 		}
 		return coords;
 	}
