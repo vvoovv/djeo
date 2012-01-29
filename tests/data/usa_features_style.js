@@ -73,18 +73,16 @@ features: [
 			theme: "highlight",
 			stroke: "red",
 			strokeWidth: 4,
-			// it's possible to supply a javascript function
+			// it's possible to supply a javascript function in the composer attribute
 			// that injects styling attributes to the calculated style for the given feature;
 			// the function accepts 3 parameters:
 			//   feature: the feature under consideration
+			//   kwArgs: composer options (composerOptions attribute of a style block or style block itself)
 			//   style: a javascript object that represent the current state of the feature's calculated style
-			//   styleFunctionDef: the value of styleFunction attribute of the style block
-			// getStyle attribute of the styleFunction javascript object is mandatory;
-			// getStyle attribute could be also a string specifying the actual function name
-			styleFunction: {
-				getStyle: function(feature, style, styleFunctionDef) {
-					if (feature.id == "US-PA") style.fill = "yellow";
-				}
+			//   lastUpdate: time when the style block was last updated
+			// the composer attribute could be also a string specifying the actual function name
+			composer: function(feature, kwArgs, style, lastUpdated) {
+				if (feature.id == "US-PA") style.fill = "yellow";
 			}
 		}
 	},

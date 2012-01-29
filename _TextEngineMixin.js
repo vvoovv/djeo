@@ -10,6 +10,8 @@ return declare(null, {
 	
 	output: "toConsole",
 	
+	outputFile: "output.txt",
+	
 	provideOutput: function() {
 		if (this.output) {
 			if (lang.isFunction(this.output)) {
@@ -34,7 +36,7 @@ return declare(null, {
 	toFile: function() {
 		if (has("host-browser")) return;
 		var fs = require.nodeRequire("fs");
-		fs.writeFileSync("output.txt", this.renderedText);
+		fs.writeFileSync(this.outputFile, this.renderedText);
 	}
 });
 

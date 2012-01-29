@@ -7,6 +7,7 @@
 <script>
 	dojoConfig = {
 		isDebug: true,
+		async: true,
 		parseOnLoad: false,
 		paths: {djeo: "../djeo"},
 		djeoEngine: "djeo",
@@ -29,7 +30,7 @@ var f1 = function(event){console.debug("function:US-AK, feature.id:"+event.featu
 DebugUtil.timer.start("loading");
 
 var map, handle1, handle2, handle3, handle4;
-var ready = function(usaGeometries, usaFeatures, usaSomeRailways) {
+var ready = function(usaGeometries, usaFeatures, usaSomeRailways, ToggleButton) {
 	DebugUtil.timer.end("loading");
 	
 	var features = [
@@ -104,7 +105,7 @@ var ready = function(usaGeometries, usaFeatures, usaSomeRailways) {
 		}
 	];
 
-    new dijit.form.ToggleButton({
+    new ToggleButton({
 		checked: true,
 		onChange: function(value){
 			if (value) handle1 = connectFeature("US-AK", f1);
@@ -113,7 +114,7 @@ var ready = function(usaGeometries, usaFeatures, usaSomeRailways) {
 		iconClass: "dijitRadioIcon"
 	}, "1");
 	
-    new dijit.form.ToggleButton({
+    new ToggleButton({
 		checked: true,
 		onChange: function(value){
 			if (value) handle2 = connectFeature("US-TX", f2);
@@ -122,7 +123,7 @@ var ready = function(usaGeometries, usaFeatures, usaSomeRailways) {
 		iconClass: "dijitRadioIcon"
 	}, "2");
 	
-    new dijit.form.ToggleButton({
+    new ToggleButton({
 		checked: true,
 		onChange: function(value){
 			if (value) handle3 = connectFeature("railways", f3);
@@ -131,7 +132,7 @@ var ready = function(usaGeometries, usaFeatures, usaSomeRailways) {
 		iconClass: "dijitRadioIcon"
 	}, "3");
 	
-    new dijit.form.ToggleButton({
+    new ToggleButton({
 		checked: true,
 		onChange: function(value){
 			if (value) handle4 = connectFeature("Seattle", f4);
@@ -140,7 +141,7 @@ var ready = function(usaGeometries, usaFeatures, usaSomeRailways) {
 		iconClass: "dijitRadioIcon"
 	}, "4");
 	
-    new dijit.form.ToggleButton({
+    new ToggleButton({
 		checked: true,
 		onChange: function(value){
 			if (value) handle5 = connectFeature("New York City", f5);
@@ -149,7 +150,7 @@ var ready = function(usaGeometries, usaFeatures, usaSomeRailways) {
 		iconClass: "dijitRadioIcon"
 	}, "5");
 
-    new dijit.form.ToggleButton({
+    new ToggleButton({
 		checked: true,
 		onChange: function(value){
 			if (value) handle6 = connectFeature("Memphis", f6);
@@ -158,7 +159,7 @@ var ready = function(usaGeometries, usaFeatures, usaSomeRailways) {
 		iconClass: "dijitRadioIcon"
 	}, "6");
 	
-    new dijit.form.ToggleButton({
+    new ToggleButton({
 		checked: true,
 		onChange: function(value){
 			if (value) handleMap = map.connect("onclick", fMap);

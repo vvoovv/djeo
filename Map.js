@@ -6,7 +6,7 @@ define([
 	"dojo/_base/array", // forEach
 	"dojo/dom-geometry", // getContentBox, position
 	"dojo/_base/xhr", // get
-	"dojo/_base/kernel", // registerModulePath
+	"dojo/_base/kernel", // global
 	"dojo/aspect", // after
 	"djeo/_base",
 	"djeo/FeatureContainer",
@@ -157,7 +157,12 @@ return declare("djeo.Map", null, {
 		// add features
 		if (kwArgs.features) this.addFeatures(kwArgs.features, /*prevent rendering*/true);
 		// set engine
-		this.setEngine(kwArgs.engine || require.rawConfig.djeoEngine || djeo.defaultEngine);
+		this.setEngine(
+			kwArgs.engine ||
+			(kernel.global.dojoConfig && kernel.global.dojoConfig.djeoEngine) ||
+			require.rawConfig.djeoEngine ||
+			djeo.defaultEngine
+		);
 	},
 	
 	ready: function(/* Function */callback) {
@@ -170,7 +175,7 @@ return declare("djeo.Map", null, {
 			callback();
 		}
 		else {
-			aspect.after(this, "_onEngineReady", callback);
+			aspect.after(this, "_afterOnEngineReady", callback);
 		}
 	},
 	
@@ -205,7 +210,12 @@ return declare("djeo.Map", null, {
 			if (this.document.features.length) this.render();
 
 			this._ready = true;
+			this._afterOnEngineReady();
 		}));
+	},
+	
+	_afterOnEngineReady: function() {
+		
 	},
 	
 	addFeatures: function(/* Array|Object */features, /* Boolean? */preventRendering) {
@@ -426,7 +436,10 @@ return declare("djeo.Map", null, {
 				// set default mapping for engineName
 				// <engine> is mapped to djeo-<engine> directory
 				// the module path is the same a for djeo
-				kernel.registerModulePath(engine, config.paths.djeo+"-"+engine);
+				// we use the body of to-be-deprecated dojo.registerModulePath 
+				var paths = {};
+				paths[engine] = config.paths.djeo+"-"+engine;
+				require({paths: paths});
 			}
 			// now require the engine
 			var engineModule = (engine == "djeo") ? "djeo/djeo/Engine" : engine+"/Engine";

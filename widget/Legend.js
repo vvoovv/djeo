@@ -1,14 +1,19 @@
-dojo.provide("djeo.widget.Legend");
+define([
+	"dojo/_base/declare", // declare
+	"dojo/_base/lang", // isString, isArray, getObject
+	"dojo/_base/array", // forEach
+	"dojo/dom-construct", // create, destroy
+	"dijit/_Widget",
+	"dijit/_TemplatedMixin",
+	"dojox/gfx",
+	"dojox/gfx/matrix",
+	"djeo/_base",
+	"djeo/common/Placemark",
+	"djeo/gfx", //_getIconLegend
+	"djeo/Style"
+], function(declare, lang, array, domConstruct, _Widget, _TemplatedMixin, gfx, matrix, djeo, P, dx) {
 
-dojo.require("dijit._Widget");
-dojo.require("dijit._TemplatedMixin");
-
-// require for djeo._getIconLegend
-dojo.require("djeo.gfx");
-
-(function(){
-
-dojo.declare("djeo.widget.Legend", [dijit._Widget, dijit._TemplatedMixin], {
+var Legend = declare([_Widget, _TemplatedMixin], {
 	// summary: A legend for a map.
 	
 	templateString: "<table dojoAttachPoint='legendNode' class='dojoxLegendNode' role='group' aria-label='map legend'><tbody dojoAttachPoint='legendBody'></tbody></table>",
@@ -26,7 +31,7 @@ dojo.declare("djeo.widget.Legend", [dijit._Widget, dijit._TemplatedMixin], {
 
 		// cleanup
 		while(this.legendBody.lastChild){
-			dojo.destroy(this.legendBody.lastChild);
+			domConstruct.destroy(this.legendBody.lastChild);
 		}
 		
 		var m = this.map,
@@ -50,63 +55,59 @@ dojo.declare("djeo.widget.Legend", [dijit._Widget, dijit._TemplatedMixin], {
 	
 	_processInlineStyle: function(featureContainer) {
 		if (featureContainer.style) this._processStyle(featureContainer.style, [featureContainer]);
-		dojo.forEach(featureContainer.features, function(feature) {
+		array.forEach(featureContainer.features, function(feature) {
 			if (feature.isContainer) this._processInlineStyle(feature);
 			else if (feature.style) this._processStyle(feature.style, [feature]);
 		}, this);
 	},
 	
 	_processStyle: function(styles, affectedFeatures) {
-		dojo.forEach(styles, function(style) {
+		array.forEach(styles, function(style) {
 				var getLegend = style.legend;
 				if (getLegend) {
-					var tr = dojo.create("tr", null, this.legendBody),
-						td = dojo.create("td", null, tr),
+					var tr = domConstruct.create("tr", null, this.legendBody),
+						td = domConstruct.create("td", null, tr),
 						name = (this.getName) ? this.getName(style) : style.name;
-					getLegend = dojo.isString(getLegend) ? dojo.getObject(getLegend) : getLegend;
+					getLegend = lang.isString(getLegend) ? lang.getObject(getLegend) : getLegend;
 					getLegend(td, style, affectedFeatures, name);
 				}
 		}, this);
 	}
 });
-
-
-var g = djeo,
-	cp = g.common.Placemark;
 	
-g._getBreaksIconLegend = function(domContainer, style, features, name) {
-	var kwArgs = style.styleFunction.options,
-		// get calculateStyle function from the kwArgs
-		calculateStyle = dojo.isString(kwArgs.calculateStyle) ? dojo.getObject(kwArgs.calculateStyle) : kwArgs.calculateStyle;
+Legend._getBreaksIconLegend = function(domContainer, style, features, name) {
+	var kwArgs = style.composerOptions,
+		// get composeStyle function from the kwArgs
+		composeStyle = lang.isString(kwArgs.composeStyle) ? lang.getObject(kwArgs.composeStyle) : kwArgs.composeStyle;
 
-	dojo.forEach(features, function(feature){
+	array.forEach(features, function(feature){
 		// calculate style for the first feature in the features array
 		// this triggers _breaks calculation if it wasn't done before
-		var calculatedStyle = g.styling.calculateStyle(feature.features[0]),
-			breaks = dojo.isArray(kwArgs.breaks) ? kwArgs.breaks : feature._breaks;
+		var calculatedStyle = djeo.calculateStyle(feature.features[0]),
+			breaks = lang.isArray(kwArgs.breaks) ? kwArgs.breaks : feature._breaks;
 
 		if (breaks) {
-			var numClasses = dojo.isArray(kwArgs.breaks) ? kwArgs.breaks.length - 1 : kwArgs.numClasses,
+			var numClasses = lang.isArray(kwArgs.breaks) ? kwArgs.breaks.length - 1 : kwArgs.numClasses,
 				isVectorShape = true,
-				shapeType = cp.get("shape", calculatedStyle),
-				src = cp.getImgSrc(calculatedStyle)
-				size = src ? cp.getImgSize(calculatedStyle) : cp.getSize(calculatedStyle);
+				shapeType = P.get("shape", calculatedStyle),
+				src = P.getImgSrc(calculatedStyle)
+				size = src ? P.getImgSize(calculatedStyle) : P.getSize(calculatedStyle);
 	
 			if (!shapeType && src) isVectorShape = false;
-			else if (!g.shapes[shapeType]) shapeType = cp.defaultShapeType;
+			else if (!djeo.shapes[shapeType]) shapeType = P.defaultShapeType;
 	
-			if (name) dojo.create("div", {innerHTML: name+":"}, domContainer);
-			var table = dojo.create("table", null, domContainer),
-				tbody = dojo.create("tbody", null, table);
+			if (name) domConstruct.create("div", {innerHTML: name+":"}, domContainer);
+			var table = domConstruct.create("table", null, domContainer),
+				tbody = domConstruct.create("tbody", null, table);
 				
 			for (var i=numClasses-1; i>=0; i--) {
-				var tr = dojo.create("tr", null, tbody),
-					td1 = dojo.create("td", null, tr),
+				var tr = domConstruct.create("tr", null, tbody),
+					td1 = domConstruct.create("td", null, tr),
 					breakStyle = {},
 					width, height;
 	
 				// calculate break specific styling parameters
-				calculateStyle(breakStyle, i, kwArgs);
+				composeStyle(breakStyle, i, kwArgs);
 	
 				if (breakStyle.fill) {
 					// color is assigned depending on the break
@@ -122,27 +123,27 @@ g._getBreaksIconLegend = function(domContainer, style, features, name) {
 				var maxWH = Math.max(width, height);
 	
 				if (isVectorShape) {
-					var surface = dojox.gfx.createSurface(td1, width+2, height+2),
-					shapeDef = g.shapes[shapeType],
+					var surface = gfx.createSurface(td1, width+2, height+2),
+					shapeDef = djeo.shapes[shapeType],
 					shapeSize = shapeType=="circle" ? Math.max(width, height) : Math.max(shapeDef.size[0], shapeDef.size[1]),
 					shape = shapeType=="circle" ?
 						surface.createCircle({cx:width/2+1, cy:height/2+1, r:Math.min(width, height)/2}) :
 						surface.createPolyline(shapeDef.points).setTransform([
-							dojox.gfx.matrix.translate(width/2+1, height/2+1),
-							dojox.gfx.matrix.scale(maxWH/shapeSize)
+							matrix.translate(width/2+1, height/2+1),
+							matrix.scale(maxWH/shapeSize)
 						]);
-					djeo.gfx.applyFill(shape, calculatedStyle);
-					djeo.gfx.applyStroke(shape, calculatedStyle, null, null, shapeSize/maxWH);
+					dx.applyFill(shape, calculatedStyle);
+					dx.applyStroke(shape, calculatedStyle, null, null, shapeSize/maxWH);
 				}
 				else {
-					dojo.create("img", {
+					domConstruct.create("img", {
 						src: src,
 						width: width,
 						height: height
 					}, td1);
 				}
 				
-				dojo.create("td", {
+				domConstruct.create("td", {
 					innerHTML: breaks[i]+"..."+breaks[i+1]
 				}, tr);
 			}
@@ -150,35 +151,35 @@ g._getBreaksIconLegend = function(domContainer, style, features, name) {
 	});
 }
 
-g._getBreaksAreaLegend = function(domContainer, style, features, name) {
-	var kwArgs = style.styleFunction.options,
-		calculateStyle = dojo.isString(kwArgs.calculateStyle) ? dojo.getObject(kwArgs.calculateStyle) : kwArgs.calculateStyle;
+Legend._getBreaksAreaLegend = function(domContainer, style, features, name) {
+	var kwArgs = style.composerOptions,
+		composeStyle = lang.isString(kwArgs.composeStyle) ? lang.getObject(kwArgs.composeStyle) : kwArgs.composeStyle;
 
-	dojo.forEach(features, function(feature){
+	array.forEach(features, function(feature){
 		// calculate style for the first feature in the features array
 		// this triggers _breaks calculation if it wasn't done before
-		g.styling.calculateStyle(feature.features[0]);
+		djeo.calculateStyle(feature.features[0]);
 
-		var breaks = dojo.isArray(kwArgs.breaks) ? kwArgs.breaks : feature._breaks;
+		var breaks = lang.isArray(kwArgs.breaks) ? kwArgs.breaks : feature._breaks;
 		if (breaks) {
-			var numClasses = dojo.isArray(kwArgs.breaks) ? kwArgs.breaks.length - 1 : kwArgs.numClasses;
+			var numClasses = lang.isArray(kwArgs.breaks) ? kwArgs.breaks.length - 1 : kwArgs.numClasses;
 	
-			if (name) dojo.create("div", {innerHTML: name+":"}, domContainer);
-			var table = dojo.create("table", null, domContainer),
-				tbody = dojo.create("tbody", null, table);
+			if (name) domConstruct.create("div", {innerHTML: name+":"}, domContainer);
+			var table = domConstruct.create("table", null, domContainer),
+				tbody = domConstruct.create("tbody", null, table);
 				
 			for (var i=numClasses-1; i>=0; i--) {
-				var tr = dojo.create("tr", null, tbody),
+				var tr = domConstruct.create("tr", null, tbody),
 					breakStyle = {};
 	
-				calculateStyle(breakStyle, i, kwArgs);
+				composeStyle(breakStyle, i, kwArgs);
 	
-				dojo.create("td", {
+				domConstruct.create("td", {
 					innerHTML: "&nbsp;&nbsp;&nbsp;&nbsp;",
 					style: {backgroundColor: breakStyle.fill}
 				}, tr),
 				
-				dojo.create("td", {
+				domConstruct.create("td", {
 					innerHTML: breaks[i]+"..."+breaks[i+1]
 				}, tr);
 			}
@@ -186,4 +187,5 @@ g._getBreaksAreaLegend = function(domContainer, style, features, name) {
 	});
 }
 
-}());
+return Legend;
+});

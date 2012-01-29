@@ -17,6 +17,7 @@ html, body, #container{
 <script>
 	dojoConfig = {
 		isDebug: true,
+		async: true,
 		parseOnLoad: false,
 		paths: {djeo: "../djeo"},
 		djeoEngine: "djeo",
@@ -28,52 +29,16 @@ html, body, #container{
 <script src="../../dojo/dojo.js"></script>
 
 <script>
-var treeCp;
 
 var paddingStep = 20;
-
-var makeFeatureTree = function(featureContainer, paddingLeft) {
-	_makeTreeLeaf(featureContainer, paddingLeft);
-
-	paddingLeft += paddingStep;
-
-	dojo.forEach(featureContainer.features, function(feature){
-		if (feature.isContainer) {
-			makeFeatureTree(feature, paddingLeft);
-		}
-		else {
-			_makeTreeLeaf(feature, paddingLeft);
-		}
-	});
-}
-
-var _makeTreeLeaf = function(feature, paddingLeft) {
-	var container = dojo.create("div", {
-		style: {paddingLeft: paddingLeft+"px"}
-	});
-	// add check box
-	var checkbox = new dijit.form.CheckBox({
-		checked: true,
-		onChange: function(value) {
-			var feature = this._feature;
-			feature.toggleVisibility();
-		}
-	});
-	dojo.place(checkbox.domNode, container);
-	var label = feature.name || feature.id;
-	dojo.place("<span>"+(feature.isContainer ? "Container: "+label : label)+"</span>", container);
-	
-	// keep feature in the checkbox and checkbox in the feature
-	checkbox._feature = feature;
-	feature._checkbox = checkbox;
-	
-	dojo.place(container, treeCp.domNode);
-}
 
 DebugUtil.timer.start("loading");
 
 require([
 	"djeo/tests/data/usa_features_style",
+	"dojo/_base/array", // forEach
+	"dojo/dom-construct", // place
+	"dojo/aspect", // after
 	"dijit/form/CheckBox",
 	"dijit/layout/BorderContainer",
 	"dijit/layout/ContentPane",
@@ -84,21 +49,61 @@ require([
 	"djeo/control/Navigation",
 	"dojo/domReady!"
 ],
-function(mapConfig) {
+function(mapConfig, array, domConstruct, aspect, CheckBox, BorderContainer, ContentPane) {
 	DebugUtil.timer.end("loading");
+
+	var treeCp;
 	
-	var bc = new dijit.layout.BorderContainer({
+	var makeFeatureTree = function(featureContainer, paddingLeft) {
+		_makeTreeLeaf(featureContainer, paddingLeft);
+	
+		paddingLeft += paddingStep;
+	
+		array.forEach(featureContainer.features, function(feature){
+			if (feature.isContainer) {
+				makeFeatureTree(feature, paddingLeft);
+			}
+			else {
+				_makeTreeLeaf(feature, paddingLeft);
+			}
+		});
+	}
+	
+	var _makeTreeLeaf = function(feature, paddingLeft) {
+		var container = domConstruct.create("div", {
+			style: {paddingLeft: paddingLeft+"px"}
+		});
+		// add check box
+		var checkbox = new CheckBox({
+			checked: true,
+			onChange: function(value) {
+				var feature = this._feature;
+				feature.toggleVisibility();
+			}
+		});
+		domConstruct.place(checkbox.domNode, container);
+		var label = feature.name || feature.id;
+		domConstruct.place("<span>"+(feature.isContainer ? "Container: "+label : label)+"</span>", container);
+		
+		// keep feature in the checkbox and checkbox in the feature
+		checkbox._feature = feature;
+		feature._checkbox = checkbox;
+		
+		domConstruct.place(container, treeCp.domNode);
+	}
+	
+	var bc = new BorderContainer({
 		design: "sidebar"
 	}, "container");
 	
-	treeCp = new dijit.layout.ContentPane({
+	treeCp = new ContentPane({
 		region: "leading",
 		style: "width: 250px",
 		splitter: true
 	});
 	bc.addChild(treeCp);
 	
-	var mapCp = new dijit.layout.ContentPane({
+	var mapCp = new ContentPane({
 		region: "center",
 		style: "padding: 0",
 		content: "<div id='map' style='width:100%; height:100%;'></div>"
@@ -110,7 +115,9 @@ function(mapConfig) {
 	DebugUtil.timer.start("render");
 	var map = new djeo.Map("map", mapConfig);
 	map.ready(function() {
-		dojo.connect(mapCp, "resize", map, "resize");
+		aspect.after(mapCp, "resize", function(){
+			map.resize();
+		});
 		DebugUtil.timer.end("render");
 		new djeo.control.Highlight(map);
 		new djeo.control.Tooltip(map);

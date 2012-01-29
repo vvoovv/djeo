@@ -8,7 +8,7 @@ define([
 
 var symbolizers = ["points", "lines"],
 	styleAttributes = {theme:1, name: 1, legend: 1},
-	noStyleMixin = {id:1, filter:1, styleClass:1, fid:1, styleFunction:1};
+	noStyleMixin = {id:1, filter:1, styleClass:1, fid:1, composer: 1, composerOptions: 1};
 
 var Style = declare("djeo.Style", null, {
 	
@@ -138,30 +138,37 @@ var Style = declare("djeo.Style", null, {
 		}
 		if (styleClass) this.styleClass = styleClass;
 		if (fid) this.fid = fid;
-
-		// preare styleFunction
-		var styleFunction = def.styleFunction;
-		if (styleFunction) {
-			this.styleFunction = {
-				// features may need this attribute to be aware that the style has changed
-				updated: (new Date()).getTime()
-			};
-			var getStyle = styleFunction.getStyle;
-			getStyle = lang.isString(getStyle) ? lang.getObject(getStyle) : getStyle;
-			for(var attr in styleFunction) {
-				this.styleFunction[attr] = (attr == "getStyle") ? getStyle : styleFunction[attr];
+		
+		// prepare composer
+		var composer = def.composer;
+		if (composer) {
+			if (lang.isString(composer)) {
+				composer = lang.getObject(composer);
 			}
+			this.composer = composer;
+			// features may need this attribute to be aware that the style has changed
+			this._updated = (new Date()).getTime();
+			this.composerOptions = def.composerOptions || def;
+		}
+
+		// prepare handler
+		var handler = def.handler;
+		if (handler) {
+			if (lang.isString(handler)) {
+				handler = lang.getObject(handler);
+			}
+			this.handler = handler;
 		}
 
 		// copy actual style attribute (e.g. color) to a separate javascript object
 		this.def = {};
 		for (attr in def) {
-			if (!(attr in styleAttributes || attr in noStyleMixin)) this.def[attr] = def[attr];
+			if (!(attr in styleAttributes) && !(attr in noStyleMixin)) this.def[attr] = def[attr];
 		}
 	},
 	
 	destroy: function() {
-		delete this.def, this.filter, this.map, this._features, this.styleFunction;
+		delete this.def, this.filter, this.map, this._features, this.composer, this.composerOptions, this.handler;
 	}
 });
 
@@ -187,7 +194,9 @@ djeo.calculateStyle = function(feature, theme) {
 		var applyStyle = style.filter ? evaluateFilter(style.filter, feature) : true;
 		if (applyStyle) {
 			styleMixin(resultStyle, style.def);
-			if (style.styleFunction) style.styleFunction.getStyle(feature, resultStyle, style.styleFunction);
+			if (style.composer) {
+				style.composer(feature, style.composerOptions, resultStyle, style._updated);
+			}
 		}
 	});
 	

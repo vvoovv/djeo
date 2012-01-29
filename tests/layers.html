@@ -7,6 +7,7 @@
 <script>
 	dojoConfig = {
 		isDebug: true,
+		async: true,
 		parseOnLoad: false,
 		paths: {djeo: "../djeo"},
 		djeoEngine: "djeo",
@@ -65,7 +66,7 @@ require([
 	"djeo/control/Navigation",
 	"dojo/domReady!"
 ],
-function() {
+function(Button) {
 	DebugUtil.timer.end("loading");
 	DebugUtil.timer.start("render");
     var map = new djeo.Map("map", {

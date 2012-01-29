@@ -31,13 +31,12 @@ n.getBreakIndex = function(breaks, numClasses, value) {
 	return (i<numClasses) ? i : -1;
 };
 
-n.getStyle = function(feature, style, styleFunctionDef) {
-	var kwArgs = styleFunctionDef.options,
-		attrValue = feature.get(kwArgs.attr);
+n.composeStyle = function(feature, kwArgs, style, lastUpdated) {
+	var attrValue = feature.get(kwArgs.attr);
 	
 	if (attrValue === undefined) return;
 	
-	var calculateStyle = lang.isString(kwArgs.calculateStyle) ? lang.getObject(kwArgs.calculateStyle) : kwArgs.calculateStyle,
+	var composeStyle = lang.isString(kwArgs.composeStyle) ? lang.getObject(kwArgs.composeStyle) : kwArgs.composeStyle,
 		breaks, numClasses;
 
 	if (lang.isArray(kwArgs.breaks)) {
@@ -48,8 +47,8 @@ n.getStyle = function(feature, style, styleFunctionDef) {
 		var getBreaks = lang.isString(kwArgs.breaks) ? lang.getObject(kwArgs.breaks) : kwArgs.breaks,
 			featureContainer = feature.parent;
 		breaks = featureContainer._breaks;
-		if (!breaks || styleFunctionDef.updated > featureContainer._breaksTimestamp) {
-			breaks = getBreaks(featureContainer, styleFunctionDef.options);
+		if (!breaks || lastUpdated > featureContainer._breaksTimestamp) {
+			breaks = getBreaks(featureContainer, kwArgs);
 			
 			// store calculated breaks for the use by other features that are children of the featureContainer
 			featureContainer._breaks = breaks;
@@ -59,10 +58,10 @@ n.getStyle = function(feature, style, styleFunctionDef) {
 	}
 
 	var breakIndex = n.getBreakIndex(breaks, numClasses, attrValue);
-	if (breakIndex < numClasses) calculateStyle(style, breakIndex, kwArgs);
+	if (breakIndex < numClasses) composeStyle(style, breakIndex, kwArgs);
 };
 
-n.calculateSizeStyle = function(style, breakIndex, kwArgs) {
+n.composeSizeStyle = function(style, breakIndex, kwArgs) {
 	var numClasses = lang.isArray(kwArgs.breaks) ? kwArgs.breaks.length - 1 : kwArgs.numClasses,
 		iconSize = kwArgs.medianSize + kwArgs.sizeStep*( breakIndex - parseInt(numClasses/2) + (numClasses%2 ? 0 : 0.5) ),
 		src = P.getImgSrc(style),
