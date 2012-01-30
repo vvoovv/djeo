@@ -1,0 +1,29 @@
+{
+	"name": "djeo",
+	"author": "Vladimir Elistratov",
+	"description": "A javascript geo library based on Dojo Toolkit. Besides djeo native engine, the same application code works under Google Maps API, Google Earth API and others. You might also want to download djeo-gmaps, djeo-ge, ...",
+	"licenses": [
+		{
+			"type": "AFLv2.1",
+			"url": "http://trac.dojotoolkit.org/browser/dojo/trunk/LICENSE#L43"
+		},
+		{
+			"type": "BSD",
+			"url": "http://trac.dojotoolkit.org/browser/dojo/trunk/LICENSE#L13"
+		}
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/vvoovv/djeo"
+	},
+	"bugs": "https://github.com/vvoovv/djeo/issues",
+	"dependencies": {
+		"dojo": "1.7.1",
+		"dijit": "1.7.1",
+		"dojox": "1.7.1"
+	},
+	"keywords": ["djeo", "geo"],
+	"homepage": "http://djeo.org",
+	"main": "./Map",
+	"icon": "http://djeo.github.com/djeo25.png"
+}

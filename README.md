@@ -4,14 +4,50 @@ djeo
 ### Twitter
 [@djeonews](http://twitter.com/djeonews)
 
-### Demos
+## Demos
 Please see [Demos wiki page](https://github.com/vvoovv/djeo/wiki/demos)
 
-### Install
-* Download dojo 1.7 from http://download.dojotoolkit.org/ and unpack it
-* Download djeo and unpack it to the same directory where dojo, dijit, dojox reside. Rename the top level directory vvoovv-djeo-xxxxxxx to djeo. At the end you should get 4 directories at the same level: dojo, dijit, dojox, djeo.
+## Installation
 
-### Code Sample
+### Automatic Download with CPM
+
+djeo can be installed via [CPM](https://github.com/kriszyp/cpm) using the following command:
+
+    cpm install djeo
+
+If you are going to use alternative engines for djeo (Google Maps API, Google Earth Javascript API, Yandex Maps API),
+execute one or several of the following commands:
+    
+	cpm install djeo-gmaps
+	cpm install djeo-ge
+	cpm install djeo-ymaps
+
+### Manual Download
+
+Alternatively, djeo and its dependencies can be downloaded individually:
+
+* [djeo](https://github.com/vvoovv/djeo)
+* [The Dojo Toolkit](http://dojotoolkit.org/download/) SDK version 1.7.1
+
+If you are going to use alternative engines for djeo (Google Maps API, Google Earth Javascript API, Yandex Maps API),
+then download one or several of the following items:
+
+* [djeo-gmaps](https://github.com/vvoovv/djeo-gmaps)
+* [djeo-ge](https://github.com/vvoovv/djeo-ge)
+* [djeo-ymaps](https://github.com/vvoovv/djeo-ymaps)
+
+Arrange all items as siblings, resulting in a directory structure like the following:
+
+* `djeo`
+* `dojo`
+* `dijit`
+* `dojox`
+* `djeo-gmaps` (optional, Google Maps API)
+* `djeo-ge` (optional, Google Earth Javascript API)
+* `djeo-ymaps` (optional, Yandex Maps API)
+
+
+## Code Sample
 Place a file with the code sample in a directory next to dojo, dijit, dojox, djeo directories
 
 	<html>
@@ -62,7 +98,7 @@ Place a file with the code sample in a directory next to dojo, dijit, dojox, dje
 			coords: [-30, 30],
 			style: {
 				size: [49, 60],
-				img: "http://vvoovv.github.com/ship.png"
+				img: "http://djeo.github.com/ship.png"
 			}
 		}
 	];
@@ -96,7 +132,6 @@ Place a file with the code sample in a directory next to dojo, dijit, dojox, dje
 	</html>
 
 
-### Licensing Information
-All the code in the **master** branch is released under Dojo Toolkit licensing terms (The "New" BSD License or The Academic Free License, v. 2.1) with some exceptions listed below.
-All contributors have signed and submitted Contributors License Agreement (CLA) as required by Dojo Toolkit licensing procedure.
-See <http://dojotoolkit.org/license> for the details.
+## License
+The "New" BSD License or The Academic Free License, v. 2.1.
+All contributors are required to sign a Contributors License Agreement (CLA). See <http://dojotoolkit.org/license> for the details.
