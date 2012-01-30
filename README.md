@@ -25,16 +25,19 @@ execute one or several of the following commands:
 ### Manual Download
 
 Alternatively, djeo and its dependencies can be downloaded individually:
+
 * [djeo](https://github.com/vvoovv/djeo)
 * [The Dojo Toolkit](http://dojotoolkit.org/download/) SDK version 1.7.1
 
 If you are going to use alternative engines for djeo (Google Maps API, Google Earth Javascript API, Yandex Maps API),
 then download one or several of the following items:
+
 * [djeo-gmaps](https://github.com/vvoovv/djeo-gmaps)
 * [djeo-ge](https://github.com/vvoovv/djeo-ge)
 * [djeo-ymaps](https://github.com/vvoovv/djeo-ymaps)
 
 Arrange all items as siblings, resulting in a directory structure like the following:
+
 * `djeo`
 * `dojo`
 * `dijit`
