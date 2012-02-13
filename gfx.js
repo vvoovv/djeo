@@ -1,6 +1,6 @@
 define([
 	"dojo/_base/Color",
-	"dojox/gfx",
+	"djeo/dojox/gfx",
 	"djeo/_base",
 	"djeo/common/Placemark"
 ], function(Color, gfx, djeo, P){

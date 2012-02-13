@@ -5,8 +5,8 @@ define([
 	"dojo/dom-construct", // create, destroy
 	"dijit/_Widget",
 	"dijit/_TemplatedMixin",
-	"dojox/gfx",
-	"dojox/gfx/matrix",
+	"djeo/dojox/gfx",
+	"djeo/dojox/gfx/matrix",
 	"djeo/_base",
 	"djeo/common/Placemark",
 	"djeo/gfx", //_getIconLegend

@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/_base/lang", // mixin, isObject
 	"dojo/_base/array", // forEach
-	"dojox/gfx/matrix",
+	"djeo/dojox/gfx/matrix",
 	"djeo/_base",
 	"djeo/common/Placemark",
 	"djeo/util/geometry",

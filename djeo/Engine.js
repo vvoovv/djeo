@@ -3,8 +3,8 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/_base/lang", // mixin
 	"dojo/_base/array", // forEach
-	"dojox/gfx",
-	"dojox/gfx/matrix",
+	"djeo/dojox/gfx",
+	"djeo/dojox/gfx/matrix",
 	"djeo/Engine",
 	"./Placemark",
 	"djeo/util/geometry"

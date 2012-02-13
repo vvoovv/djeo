@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare", // declare
-	"dojox/gfx",
-	"dojox/gfx/Moveable"
+	"djeo/dojox/gfx",
+	"djeo/dojox/gfx/Moveable"
 ], function(declare, gfx, Moveable) {
 
 return declare([Moveable], {

@@ -1,6 +1,6 @@
 define([
 	"dojo/_base/lang", // getObject, mixin
-	"dojox/xml/DomParser",
+	"djeo/dojox/xml/DomParser",
 	"require"
 ], function(lang, domParser) {
 

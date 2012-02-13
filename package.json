@@ -19,8 +19,7 @@
 	"bugs": "https://github.com/vvoovv/djeo/issues",
 	"dependencies": {
 		"dojo": "1.7.1",
-		"dijit": "1.7.1",
-		"dojox": "1.7.1"
+		"dijit": "1.7.1"
 	},
 	"keywords": ["djeo", "geo"],
 	"homepage": "http://djeo.org",
