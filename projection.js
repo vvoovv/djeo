@@ -2,10 +2,10 @@ define([
 	"dojo/_base/lang", // extend
 	"dojo/_base/array", // forEach
 	"dojo/_base/kernel", // global
-	"djeo/Map",
-	"djeo/Placemark",
-	"djeo/FeatureContainer",
-	"djeo/util/bbox"
+	"./Map",
+	"./Placemark",
+	"./FeatureContainer",
+	"./util/bbox"
 ], function(lang, array, kernel, Map, Placemark, FeatureContainer, bbox) {
 
 // module object

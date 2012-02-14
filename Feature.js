@@ -2,8 +2,8 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/_base/lang", // mixin, isArray
 	"dojo/_base/array", // forEach
-	"djeo/Style",
-	"djeo/util/_base"
+	"./Style",
+	"./util/_base"
 ], function(declare, lang, array, Style, u){
 
 return declare("djeo.Feature", null, {

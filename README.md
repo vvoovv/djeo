@@ -41,14 +41,13 @@ Arrange all items as siblings, resulting in a directory structure like the follo
 * `djeo`
 * `dojo`
 * `dijit`
-* `dojox`
 * `djeo-gmaps` (optional, Google Maps API)
 * `djeo-ge` (optional, Google Earth Javascript API)
 * `djeo-ymaps` (optional, Yandex Maps API)
 
 
 ## Code Sample
-Place a file with the code sample in a directory next to dojo, dijit, dojox, djeo directories
+Place a file with the code sample in a directory next to dojo, dijit, djeo directories
 
 	<html>
 	<head>
@@ -66,9 +65,8 @@ Place a file with the code sample in a directory next to dojo, dijit, dojox, dje
 	<script src="../dojo/dojo.js" data-dojo-config="
 		djeoEngine: 'djeo',
 		geKey: 'ABQIAAAA-DMAtggvLwlIYlUJiASaAxRQnCpeV9jusWIeBw0POFqU6SItGxRWZhddpS8pIkVUd2fDQhzwPUWmMA',
-		ymapsKey: 'AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A==',
-		paths: {djeo:'../djeo'}">
-	</script>
+		ymapsKey: 'AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=='
+	"></script>
 	
 	<script>
 	var features = [

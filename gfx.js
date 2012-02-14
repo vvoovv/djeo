@@ -1,8 +1,8 @@
 define([
 	"dojo/_base/Color",
-	"djeo/dojox/gfx",
-	"djeo/_base",
-	"djeo/common/Placemark"
+	"./dojox/gfx",
+	"./_base",
+	"./common/Placemark"
 ], function(Color, gfx, djeo, P){
 
 // center of each shape must be 0,0

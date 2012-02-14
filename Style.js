@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/_base/lang", // isString, isArray, getObject
 	"dojo/_base/array", // forEach
-	"djeo/_base",
+	"./_base",
 	"dojo/colors"
 ], function(declare, lang, array, djeo){
 

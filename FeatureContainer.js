@@ -2,10 +2,10 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/_base/lang", // isString, isArray
 	"dojo/_base/array", // forEach
-	"djeo/_base",
-	"djeo/Feature",
-	"djeo/util/_base",
-	"djeo/util/bbox"
+	"./_base",
+	"./Feature",
+	"./util/_base",
+	"./util/bbox"
 ], function(declare, lang, array, djeo, Feature, u, bbox){
 
 var fc = declare("djeo.FeatureContainer", [Feature], {

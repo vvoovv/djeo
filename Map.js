@@ -1,4 +1,5 @@
 define([
+	"require",
 	"dojo/_base/declare", // declare
 	"dojo/_base/lang", // getObject, mixin, hitch, isString, isArray, isObject
 	"dojo/has", // has
@@ -8,10 +9,10 @@ define([
 	"dojo/_base/xhr", // get
 	"dojo/_base/kernel", // global
 	"dojo/aspect", // after
-	"djeo/_base",
-	"djeo/FeatureContainer",
-	"djeo/Placemark" // just request it, no actual use of djeo.Placemark
-], function(declare, lang, has, dom, array, domGeom, xhr, kernel, aspect, djeo, FeatureContainer){
+	"./_base",
+	"./FeatureContainer",
+	"./Placemark" // just request it, no actual use of djeo.Placemark
+], function(require, declare, lang, has, dom, array, domGeom, xhr, kernel, aspect, djeo, FeatureContainer){
 
 return declare("djeo.Map", null, {
 	// summary:
@@ -420,7 +421,7 @@ return declare("djeo.Map", null, {
 			var config = require.rawConfig,
 				packageDefined = false;
 			// check if name is a package id or defined in the paths attribute of the dojo config
-			if (config.paths[engine]) {
+			if (config.paths && config.paths[engine]) {
 				packageDefined = true;
 			}
 			else if (config.packages) {
@@ -432,17 +433,10 @@ return declare("djeo.Map", null, {
 					}
 				}
 			}
-			if (!packageDefined) {
-				// set default mapping for engineName
-				// <engine> is mapped to djeo-<engine> directory
-				// the module path is the same a for djeo
-				// we use the body of to-be-deprecated dojo.registerModulePath 
-				var paths = {};
-				paths[engine] = config.paths.djeo+"-"+engine;
-				require({paths: paths});
-			}
 			// now require the engine
-			var engineModule = (engine == "djeo") ? "djeo/djeo/Engine" : engine+"/Engine";
+			var engineModule = (engine == "djeo") ?
+				"./djeo/Engine" :
+				(packageDefined ? engine+"/Engine" : "djeo-"+engine+"/Engine");
 			require([engineModule], lang.hitch(this, function(engineClass) {
 				// setup and mixin options
 				var options = {};
