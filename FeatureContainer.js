@@ -100,20 +100,22 @@ var fc = declare("djeo.FeatureContainer", [Feature], {
 		return this.container;
 	},
 	
-	connectWithHandle: function(handle, /* String|Array? */events, /*Object|null*/ context, /*String|Function*/ method) {
+	connectWithHandle: function(handle, kwArgs) {
 		if (!this.features.length) return handle;
-		events = lang.isString(events) ? [events] : events;
+		if (kwArgs.events) {
+			kwArgs.events = lang.isString(kwArgs.events) ? [kwArgs.events] : kwArgs.events;
+		}
 		handle = handle || u.uid();
 		array.forEach(this.features, function(feature) {
-			feature.connectWithHandle(handle, events, context, method);
+			feature.connectWithHandle(handle, kwArgs);
 		});
 		return handle;
 	},
 	
-	disconnect: function(handle) {
+	disconnect: function(handle, key, removeEventListener) {
 		if (!this.features.length) return;
 		array.forEach(this.features, function(feature) {
-			feature.disconnect(handle);
+			feature.disconnect(handle, key, removeEventListener);
 		});
 	}
 });

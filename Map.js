@@ -16,7 +16,7 @@ define([
 
 return declare("djeo.Map", null, {
 	// summary:
-	//		The main map object. See tests and demo for examples
+	//		The main map object. See djeo/tests and djeo-demos for examples
 
 	// engine: djeo.Engine
 	//		Engine used by the map
@@ -397,19 +397,19 @@ return declare("djeo.Map", null, {
 		return this.document.connect(events, context, method);
 	},
 
-	connectWithHandle: function(/* Number */handle, /* String|Array? */events, /*Object|null*/ context, /*String|Function*/ method) {
+	connectWithHandle: function(/* String|Number */ handle, /* Object */kwArgs) {
 		// summary:
 		//		Adds a listener for an event or an array of events for all features in the map
 		//		The connection will be associated with the supplied handle
 		// returns: Number
 		//		The supplied handle
-		return this.document.connectWithHandle(handle, events, context, method);
+		return this.document.connectWithHandle(handle, kwArgs);
 	},
 	
-	disconnect: function(/* Number */handle) {
+	disconnect: function(/* Number */handle, key, removeEventListener) {
 		// summary:
 		//		Removes all event listeners associated with the handle for all features in the map
-		this.document.disconnect(handle);
+		this.document.disconnect(handle, key, removeEventListener);
 	},
 
 	setEngine: function(/* String|Object */engine, /* Object? */engineOptions) {
@@ -433,11 +433,25 @@ return declare("djeo.Map", null, {
 					}
 				}
 			}
-			// now require the engine
-			var engineModule = (engine == "djeo") ?
+			var engineMid = (engine == "djeo") ?
 				"./djeo/Engine" :
 				(packageDefined ? engine+"/Engine" : "djeo-"+engine+"/Engine");
-			require([engineModule], lang.hitch(this, function(engineClass) {
+			;
+			// Check what we need to load
+			// If we have a built version (has("djeo-built")==true), load built basic modules for the engine,
+			// e.g Engine, Navigation, Highlight, Tooltip
+			var requireMid = has("djeo-built") ?
+				( (engine == "djeo") ? "./native" : "djeo-"+engine+"/"+engine ) :
+				engineMid
+			;
+			// now require the engine
+			require([requireMid, "require"], lang.hitch(this, function(engineClass, require) {
+				// correct engineClass for the built version (has("djeo-built")==true)
+				if (has("djeo-built")) {
+					require([engineMid], function(_engineClass) {
+						engineClass = _engineClass;
+					});
+				}
 				// setup and mixin options
 				var options = {};
 				if (this.engineOptions[engine]) {

@@ -97,41 +97,69 @@ var p = declare("djeo.Placemark", [Feature], {
 		return bb;
 	},
 
-	connectWithHandle: function(handle, /* String|Array? */events, /*Object|null*/ context, /*String|Function*/ method) {
+	connectWithHandle: function(handle, /* Object */kwArgs) {
 		if (this.invalid) return handle;
-		events = lang.isString(events) ? [events] : events;
-		
-		// disconnect existing events for this handle
 		var handleObj = this.handles[handle];
-		if (handleObj) {
-			var eventConnections = handleObj[3];
-			array.forEach(eventConnections, function(eventConnection){
-				if (eventConnection) this.map.engine.disconnect(eventConnection);
-			}, this);
-		}
-		var eventConnections = [];
-		// the format of handleObj is [events,context,method,eventConnections]
-		var handleObj = [events, context, method, eventConnections];
-
-		var numEvents = 0; // number of connected events
-		array.forEach(events, function(event) {
-			if (djeo.events[event]) {
-				eventConnections.push(
-					this.map.engine.connect(this, event, context, method)
-				);
-				numEvents++;
+		
+		if (!handleObj || !kwArgs.key) {
+			var events = kwArgs.events;
+			events = lang.isString(events) ? [events] : events;
+			
+			// disconnect existing events for this handle
+			if (handleObj) {
+				var eventConnections = handleObj[3];
+				array.forEach(eventConnections, function(eventConnection){
+					if (eventConnection) this.map.engine.disconnect(eventConnection);
+				}, this);
 			}
-			else eventConnections.push(null);
-		}, this);
-		if (!numEvents) return handle;
-		handle = handle || u.uid();
-		if (!this.handles[handle]) this.handles[handle] = handleObj;
+			var eventConnections = [];
+			// the format of handleObj is [events,context,method,eventConnections]
+			handleObj = [events, kwArgs.context, kwArgs.method, eventConnections];
+	
+			var numEvents = 0; // number of connected events
+			array.forEach(events, function(event) {
+				if (djeo.events[event]) {
+					eventConnections.push(
+						this.map.engine.connect(this, event, kwArgs.context, kwArgs.method)
+					);
+					numEvents++;
+				}
+				else eventConnections.push(null);
+			}, this);
+			if (!numEvents) return handle;
+			handle = handle || u.uid();
+			if (!this.handles[handle]) this.handles[handle] = handleObj;
+		}
+		// attach key-value
+		if (kwArgs.key) {
+			if (handleObj.length == 4) {
+				handleObj[4] = {}
+			}
+			handleObj[4][kwArgs.key] = kwArgs.value;
+		}
 		return handle;
 	},
 
-	disconnect: function(handle) {
+	disconnect: function(handle, key, removeEventListener) {
 		var handleObj = this.handles[handle];
-		if (handleObj) {
+		if (!handleObj) return;
+
+		var hasKey = (arguments.length > 1) ? true : false,
+			disconnect = true
+		;
+		
+		if (hasKey) {
+			if (handleObj.length == 4) return;
+			delete handleObj[4][key];
+			if (removeEventListener) {
+				// check if there are still keys attached to handleObj
+				for (var k in handleObj[4]) {
+					disconnect = false;
+					break;
+				}
+			}
+		}
+		if (disconnect) {
 			var eventConnections = handleObj[3];
 			array.forEach(eventConnections, function(eventConnection){
 				this.map.engine.disconnect(eventConnection);
@@ -139,7 +167,7 @@ var p = declare("djeo.Placemark", [Feature], {
 			delete this.handles[handle];
 		}
 	},
-	
+
 	translate: function(position) {
 		var factory = this.map.engine.factories.Placemark;
 		if (factory.translate) {

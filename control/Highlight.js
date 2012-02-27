@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare", // declare
 	"djeo/_base",
-	"./Base"
+	"./_PointerBase"
 ], function(declare, djeo, Base) {
 
 var dependency = "Highlight";
@@ -22,7 +22,7 @@ return declare("djeo.control.Highlight", [Base], {
 	init: function() {
 
 	},
-	
+/*	
 	process: function(event){
 		var feature = event.feature;
 
@@ -40,6 +40,17 @@ return declare("djeo.control.Highlight", [Base], {
 				this.highlightedFeature = null;
 			}
 		}
+	}
+*/
+	pointeroverAction: function(newfeature, oldFeature) {
+		if (oldFeature) {
+			oldFeature.render(true);
+		}
+		newfeature.render(true, "highlight");
+	},
+	
+	pointeroutAction: function(feature) {
+		feature.render(true);
 	}
 });
 

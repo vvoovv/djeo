@@ -6,7 +6,7 @@ define([
 	"dijit/Tooltip",
 	"dijit/place",
 	"djeo/_base",
-	"./Base"
+	"./_PointerBase"
 ], function(declare, lang, on, domGeom, Tooltip, place, djeo, Base){
 
 var dependency = "Tooltip";
@@ -21,12 +21,7 @@ var tooltip,
 	aroundRect = {x: 0, y:0, w:0, h:0}
 ;
 
-var timeoutId, timeoutFeature;
-
 declare("djeo.control.Tooltip", Base, {
-	
-	// current tooltip feature
-	feature: null,
 	
 	offsetX: 0,
 	
@@ -35,8 +30,6 @@ declare("djeo.control.Tooltip", Base, {
 	position: ["above-centered", "below-centered"],
 	
 	rtl: false,
-	
-	onpointeroutDelay: 200, // milliseconds
 
 	constructor: function(map, kwArgs) {
 		this._dependency = dependency;
@@ -59,11 +52,11 @@ declare("djeo.control.Tooltip", Base, {
 		on(this.map.container, "mousemove", lang.hitch(this, function(domEvent){
 			this.clientX = domEvent.clientX;
 			this.clientY = domEvent.clientY;
-			if (!timeoutId) this.moveTooltip(domEvent.clientX, domEvent.clientY);
+			if (!tooltipControl.c.timeoutId) tooltipControl.moveTooltip(domEvent.clientX, domEvent.clientY);
 		}));
 	},
 	
-	process: function(event){
+/*	process: function(event){
 		var feature = event.feature;
 		
 		if (timeoutId) {
@@ -92,7 +85,15 @@ declare("djeo.control.Tooltip", Base, {
 			this.feature = null;
 		}
 	},
+*/
+	pointeroverAction: function(feature) {
+		this.showTooltip(feature);
+	},
 	
+	pointeroutAction: function(feature) {
+		this.hideTooltip();
+	},
+
 	showTooltip: function(feature) {
 		this._setAroundRect();
 		tooltip.show(this.text(feature), aroundRect, this.position, this.rtl);
@@ -103,7 +104,9 @@ declare("djeo.control.Tooltip", Base, {
 	},
 	
 	moveTooltip: function(x, y) {
-		if (this.feature) {
+		// currently active feature
+		var f = this.c.feature;
+		if (f && f.handles[this.c.handle][4][this.id]) {
 			this._setAroundRect(x, y);
 			place.around(tooltip.domNode, aroundRect, this.position, !this.rtl, lang.hitch(tooltip, "orient"));
 		}

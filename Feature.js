@@ -1,6 +1,6 @@
 define([
 	"dojo/_base/declare", // declare
-	"dojo/_base/lang", // mixin, isArray
+	"dojo/_base/lang", // mixin, isArray, isString
 	"dojo/_base/array", // forEach
 	"./Style",
 	"./util/_base"
@@ -78,14 +78,18 @@ return declare("djeo.Feature", null, {
 	},
 
 	connect: function(/* String|Array? */events, /*Object|null*/ context, /*String|Function*/ method) {
-		return this.connectWithHandle(null, events, context, method);
+		return this.connectWithHandle(null, {
+			events: lang.isString(events) ? [events] : events,
+			context: context,
+			method: method
+		});
 	},
 	
-	connectWithHandle: function(handle, /* String|Array? */events, /*Object|null*/ context, /*String|Function*/ method) {
+	connectWithHandle: function(/* String|Number */ handle, /*Object*/ kwArgs) {
 		
 	},
 	
-	disconnect: function(handle, keepHandlesEntry) {
+	disconnect: function(handle, key, removeEventListener) {
 		
 	}
 });

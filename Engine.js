@@ -1,8 +1,9 @@
 define([
 	"dojo/_base/declare", // declare
+	"dojo/has", // has
 	"dojo/_base/lang", // mixin, hitch, isArray, isString, isObject
 	"dojo/_base/array" // forEach
-], function(declare, lang, array){
+], function(declare, has, lang, array){
 
 return declare(null, {
 	// summary:
@@ -57,7 +58,13 @@ return declare(null, {
 	
 	matchModuleId: function(dependency) {
 		if (this.ignoredDependencies[dependency]) return null;
-		var moduleId = this._require.toAbsMid("./") + dependency;
+		// calculate moduleId
+		var moduleId = this._require.toAbsMid("./");
+		// treat the case of a build when "./" is resolved to "pack/main"
+		if (moduleId.length>5 && moduleId.substr(moduleId.length-5, 5)=="/main") {
+			moduleId = moduleId.substring(0, moduleId.length-4);
+		}
+		moduleId += dependency;
 		return moduleId;
 	},
 
