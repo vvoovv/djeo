@@ -14,7 +14,7 @@ define([
 	"./Placemark" // just request it, no actual use of djeo.Placemark
 ], function(require, declare, lang, has, dom, array, domGeom, xhr, kernel, aspect, djeo, FeatureContainer){
 
-return declare("djeo.Map", null, {
+return declare(null, {
 	// summary:
 	//		The main map object. See djeo/tests and djeo-demos for examples
 

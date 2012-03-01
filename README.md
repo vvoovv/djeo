@@ -59,12 +59,11 @@ Place a file with the code sample in a directory next to dojo, dijit, djeo direc
 	Supported mapping engines (replace the value for djeoEngine parameter)
 	djeo native mapping engine - djeoEngine:'djeo'
 	Google Maps API - djeoEngine:'gmaps'
-	Google Earth API - djeoEngine:'ge' - apply for a key at http://code.google.com/apis/maps/signup.html
+	Google Earth API - djeoEngine:'ge'
 	Yandex Maps API - djeoEngine:'ymaps' - apply for a key at http://api.yandex.ru/maps/form.xml
 	-->
 	<script src="../dojo/dojo.js" data-dojo-config="
 		djeoEngine: 'djeo',
-		geKey: 'ABQIAAAA-DMAtggvLwlIYlUJiASaAxRQnCpeV9jusWIeBw0POFqU6SItGxRWZhddpS8pIkVUd2fDQhzwPUWmMA',
 		ymapsKey: 'AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=='
 	"></script>
 	

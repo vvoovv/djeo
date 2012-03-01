@@ -8,7 +8,7 @@ define([
 	"./util/bbox"
 ], function(declare, lang, array, djeo, Feature, u, bbox) {
 
-var p = declare("djeo.Placemark", [Feature], {
+var p = declare([Feature], {
 	
 	type: "",
 
@@ -144,11 +144,9 @@ var p = declare("djeo.Placemark", [Feature], {
 		var handleObj = this.handles[handle];
 		if (!handleObj) return;
 
-		var hasKey = (arguments.length > 1) ? true : false,
-			disconnect = true
-		;
+		var disconnect = true;
 		
-		if (hasKey) {
+		if (key) {
 			if (handleObj.length == 4) return;
 			delete handleObj[4][key];
 			if (removeEventListener) {

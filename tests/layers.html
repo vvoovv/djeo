@@ -10,7 +10,6 @@
 		async: true,
 		parseOnLoad: false,
 		djeoEngine: "djeo",
-		geKey: "ABQIAAAA-DMAtggvLwlIYlUJiASaAxRQnCpeV9jusWIeBw0POFqU6SItGxRWZhddpS8pIkVUd2fDQhzwPUWmMA",
 		ymapsKey: "AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=="
 	};
 </script>
@@ -60,15 +59,15 @@ var features = [
 DebugUtil.timer.start("loading");
 
 require([
-	"dijit/form/Button",
 	"djeo/Map",
 	"djeo/control/Navigation",
+	"dijit/form/Button",
 	"dojo/domReady!"
 ],
-function(Button) {
+function(Map, Navigation, Button) {
 	DebugUtil.timer.end("loading");
 	DebugUtil.timer.start("render");
-    var map = new djeo.Map("map", {
+    var map = new Map("map", {
 		layers: "HYBRID",
 		style: {
 			type: "circle",
@@ -78,7 +77,7 @@ function(Button) {
 	});
 	map.ready(function() {
 		DebugUtil.timer.end("render");
-		new djeo.control.Navigation(map);
+		new Navigation(map);
 	});
 });
 

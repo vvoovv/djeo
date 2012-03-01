@@ -10,7 +10,7 @@ var symbolizers = ["points", "lines"],
 	styleAttributes = {theme:1, name: 1, legend: 1},
 	noStyleMixin = {id:1, filter:1, styleClass:1, fid:1, composer: 1, composerOptions: 1};
 
-var Style = declare("djeo.Style", null, {
+var Style = declare(null, {
 	
 	// json style definition
 	def: null,

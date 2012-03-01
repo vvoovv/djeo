@@ -7,7 +7,7 @@ define([
 var dependency = "Highlight";
 djeo.registerDependency("Highlight");
 
-return declare("djeo.control.Highlight", [Base], {
+return declare([Base], {
 	//	summary:
 	//		A basic highlighting control for the map
 	

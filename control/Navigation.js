@@ -7,7 +7,7 @@ define([
 var dependency = "Navigation";
 djeo.registerDependency("Navigation");
 
-return declare("djeo.control.Navigation", null, {
+return declare(null, {
 	
 	constructor: function(map, kwArgs) {
 		this.map = map;

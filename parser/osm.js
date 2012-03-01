@@ -4,7 +4,7 @@ define([
 	"require"
 ], function(lang, domParser) {
 
-var osm = lang.getObject("djeo.parser.osm", true);
+var osm = {};
 
 var _onBegin = function(){},
 	_onComplete = function(){}

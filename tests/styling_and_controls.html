@@ -10,7 +10,6 @@
 		async: true,
 		parseOnLoad: false,
 		djeoEngine: "djeo",
-		geKey: "ABQIAAAA-DMAtggvLwlIYlUJiASaAxRQnCpeV9jusWIeBw0POFqU6SItGxRWZhddpS8pIkVUd2fDQhzwPUWmMA",
 		ymapsKey: "AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=="
 	};
 </script>
@@ -24,14 +23,14 @@ DebugUtil.timer.start("loading");
 
 require([
 	"djeo/tests/data/usa_features_style",
-	"dijit/form/ToggleButton",
 	"djeo/Map",
 	"djeo/control/Highlight",
 	"djeo/control/Tooltip",
 	"djeo/control/Navigation",
+	"dijit/form/ToggleButton",
 	"dojo/domReady!"
 ],
-function(mapConfig, ToggleButton){
+function(mapConfig, Map, Highlight, Tooltip, Navigation, ToggleButton){
 	DebugUtil.timer.end("loading");
 	
 	new ToggleButton({
@@ -59,12 +58,12 @@ function(mapConfig, ToggleButton){
 	}, "navigation");
 	
 	DebugUtil.timer.start("render");
-	var map = new djeo.Map("map", mapConfig);
+	var map = new Map("map", mapConfig);
 	map.ready(function() {
 		DebugUtil.timer.end("render");
-		highlight = new djeo.control.Highlight(map);
-		tooltip = new djeo.control.Tooltip(map);
-		navigation = new djeo.control.Navigation(map);
+		highlight = new Highlight(map);
+		tooltip = new Tooltip(map);
+		navigation = new Navigation(map);
 	});
 });
 </script>

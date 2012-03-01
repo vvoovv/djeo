@@ -10,7 +10,6 @@
 		async: true,
 		parseOnLoad: false,
 		djeoEngine: "djeo",
-		geKey: "ABQIAAAA-DMAtggvLwlIYlUJiASaAxRQnCpeV9jusWIeBw0POFqU6SItGxRWZhddpS8pIkVUd2fDQhzwPUWmMA",
 		ymapsKey: "AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=="
 	};
 </script>
@@ -29,7 +28,7 @@ var f1 = function(event){console.debug("function:US-AK, feature.id:"+event.featu
 DebugUtil.timer.start("loading");
 
 var map, handle1, handle2, handle3, handle4;
-var ready = function(usaGeometries, usaFeatures, usaSomeRailways, ToggleButton) {
+var ready = function(Map, Navigation, usaGeometries, usaFeatures, usaSomeRailways, ToggleButton) {
 	DebugUtil.timer.end("loading");
 	
 	var features = [
@@ -169,7 +168,7 @@ var ready = function(usaGeometries, usaFeatures, usaSomeRailways, ToggleButton) 
 	
 	
 	DebugUtil.timer.start("render");
-    map = new djeo.Map("map", {
+    map = new Map("map", {
 		geometries: usaGeometries,
 		features: features,
 		resizePoints: false,
@@ -177,7 +176,7 @@ var ready = function(usaGeometries, usaFeatures, usaSomeRailways, ToggleButton) 
 	});
 	map.ready(function(){
 		DebugUtil.timer.end("render");
-		new djeo.control.Navigation(map);
+		new Navigation(map);
 		handle1 = connectFeature("US-AK", f1);
 		handle2 = connectFeature("US-TX", f2);
 		handle3 = connectFeature("railways", f3);
@@ -198,13 +197,13 @@ var disconnectFeature = function(id, handle) {
 
 
 require([
+	"djeo/Map",
+	"djeo/control/Navigation",
 	"djeo/tests/data/usa_geometries",
 	"djeo/tests/data/usa_features",
 	"djeo/tests/data/usa_some_railways",
 
 	"dijit/form/ToggleButton",
-	"djeo/Map",
-	"djeo/control/Navigation",
 
 	"dojo/domReady!"
 ], ready);

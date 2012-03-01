@@ -6,7 +6,7 @@ define([
 	"./util/_base"
 ], function(declare, lang, array, Style, u){
 
-return declare("djeo.Feature", null, {
+return declare(null, {
 	// summary:
 	//		The base class for all map features.
 	

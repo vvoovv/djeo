@@ -8,7 +8,7 @@ define([
 	"./util/bbox"
 ], function(declare, lang, array, djeo, Feature, u, bbox){
 
-var fc = declare("djeo.FeatureContainer", [Feature], {
+var fc = declare([Feature], {
 	
 	type: "FeatureContainer",
 	

@@ -79,7 +79,7 @@ return declare(null, {
 
 	prepare: function() {
 		// summary:
-		//		Normally called by _render method of djeo.Map.
+		//		Normally called by _render method of djeo/Map.
 		//		Should include some preparatory code for rendering.
 		//		Should be implemented in the inherited class
 	},
@@ -132,11 +132,11 @@ return declare(null, {
 	
 	render: function(/* Boolean */stylingOnly, /* String? */theme) {
 		// summary:
-		//		Default implementation of the render method of djeo.Map
+		//		Default implementation of the render method of djeo/Map
 		// stylingOnly:
-		//		See description in the render method of djeo.Map
+		//		See description in the render method of djeo/Map
 		// theme:
-		//		See description in the render method of djeo.Map
+		//		See description in the render method of djeo/Map
 		var map = this.map;
 		if (!map.extent) map.extent = map.getBbox();
 		map._calculateViewport();
@@ -146,7 +146,7 @@ return declare(null, {
 	
 	renderFeatures: function(/* Array|Object */features, /* Boolean */stylingOnly, /* String? */theme) {
 		// summary:
-		//		Default implementation of the renderFeatures method of djeo.Map
+		//		Default implementation of the renderFeatures method of djeo/Map
 		if (lang.isString(features)) features = [features];
 		if (lang.isArray(features)) {
 			array.forEach(features, function(feature){

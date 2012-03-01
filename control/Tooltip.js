@@ -21,7 +21,7 @@ var tooltip,
 	aroundRect = {x: 0, y:0, w:0, h:0}
 ;
 
-declare("djeo.control.Tooltip", Base, {
+return declare([Base], {
 	
 	offsetX: 0,
 	
