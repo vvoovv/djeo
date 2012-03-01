@@ -107,14 +107,14 @@ Place a file with the code sample in a directory next to dojo, dijit, djeo direc
 		"djeo/control/Tooltip",
 		"dojo/domReady!"
 	],
-	function(){
-		var map = new djeo.Map("map", {
+	function(Map, Navigation, Highlight, Tooltip){
+		var map = new Map("map", {
 			features: features
 		});
 		map.ready(function(){
-			new djeo.control.Navigation(map);
-			new djeo.control.Highlight(map);
-			new djeo.control.Tooltip(map);
+			new Navigation(map);
+			new Highlight(map);
+			new Tooltip(map);
 		});
 	});
 	</script>
