@@ -45,8 +45,8 @@ var defaults = {
 var Parser = function(elements, args) {
 	this.elements = elements;
 	lang.mixin(this, args);
-	
-	if (!this.features) this.features = [];
+
+	this.features = [];
 
 	this.nodesById = {};
 	this.waysById = {};
@@ -108,7 +108,10 @@ var Parser = function(elements, args) {
 		}
 		this.onComplete();
 
-		return this.features;
+		return {
+			projection: "EPSG:4326",
+			features: this.features
+		};
 	};
 	
 	this.getAttrs = function(element) {

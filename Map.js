@@ -445,24 +445,22 @@ return declare(null, {
 				engineMid
 			;
 			// now require the engine
-			require([requireMid, "require"], lang.hitch(this, function(engineClass, require) {
-				// correct engineClass for the built version (has("djeo-built")==true)
-				if (has("djeo-built")) {
-					require([engineMid], function(_engineClass) {
-						engineClass = _engineClass;
-					});
-				}
-				// setup and mixin options
-				var options = {};
-				if (this.engineOptions[engine]) {
-					lang.mixin(options, this.engineOptions[engine]);
-				}
-				if (engineOptions) {
-					lang.mixin(options, engineOptions);
-				}
-				options.map = this;
-				engine = new engineClass(options);
-				this._initializeEngine(engine);
+			require(["require", requireMid], lang.hitch(this, function(require) {
+				// if we are in an unbuilt version, request engine module again
+				// if we are in a built version, request engine module from the just loaded build
+				require([engineMid], lang.hitch(this, function(engineClass) {
+					// setup and mixin options
+					var options = {};
+					if (this.engineOptions[engine]) {
+						lang.mixin(options, this.engineOptions[engine]);
+					}
+					if (engineOptions) {
+						lang.mixin(options, engineOptions);
+					}
+					options.map = this;
+					engine = new engineClass(options);
+					this._initializeEngine(engine);
+				}));
 			}));
 		}
 		else {

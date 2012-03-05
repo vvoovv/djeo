@@ -12,7 +12,7 @@ define([
 
 return declare([Engine], {
 	
-	correctionScale: 1000,
+	correctionScale: 100000,
 	
 	pointZoomFactor: 0.01,
 	
