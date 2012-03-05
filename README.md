@@ -9,6 +9,11 @@ Please see [Demos wiki page](https://github.com/vvoovv/djeo/wiki/demos)
 
 ## Installation
 
+### Built version
+
+If you never worked with Dojo Toolkit, we recommend to download the latest built version of the djeo library from [here](https://github.com/vvoovv/djeo/downloads).
+Unpack the archive and start from helloworld/helloworld.html
+
 ### Automatic Download with CPM
 
 djeo can be installed via [CPM](https://github.com/kriszyp/cpm) using the following command:
