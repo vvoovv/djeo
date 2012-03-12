@@ -5,8 +5,9 @@ define([
 	"./Map",
 	"./Placemark",
 	"./FeatureContainer",
+	"./util/_base",
 	"./util/bbox"
-], function(lang, array, kernel, Map, Placemark, FeatureContainer, bbox) {
+], function(lang, array, kernel, Map, Placemark, FeatureContainer, u, bbox) {
 
 // module object
 var proj = {},
@@ -195,6 +196,21 @@ lang.extend(Map, {
 		}
 		return coords;
 	}
+});
+
+// transformations for Spherical Mercator projection
+// see http://mercator.myzen.co.uk for derivation of formulas
+proj.addTransform("EPSG:4326", "EPSG:3857", function(point){
+	return {
+		x: u.earthRadius * point.x * Math.PI / 180,
+		y: u.earthRadius * Math.log(Math.tan(Math.PI/4 + point.y*Math.PI/360))
+	};
+});
+proj.addTransform("EPSG:3857", "EPSG:4326", function(point){
+	return {
+		x: 180*point.x / (Math.PI * u.earthRadius),
+		y: 360/Math.PI * Math.atan(Math.exp(point.y / u.earthRadius)) - 90
+	};
 });
 
 return proj;

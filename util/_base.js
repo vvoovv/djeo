@@ -4,6 +4,8 @@ define(["dojo/has"], function(has){
 var u = {},
 	idCounter = 0;
 
+u.earthRadius = 6378137; // meters
+
 u.baseUrl = has("host-browser") ? window.location.href.substring(0, window.location.href.lastIndexOf('/')+1) : "";
 
 u.uid = function() {
