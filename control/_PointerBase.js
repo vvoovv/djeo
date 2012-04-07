@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/_base/lang", // mixin, hitch, isArray, isString
 	"dojo/_base/array", // forEach
-	"djeo/util/_base"
+	"../util/_base"
 ], function(declare, lang, array, u){
 	
 var handle = u.uid();

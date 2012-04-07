@@ -2,11 +2,11 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/_base/lang", // mixin, isObject
 	"dojo/_base/array", // forEach
-	"djeo/dojox/gfx/matrix",
-	"djeo/_base",
-	"djeo/common/Placemark",
-	"djeo/util/geometry",
-	"djeo/gfx"
+	"../dojox/gfx/matrix",
+	"../_base",
+	"../common/Placemark",
+	"../util/geometry",
+	"../gfx"
 ], function(declare, lang, array, matrix, djeo, P, geom, dx) {
 
 return declare([P], {

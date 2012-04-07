@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/has", // has
 	"dojo/_base/event", // stop
-	"djeo/dojox/gfx",
+	"../dojox/gfx",
 	"./Moveable",
 	"dojo/_base/sniff"
 ], function(declare, has, event, gfx, Moveable) {

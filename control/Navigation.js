@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare", // declare
 	"dojo/_base/lang", // mixin
-	"djeo/_base"
+	"../_base"
 ], function(declare, lang, djeo){
 
 var dependency = "Navigation";

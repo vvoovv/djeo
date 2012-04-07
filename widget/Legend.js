@@ -5,12 +5,12 @@ define([
 	"dojo/dom-construct", // create, destroy
 	"dijit/_Widget",
 	"dijit/_TemplatedMixin",
-	"djeo/dojox/gfx",
-	"djeo/dojox/gfx/matrix",
-	"djeo/_base",
-	"djeo/common/Placemark",
-	"djeo/gfx", //_getIconLegend
-	"djeo/Style"
+	"../dojox/gfx",
+	"../dojox/gfx/matrix",
+	"../_base",
+	"../common/Placemark",
+	"../gfx", //_getIconLegend
+	"../Style"
 ], function(declare, lang, array, domConstruct, _Widget, _TemplatedMixin, gfx, matrix, djeo, P, dx) {
 
 var Legend = declare([_Widget, _TemplatedMixin], {

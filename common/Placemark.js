@@ -2,9 +2,9 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/_base/lang", // isArray, isObject
 	"dojo/_base/array", // forEach
-	"djeo/_base",
-	"djeo/util/_base",
-	"djeo/Style"
+	"../_base",
+	"../util/_base",
+	"../Style"
 ], function(declare, lang, array, djeo, u) {
 	
 var P = declare(null, {
@@ -134,7 +134,7 @@ var P = declare(null, {
 
 P.defaultShapeType = "square";
 
-P.shapeIconsUrl = require.toUrl("djeo/resources/icons/");
+P.shapeIconsUrl = require.toUrl("../resources/icons/");
 
 P.shapes = {
 	circle: "circle.png",

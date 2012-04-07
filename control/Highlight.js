@@ -1,6 +1,6 @@
 define([
 	"dojo/_base/declare", // declare
-	"djeo/_base",
+	"../_base",
 	"./_PointerBase"
 ], function(declare, djeo, Base) {
 

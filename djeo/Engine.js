@@ -1,14 +1,35 @@
 define([
 	"require",
 	"dojo/_base/declare", // declare
-	"dojo/_base/lang", // mixin
+	"dojo/_base/lang", // mixin, isString, hitch
 	"dojo/_base/array", // forEach
-	"djeo/dojox/gfx",
-	"djeo/dojox/gfx/matrix",
-	"djeo/Engine",
+	"../dojox/gfx",
+	"../dojox/gfx/matrix",
+	"../Engine",
 	"./Placemark",
-	"djeo/util/geometry"
+	"../util/geometry"
 ], function(require, declare, lang, array, gfx, matrix, Engine, Placemark, geom) {
+	
+var _osm = [
+	"./WebTiles",
+	{
+		url: [
+			"a.tile.openstreetmap.org",
+			"b.tile.openstreetmap.org",
+			"c.tile.openstreetmap.org"
+		]
+	}
+]
+
+var supportedLayers = {
+	"ROADMAP": _osm,
+	"osm": _osm,
+	"openstreetmap": _osm,
+	"osm.org": _osm,
+	"openstreetmap.org": _osm,
+	"mapquest.com": 1,
+	"mapquest": 1
+};
 
 return declare([Engine], {
 	
@@ -22,10 +43,13 @@ return declare([Engine], {
 	
 	correctScale: false,
 	
+	_layers: null,
+	
 	constructor: function(kwArgs) {
 		this._require = require;
 		// set ignored dependencies
 		lang.mixin(this.ignoredDependencies, {"Highlight": 1, "Tooltip": 1});
+		this._layers = {};
 		// initialize basic factories
 		this._initBasicFactories(new Placemark({
 			map: this.map,
@@ -93,8 +117,32 @@ return declare([Engine], {
 		this.surface.destroy();
 	},
 	
-	enableLayer: function(layerId, enabled) {
-		// for the moment the function does nothing
+	enableLayer: function(layer, enabled) {
+		if (enabled === undefined) enabled = true;
+		if (enabled) {
+			if (lang.isString(layer)) {
+				// we've got a layer id
+				// check if know the layer id
+				if (!supportedLayers[layer]) return;
+				// check if the layer already has been enabled
+				if (this._layers[layer]) return;
+
+				var layerDef = supportedLayers[layer];
+				if (lang.isString(layerDef)) {
+					layerDef = [layerDef, {}];
+				}
+				require([layerDef[0]], function(Layer){
+					console.debug("Layer:"+Layer);
+				});
+			}
+			else {
+				// we've got a layer instance
+				// check if the layer already has been enabled
+				for (var id in this.layers) {
+					if (this.layers[id] === layer) return;
+				}
+			}
+		}
 	},
 	
 	zoomTo: function(/* Array */extent) {

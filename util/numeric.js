@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/lang", // isArray, isString, getObject
 	"dojo/_base/array", // forEach
-	"djeo/common/Placemark"
+	"../common/Placemark"
 ], function(lang, array, P){
 
 // module object

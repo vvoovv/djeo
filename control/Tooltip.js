@@ -5,7 +5,7 @@ define([
 	"dojo/dom-geometry", // position
 	"dijit/Tooltip",
 	"dijit/place",
-	"djeo/_base",
+	"../_base",
 	"./_PointerBase"
 ], function(declare, lang, on, domGeom, Tooltip, place, djeo, Base){
 
