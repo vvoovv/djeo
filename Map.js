@@ -276,6 +276,10 @@ return declare(null, {
 		}, this);
 	},
 	
+	_show: function(feature, show, attrOnly){
+		
+	},
+	
 	toggleVisibility: function(features) {
 		if (!features) features = this.document;
 		if (!lang.isArray(features)) features = [features];
@@ -389,21 +393,21 @@ return declare(null, {
 		return this.features[id];
 	},
 
-	connect: function(/* String|Array? */events, /*Object|null*/ context, /*String|Function*/ method) {
+	on: function(/* String|Array? */events, /*Function*/ method, /*Object?*/ context) {
 		// summary:
 		//		Adds a listener for an event or an array of events for all features in the map
 		// returns: Number
 		//		A handle that identifies this particular connection
-		return this.document.connect(events, context, method);
+		return this.document.on(events, method, context);
 	},
 
-	connectWithHandle: function(/* String|Number */ handle, /* Object */kwArgs) {
+	onForHandle: function(/* String|Number */ handle, /* Object */kwArgs) {
 		// summary:
 		//		Adds a listener for an event or an array of events for all features in the map
 		//		The connection will be associated with the supplied handle
 		// returns: Number
 		//		The supplied handle
-		return this.document.connectWithHandle(handle, kwArgs);
+		return this.document.onForHandle(handle, kwArgs);
 	},
 	
 	disconnect: function(/* Number */handle, key, removeEventListener) {
@@ -475,6 +479,7 @@ return declare(null, {
 	},
 	
 	_initializeEngine: function(engine) {
+		this._calculateViewport();
 		engine.initialize(lang.hitch(this, function(){
 			this.engine = engine;
 			this._onEngineReady();

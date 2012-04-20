@@ -38,12 +38,14 @@ var P = declare(null, {
 		}
 		
 		var style = djeo.calculateStyle(feature, theme);
+		//save calculated style (for normal theme only) in this.state
+		// cs stands for "calculated style"
+		if (!theme || theme == "normal") {
+			feature.state.cs = style;
+		}
 
 		// apply style to the base geometry
-		var type = feature.getCoordsType(),
-			styleType = "point";
-		if (type == "Polygon" || type == "MultiPolygon") styleType = "polygon";
-		else if (type == "LineString" || type == "MultiLineString") styleType = "line";
+		var styleType = feature.isPoint() ? "point" : (feature.isArea() ? "polygon" : "line");
 		if (stylingOnly) {
 			this.applyStyle(feature, style, styleType, coords);
 		}

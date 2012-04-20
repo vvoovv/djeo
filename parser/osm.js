@@ -1,46 +1,26 @@
 define([
 	"dojo/_base/lang", // getObject, mixin
+	"dojo/_base/array", // forEach
 	"djeo/dojox/xml/DomParser",
-	"require"
-], function(lang, domParser) {
+	"./osm/_defaultCallbacks",
+	"./osm/_defaultFeatureTree"
+], function(lang, array, domParser, defaultCallbacks, defaultFeatureTree) {
 
 var osm = {};
 
-var _onBegin = function(){},
-	_onComplete = function(){}
-;
-
-var _onNode = function(node, feature) {
-	this.features.push(feature);
-};
-
-var _onWay = function(way, feature) {
-	this.features.push(feature);
-};
-
-var _onRelation = function(node) {
-};
-
 var defaults = {
+	// return an array of features or a single feature container
+	returnArray: true,
 	attachTags: true,
 	useAttrs: false,
 	idFromOsm: true,
 	//nodes without tags are ignored
 	//nodesWithoutTags: false,
 	waysWithoutTags: false,
-	onBegin: _onBegin,
-	onComplete: _onComplete,
-	onNode: _onNode,
-	onWay: _onWay,
-	onRelation: _onRelation
+	featureTree: defaultFeatureTree // array of feature containers
 };
 
-/*
-	str
-	url
-	container
-	features
-*/
+lang.mixin(defaults, defaultCallbacks);
 
 var Parser = function(elements, args) {
 	this.elements = elements;
@@ -59,6 +39,10 @@ var Parser = function(elements, args) {
 				type = e.nodeName
 			;
 			if (type == "#text") continue;
+			// action normally can be equal to "delete" or "modify"
+			// we don't consider elements with action attribute
+			if (e.getAttribute("action")) continue;
+
 			var id = e.getAttribute("id");
 			// save id for future reference
 			e.id = id;
@@ -80,6 +64,10 @@ var Parser = function(elements, args) {
 				type = e.nodeName
 			;
 			if (type == "#text") continue;
+			// action normally can be equal to "delete" or "modify"
+			// we don't consider elements with action attribute
+			if (e.getAttribute("action")) continue;
+
 			var id = e.id,
 				attrs = this.getAttrs(e),
 				feature
@@ -108,10 +96,18 @@ var Parser = function(elements, args) {
 		}
 		this.onComplete();
 
-		return {
-			projection: "EPSG:4326",
-			features: this.features
-		};
+		if (this.returnArray) {
+			// set projection for each top level feature
+			array.forEach(this.features, function(f){
+				f.projection = "EPSG:4326";
+			})
+		}
+		return this.returnArray ?
+			this.features :
+			{
+				projection: "EPSG:4326",
+				features: this.features
+			};
 	};
 	
 	this.getAttrs = function(element) {

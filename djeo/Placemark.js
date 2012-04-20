@@ -20,7 +20,7 @@ return declare([P], {
 	init: function() {
 		this.group = this.engine.group;
 		
-		this.polygons = this.group.createGroup();
+		this.areas = this.group.createGroup();
 		this.lines = this.group.createGroup();
 		this.points = this.group.createGroup();
 		this.text = this.group.createGroup();
@@ -57,7 +57,7 @@ return declare([P], {
 	},
 
 	makePolygon: function(feature, coords) {
-		return this.polygons.createPath({path: this.makePathString(coords, 2)});
+		return this.areas.createPath({path: this.makePathString(coords, 2)});
 	},
 	
 	makeMultiLineString: function(feature, coords) {
@@ -65,7 +65,7 @@ return declare([P], {
 	},
 	
 	makeMultiPolygon: function(feature, coords) {
-		return this.polygons.createPath({path: this.makePathString(coords, 3)});
+		return this.areas.createPath({path: this.makePathString(coords, 3)});
 	},
 	
 	applyPointStyle: function(feature, calculatedStyle, coords) {
@@ -266,7 +266,7 @@ return declare([P], {
 	applyPolygonStyle: function(feature, calculatedStyle, coords) {
 		// no specific shape styles for a polygon!
 		this._updateShapes(feature, coords, calculatedStyle);
-		this._applyPolygonStyle(feature.baseShapes[0], calculatedStyle, calculatedStyle.polygon);
+		this._applyPolygonStyle(feature.baseShapes[0], calculatedStyle, calculatedStyle.area);
 	},
 	
 	_applyPolygonStyle: function(shape, calculatedStyle, specificStyle) {
@@ -374,7 +374,7 @@ return declare([P], {
 				break
 			case "Polygon":
 			case "MultiPolygon":
-				specificStyle = calculatedStyle.polygon;
+				specificStyle = calculatedStyle.area;
 		}
 		var textStyle = P.get("text", calculatedStyle, specificStyle);
 		if (!textStyle) return;
@@ -407,7 +407,7 @@ return declare([P], {
 			var x = this.getX(coords[0]),
 				y = this.getY(coords[1]);
 		}
-		else if (type == "Polygon" || type == "MultiPolygon") {
+		else if (feature.isArea()) {
 			var center = geom.center(feature),
 				x = this.getX(center[0]),
 				y = this.getY(center[1]);

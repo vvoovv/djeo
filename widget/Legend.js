@@ -90,8 +90,9 @@ Legend._getBreaksIconLegend = function(domContainer, style, features, name) {
 			var numClasses = lang.isArray(kwArgs.breaks) ? kwArgs.breaks.length - 1 : kwArgs.numClasses,
 				isVectorShape = true,
 				shapeType = P.get("shape", calculatedStyle),
-				src = P.getImgSrc(calculatedStyle)
-				size = src ? P.getImgSize(calculatedStyle) : P.getSize(calculatedStyle);
+				src = P.getImgSrc(calculatedStyle),
+				size = src ? P.getImgSize(calculatedStyle) : P.getSize(calculatedStyle)
+			;
 	
 			if (!shapeType && src) isVectorShape = false;
 			else if (!djeo.shapes[shapeType]) shapeType = P.defaultShapeType;

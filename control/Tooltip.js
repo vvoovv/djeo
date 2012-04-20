@@ -12,7 +12,7 @@ define([
 var dependency = "Tooltip";
 djeo.registerDependency("Tooltip");
 
-var DEFAULT_TEXT = function(feature){
+var DEFAULT_CONTENT = function(feature){
 	return feature.tooltip || feature.name || feature.id;
 };
 
@@ -34,7 +34,7 @@ return declare([Base], {
 	constructor: function(map, kwArgs) {
 		this._dependency = dependency;
 
-		this.text = kwArgs && kwArgs.text ? kwArgs.text : DEFAULT_TEXT;
+		this.content = kwArgs && kwArgs.content ? kwArgs.content : DEFAULT_CONTENT;
 		
 		this.attachFactory(this.enabled);
 	},
@@ -55,37 +55,7 @@ return declare([Base], {
 			if (!tooltipControl.c.timeoutId) tooltipControl.moveTooltip(domEvent.clientX, domEvent.clientY);
 		}));
 	},
-	
-/*	process: function(event){
-		var feature = event.feature;
-		
-		if (timeoutId) {
-			clearTimeout(timeoutId);
-			timeoutId = null;
-		}
 
-		if (event.type == "onmouseover") {
-			if (this.feature == feature) return;
-
-			this.feature = feature;
-			this.showTooltip(feature);
-		}
-		else if (event.type == "onmouseout"){
-			timeoutFeature = feature;
-			timeoutId = setTimeout(
-				lang.hitch(this, this._onpointerout),
-				this.onpointeroutDelay
-			)
-		}
-	},
-	
-	_onpointerout: function() {
-		if (this.feature) {
-			this.hideTooltip();
-			this.feature = null;
-		}
-	},
-*/
 	pointeroverAction: function(feature) {
 		this.showTooltip(feature);
 	},
@@ -96,7 +66,9 @@ return declare([Base], {
 
 	showTooltip: function(feature) {
 		this._setAroundRect();
-		tooltip.show(this.text(feature), aroundRect, this.position, this.rtl);
+		// calculated style
+		var cs = feature.state.cs;
+		tooltip.show(cs.tooltip ? cs.tooltip(feature) : this.content(feature), aroundRect, this.position, this.rtl);
 	},
 	
 	hideTooltip: function() {

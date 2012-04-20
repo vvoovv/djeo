@@ -160,7 +160,7 @@ var ready = function(Map, Navigation, usaGeometries, usaFeatures, usaSomeRailway
     new ToggleButton({
 		checked: true,
 		onChange: function(value){
-			if (value) handleMap = map.connect("onclick", fMap);
+			if (value) handleMap = map.on("click", fMap);
 			else map.disconnect(handleMap);
 		},
 		iconClass: "dijitRadioIcon"
@@ -183,12 +183,12 @@ var ready = function(Map, Navigation, usaGeometries, usaFeatures, usaSomeRailway
 		handle4 = connectFeature("Seattle", f4);
 		handle5 = connectFeature("New York City", f5);
 		handle6 = connectFeature("Memphis", f6);
-		handleMap = map.connect("onclick", fMap);
+		handleMap = map.on("click", fMap);
 	});
 }
 
 var connectFeature = function(id, callback) {
-	return map.getFeatureById(id).connect(["onclick", "onmouseover", "onmouseout"], callback);
+	return map.getFeatureById(id).on(["click", "mouseover", "mouseout"], callback);
 }
 
 var disconnectFeature = function(id, handle) {

@@ -16,6 +16,8 @@ var fc = declare([Feature], {
 	
 	features: null,
 	
+	numVisibleFeatures: 0,
+	
 	constructor: function(featureDef, kwArgs) {
 		if (this.features) {
 			var features = this.features;
@@ -27,11 +29,40 @@ var fc = declare([Feature], {
 	
 	show: function(show) {
 		if (show === undefined) show = true;
+		if (this.features.length == 0) {
+			// just notify parent
+			this.parent._show(this, show, true);
+		}
+		array.forEach(this.features, function(feature){
+			feature.show(show);
+		}, this);
 		if (this.visible != show) {
-			array.forEach(this.features, function(feature){
-				feature.show(show);
-			}, this);
 			this.visible = show;
+		}
+	},
+	
+	_show: function(feature, show, attrOnly){
+		// if attrOnly==true don't call feature._show();
+		if (show) {
+			this.numVisibleFeatures++;
+			if (!this.visible) {
+				// set visibility to true
+				this.visible = true;
+			}
+			if (this.numVisibleFeatures == 1) {
+				// notify parent
+				this.parent._show(this, true, true);
+			}
+		}
+		else {
+			this.numVisibleFeatures--;
+			if (this.numVisibleFeatures==0){
+				// notify parent
+				this.parent._show(this, false, true);
+			}
+		}
+		if (!attrOnly) {
+			feature._show(show);
 		}
 	},
 	
@@ -78,6 +109,8 @@ var fc = declare([Feature], {
 	},
 	
 	getBbox: function() {
+		if (this.features.length == 0) return null;
+
 		var bb = [Infinity,Infinity,-Infinity,-Infinity];
 		array.forEach(this.features, function(feature){
 			bbox.extend(bb, feature.getBbox());
@@ -100,14 +133,14 @@ var fc = declare([Feature], {
 		return this.container;
 	},
 	
-	connectWithHandle: function(handle, kwArgs) {
+	onForHandle: function(handle, kwArgs) {
 		if (!this.features.length) return handle;
 		if (kwArgs.events) {
 			kwArgs.events = lang.isString(kwArgs.events) ? [kwArgs.events] : kwArgs.events;
 		}
 		handle = handle || u.uid();
 		array.forEach(this.features, function(feature) {
-			feature.connectWithHandle(handle, kwArgs);
+			feature.onForHandle(handle, kwArgs);
 		});
 		return handle;
 	},

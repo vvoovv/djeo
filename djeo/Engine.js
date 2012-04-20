@@ -9,6 +9,8 @@ define([
 	"./Placemark",
 	"djeo/util/geometry"
 ], function(require, declare, lang, array, gfx, matrix, Engine, Placemark, geom) {
+	
+var engineEvents = {mouseover: "onmouseover", mouseout: "onmouseout", click: "onclick"};
 
 return declare([Engine], {
 	
@@ -18,7 +20,7 @@ return declare([Engine], {
 	
 	resizePoints: true,
 	resizeLines: true,
-	resizePolygons: true,
+	resizeAreas: true,
 	
 	correctScale: false,
 	
@@ -40,11 +42,11 @@ return declare([Engine], {
 		
 		if (map.resizePoints !== undefined) this.resizePoints = map.resizePoints;
 		if (map.resizeLines !== undefined) this.resizeLines = map.resizeLines;
-		if (map.resizePolygons !== undefined) this.resizePolygons = map.resizePolygons;
+		if (map.resizeAreas !== undefined) this.resizeAreas = map.resizeAreas;
 		
 		if (map.resizePoints !== undefined) this.resizePoints = map.resizePoints;
 		if (map.resizeLines !== undefined) this.resizeLines = map.resizeLines;
-		if (map.resizePolygons !== undefined) this.resizePolygons = map.resizePolygons;
+		if (map.resizeAreas !== undefined) this.resizeAreas = map.resizeAreas;
 
 		this.initialized = true;
 		readyFunction();
@@ -60,6 +62,7 @@ return declare([Engine], {
 		var mapExtent = this.map.extent,
 			mapWidth = mapExtent[2] - mapExtent[0],
 			mapHeight = mapExtent[3] - mapExtent[1];
+		console.debug(mapExtent);
 
 		// check if we need to apply a corrective scaling
 		if (mapWidth<1000 || mapHeight<1000) this.correctScale = true;
@@ -73,10 +76,11 @@ return declare([Engine], {
 		return this.group;
 	},
 	
-	connect: function(feature, event, context, method) {
+	on: function(feature, event, method, context) {
 		var connections = [];
 		// normalize the callback function
-		method = this.normalizeCallback(feature, event, context, method);
+		method = this.normalizeCallback(feature, event, method, context);
+		event = engineEvents[event];
 		array.forEach(feature.baseShapes, function(shape){
 			connections.push([shape, shape.connect(event, method)]);
 		});
@@ -151,16 +155,15 @@ return declare([Engine], {
 	
 	_resizePlacemark: function(feature, scaleFactor) {
 		if (feature.invalid) return;
-		var type = feature.getCoordsType();
 
-		if (this.resizePoints && type == "Point") {
+		if (this.resizePoints && feature.isPoint()) {
 			array.forEach(feature.baseShapes, function(shape){
 				shape.applyRightTransform(matrix.scale(scaleFactor));
 			});
 		}
 		else if ( gfx.renderer!="vml" && (
-				(this.resizeLines && (type == "LineString" || type == "MultiLineString")) ||
-				(this.resizePolygons && (type == "Polygon" || type == "MultiPolygon")) )) {
+				(this.resizeLines && feature.isLine()) ||
+				(this.resizeAreas && feature.isArea()) )) {
 			array.forEach(feature.baseShapes, function(shape){
 				var stroke = shape.getStroke();
 				if (stroke) {

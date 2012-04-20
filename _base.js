@@ -13,7 +13,7 @@ lang.mixin(djeo, {
 djeo.featureTypes = {};
 
 // supported events
-djeo.events = {onmouseover: 1, onmouseout: 1, onclick: 1, onmousemove: 1};
+djeo.events = {mouseover: 1, mouseout: 1, click: 1, mousemove: 1};
 
 var deps = {};
 djeo.dependencies = deps;
@@ -34,7 +34,7 @@ djeo.defaultStyle = [
 	{
 		theme: "highlight",
 		stroke: "orange",
-		polygon: {strokeWidth: 3},
+		area: {strokeWidth: 3},
 		rScale: 1.5
 	}
 ]

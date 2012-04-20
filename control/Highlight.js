@@ -22,26 +22,7 @@ return declare([Base], {
 	init: function() {
 
 	},
-/*	
-	process: function(event){
-		var feature = event.feature;
 
-		if (event.type == "onmouseover") {
-			if (this.highlightedFeature) {
-				if (this.highlightedFeature == feature) return;
-				this.highlightedFeature.render(true);
-			}
-			this.highlightedFeature = feature;
-			feature.render(true, "highlight");
-		}
-		else { // onmouseout
-			if (this.highlightedFeature) {
-				this.highlightedFeature.render(true);
-				this.highlightedFeature = null;
-			}
-		}
-	}
-*/
 	pointeroverAction: function(newfeature, oldFeature) {
 		if (oldFeature) {
 			oldFeature.render(true);
