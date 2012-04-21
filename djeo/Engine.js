@@ -62,7 +62,6 @@ return declare([Engine], {
 		var mapExtent = this.map.extent,
 			mapWidth = mapExtent[2] - mapExtent[0],
 			mapHeight = mapExtent[3] - mapExtent[1];
-		console.debug(mapExtent);
 
 		// check if we need to apply a corrective scaling
 		if (mapWidth<1000 || mapHeight<1000) this.correctScale = true;

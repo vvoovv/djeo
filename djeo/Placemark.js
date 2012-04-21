@@ -419,8 +419,7 @@ return declare([P], {
 			textDef.x = x;
 			textDef.y = y;
 			textDef.text = label;
-			
-			console.debug(x,y,this.lengthDenominator);
+
 			textShape = this.text.createText(textDef).setTransform(matrix.scaleAt(1/this.lengthDenominator, x, y ));
 
 			if (fill) textShape.setFill(fill);

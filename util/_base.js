@@ -8,7 +8,7 @@ u.earthRadius = 6378137; // meters
 
 var location = window.location,
 	// href without search
-	url = location.origin + location.pathname
+	url = location.protocol + "//" + location.host + location.pathname
 ;
 u.baseUrl = has("host-browser") ? url.substring(0, url.lastIndexOf('/')+1) : "";
 
