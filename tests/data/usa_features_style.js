@@ -39,7 +39,7 @@ style: [
 	{
 		// the following style attributes are applied to the feature with id="US-CA" (California)
 		fid: "US-CA",
-		polygon: {
+		area: {
 			// the attributes inside polygon block are applied to polygon map features only;
 			// this is referred to as "specific" style;
 			// use "line" for line strings;
@@ -53,7 +53,7 @@ style: [
 		// the following style attributes are applied to the features
 		// with id="US-IL" (Illinois) or id="US-OH" (Ohio)
 		fid: ["US-IL","US-OH"],
-		polygon: {
+		area: {
 			fill: "green",
 			stroke: "cyan"
 		}
@@ -63,6 +63,7 @@ style: [
 features: [
 	{
 		id: "areas",
+		name: "Areas",
 		// define styleClass for the feature
 		styleClass: "styleForAreas",
 		features: usaFeatures,
@@ -87,6 +88,7 @@ features: [
 		}
 	},
 	{
+		name: "Test a hole",
 		// inline style always overrides styling attributes defined with styleClass and
 		// inline styles located before in the map feature hierarchy
 		style: {
@@ -107,6 +109,7 @@ features: [
 	},
 	{
 		id: "railways",
+		name: "Line strings",
 		style: [
 			{
 				stroke: "red",
@@ -140,6 +143,7 @@ features: [
 		features: usaSomeRailways
 	},
 	{
+		name: "Point features",
 		// define point map features in this feature container
 		features: [
 			{

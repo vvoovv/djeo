@@ -46,6 +46,20 @@ var p = declare([Feature], {
 		return this.getType();
 	},
 	
+	isPoint: function() {
+		return (this.getCoordsType() == "Point");
+	},
+	
+	isArea: function() {
+		var type = this.getCoordsType();
+		return (type == "Polygon" || type == "MultiPolygon");
+	},
+	
+	isLine: function() {
+		var type = this.getCoordsType();
+		return (type == "LineString" || type == "MultiLineString");
+	},
+	
 	getCoords: function() {
 		return this._getCoords();
 	},
@@ -69,6 +83,9 @@ var p = declare([Feature], {
 	},
 
 	_render: function(stylingOnly, theme) {
+		if (!stylingOnly) {
+			this.parent._show(this, true, true);
+		}
 		this.map.engine.factories.Placemark._render(this, stylingOnly, theme);
 	},
 	
@@ -84,9 +101,14 @@ var p = declare([Feature], {
 	show: function(show) {
 		if (show === undefined) show = true;
 		if (this.visible != show) {
-			this.map.engine.factories.Placemark.show(this, show);
-			this.visible = show;
+			// delegate to the parent
+			this.parent._show(this, show);
 		}
+	},
+	
+	_show: function(show) {
+		this.map.engine.factories.Placemark.show(this, show);
+		this.visible = show;
 	},
 
 	getBbox: function() {
@@ -97,7 +119,7 @@ var p = declare([Feature], {
 		return bb;
 	},
 
-	connectWithHandle: function(handle, /* Object */kwArgs) {
+	onForHandle: function(handle, /* Object */kwArgs) {
 		if (this.invalid) return handle;
 		var handleObj = this.handles[handle];
 		
@@ -120,7 +142,7 @@ var p = declare([Feature], {
 			array.forEach(events, function(event) {
 				if (djeo.events[event]) {
 					eventConnections.push(
-						this.map.engine.connect(this, event, kwArgs.context, kwArgs.method)
+						this.map.engine.on(this, event, kwArgs.method, kwArgs.context)
 					);
 					numEvents++;
 				}

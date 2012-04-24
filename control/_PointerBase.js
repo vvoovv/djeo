@@ -38,7 +38,7 @@ return declare(null, {
 		this.map = map;
 		
 		// default events to listen to
-		this.events = ["onmouseover", "onmouseout"];
+		this.events = ["mouseover", "mouseout"];
 
 		if(!kwArgs) kwArgs = {};
 		lang.mixin(this, kwArgs);
@@ -72,10 +72,10 @@ return declare(null, {
 	
 	_connectEvents: function() {
 		array.forEach(this.features, function(feature){
-			feature.connectWithHandle(handle, {
+			feature.onForHandle(handle, {
 				events: this.events,
 				context: this,
-				method: "process",
+				method: this.process,
 				key: this.id,
 				value: this
 			});
@@ -96,7 +96,7 @@ return declare(null, {
 			this.c.timeoutId = null;
 		}
 
-		if (event.type == "onmouseover") {
+		if (event.type == "mouseover") {
 			if (this.c.feature == feature) return;
 
 			//this.c.feature = feature;
@@ -108,7 +108,7 @@ return declare(null, {
 			}
 			this.c.feature = feature;
 		}
-		else if (event.type == "onmouseout"){
+		else if (event.type == "mouseout"){
 			this.c.timeoutId = setTimeout(
 				lang.hitch(this, this._onpointerout),
 				this._onpointeroutDelay

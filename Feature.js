@@ -77,15 +77,15 @@ return declare(null, {
 		return this.bbox;
 	},
 
-	connect: function(/* String|Array? */events, /*Object|null*/ context, /*String|Function*/ method) {
-		return this.connectWithHandle(null, {
+	on: function(/* String|Array? */events, /*Function*/ method, /*Object?*/ context) {
+		return this.onForHandle(null, {
 			events: lang.isString(events) ? [events] : events,
 			context: context,
 			method: method
 		});
 	},
 	
-	connectWithHandle: function(/* String|Number */ handle, /*Object*/ kwArgs) {
+	onForHandle: function(/* String|Number */ handle, /*Object*/ kwArgs) {
 		
 	},
 	

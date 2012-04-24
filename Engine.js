@@ -116,13 +116,12 @@ return declare(null, {
 		//		An array that holds connection parameters that are specific for the engine
 	},
 	
-	normalizeCallback: function(feature, event, context, method) {
+	normalizeCallback: function(feature, event, method, context) {
 		// summary:
 		//		Normalizes callback function for events
 		//		A particular map engine may provide different implementation of the function
-		method = method ? lang.hitch(context, method) : context;
 		return function(nativeEvent){
-			method({
+			method.call(context, {
 				type: event,
 				event: nativeEvent,
 				feature: feature
@@ -163,14 +162,23 @@ return declare(null, {
 	},
 
 	renderContainer: function(container, stylingOnly, theme) {
+		if (!stylingOnly) {
+			// reset numVisibleFeatures
+			container.numVisibleFeatures = 0;
+		}
 		this._renderContainer(container, stylingOnly, theme);
 	},
 
 	_renderContainer: function(container, stylingOnly, theme) {
 		if (!container.visible) return;
+		if (container.features.length == 0 && !stylingOnly) {
+			container.parent.numVisibleFeatures++;
+		}
 		array.forEach(container.features, function(feature){
-			if (feature.isContainer || feature.visible) feature._render(stylingOnly, theme);
-		}, container);
+			if (feature.isContainer || feature.visible) {
+				feature._render(stylingOnly, theme);
+			}
+		});
 	},
 	
 	enableLayer: function(layerId, enabled) {

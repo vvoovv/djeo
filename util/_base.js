@@ -6,7 +6,11 @@ var u = {},
 
 u.earthRadius = 6378137; // meters
 
-u.baseUrl = has("host-browser") ? window.location.href.substring(0, window.location.href.lastIndexOf('/')+1) : "";
+var location = window.location,
+	// href without search
+	url = location.protocol + "//" + location.host + location.pathname
+;
+u.baseUrl = has("host-browser") ? url.substring(0, url.lastIndexOf('/')+1) : "";
 
 u.uid = function() {
 	idCounter += 1;
