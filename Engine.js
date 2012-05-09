@@ -33,11 +33,19 @@ return declare(null, {
 	// ignoredDependencies: Object
 	//		Ignored dependencies (e.g default implementation is used)
 	ignoredDependencies: null,
+	
+	// _layerCtrs: Object
+	//		Registry of layer constructors. Used to store costructors resolved from layer modules via require call
+	//		in the _onEngineReady functions of djeo/Map during djeo/Map initialization.
+	//		We need to resolve modules there to simplify things
+	//		(e.g. so set a proper map projection before rendering of features)
+	_layerCtrs: null,
 
 	constructor: function(kwArgs){
 		lang.mixin(this, kwArgs);
 		this.factories = {};
 		this.ignoredDependencies = {};
+		this._layerCtrs = {};
 	},
 
 	initialize: function(/* Function */readyFunction) {
@@ -181,8 +189,20 @@ return declare(null, {
 		});
 	},
 	
-	enableLayer: function(layerId, enabled) {
+	enableLayer: function(/* String|Object */layer, enabled) {
 
+	},
+	
+	isValidLayerId: function(/* String */layerId) {
+		return true;
+	},
+	
+	getLayerModuleId: function(/* String */layerId) {
+		return null;
+	},
+	
+	setLayerConstructor: function(/* String */layerId, /* Function */ctr) {
+		this._layerCtrs[layerId.toLowerCase()] = ctr;
 	}
 });
 

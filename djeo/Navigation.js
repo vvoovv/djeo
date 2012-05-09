@@ -2,10 +2,11 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/has", // has
 	"dojo/_base/event", // stop
+	"dojo/dom-geometry",
 	"../dojox/gfx",
 	"./Moveable",
 	"dojo/_base/sniff"
-], function(declare, has, event, gfx, Moveable) {
+], function(declare, has, event, domGeom, gfx, Moveable) {
 
 return declare(null, {
 
@@ -15,7 +16,7 @@ return declare(null, {
 	enable: function(enable) {
 		if (enable === undefined) enable = true;
 		if (enable) {
-			this.moveable = new Moveable(this.map.engine.surface);
+			this.moveable = new Moveable(this.map.engine.container, this.map);
 			if (gfx.renderer!="silverlight") this.enableZoom(true);
 		}
 		else {
@@ -41,14 +42,22 @@ return declare(null, {
 		event.stop(mouseEvent);
 		
 		// position relative to map container
-		var x = mouseEvent.pageX - this.map.x,
-			y = mouseEvent.pageY - this.map.y;
-		
-		// zoom increment power 
+		var coords = domGeom.position(this.map.engine.container, true),
+			x = mouseEvent.pageX - coords.x,
+			y = mouseEvent.pageY - coords.y
+		;
+
+		// zoom increment power
 		var power = mouseEvent[ has("mozilla") ? "detail" : "wheelDelta" ] / (has("mozilla") ? -3 : 120),
-			scaleFactor = Math.pow(1.2, power);
+			scaleFactor = Math.pow(this.map.engine.scaleFactor, power)
+		;
 
 		var engine = this.map.engine;
+		
+		for (var layerId in engine.layers) {
+			engine.layers[layerId].doZoom(scaleFactor, mouseEvent);
+		}
+
 		engine.group.applyLeftTransform({xx:scaleFactor,yy:scaleFactor, dx: x*(1-scaleFactor), dy: y*(1-scaleFactor)});
 
 		engine.factories.Placemark.calculateLengthDenominator();

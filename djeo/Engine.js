@@ -3,37 +3,45 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/_base/lang", // mixin, isString, hitch
 	"dojo/_base/array", // forEach
+	"dojo/dom-construct", // create
 	"../dojox/gfx",
 	"../dojox/gfx/matrix",
 	"../Engine",
 	"./Placemark",
 	"../util/geometry"
-], function(require, declare, lang, array, gfx, matrix, Engine, Placemark, geom) {
+], function(require, declare, lang, array, domConstruct, gfx, matrix, Engine, Placemark, geom) {
 
-var _osm = [
-	"./WebTiles",
-	{
-		url: [
-			"a.tile.openstreetmap.org",
-			"b.tile.openstreetmap.org",
-			"c.tile.openstreetmap.org"
-		]
-	}
-]
+var _osm = ["./WebTiles", {url: "http://[a,b,c].tile.openstreetmap.org"}];
+
+// MapQuest-OSM Tiles
+var _mqOsm = ["./WebTiles", {url: "http://otile[1,2,3,4].mqcdn.com/tiles/1.0.0/osm"}];
+
+// MapQuest Open Aerial Tiles
+var _mqOe = ["./WebTiles", {url: "http://oatile[1,2,3,4].mqcdn.com/tiles/1.0.0/sat"}];
 
 var supportedLayers = {
-	"ROADMAP": _osm,
+	"webtiles": ["./WebTiles", {}],
+	"roadmap": _osm,
+	"satellite": _mqOe,
 	"osm": _osm,
 	"openstreetmap": _osm,
 	"osm.org": _osm,
 	"openstreetmap.org": _osm,
-	"mapquest.com": 1,
-	"mapquest": 1
+	"mapquest-osm": _mqOsm,
+	"mapquest-oa": _mqOe
 };
 
 var engineEvents = {mouseover: "onmouseover", mouseout: "onmouseout", click: "onclick"};
 
+var getLayerClassId = function(/* String */layerId) {
+	// check if we've got a complex structure like "layerClassId:url"
+	var colonIndex = layerId.indexOf(":");
+	return (colonIndex > 0) ? layerId.substring(0, colonIndex) : layerId;
+};
+
 return declare([Engine], {
+	
+	scaleFactor: 1.2,
 	
 	correctionScale: 100000,
 	
@@ -45,13 +53,26 @@ return declare([Engine], {
 	
 	correctScale: false,
 	
-	_layers: null,
+	// array of layers
+	layers: null,
+	
+	// registry of layers
+	_layerReg: null,
+	
+	// the bottom layer may set projection for the whole map
+	// it may also set discrete zooms for the whole map
+	bottomLayer: null,
+	
+	// container: Object
+	//		Container for all map's divs
+	container: null,
 	
 	constructor: function(kwArgs) {
 		this._require = require;
 		// set ignored dependencies
 		lang.mixin(this.ignoredDependencies, {"Highlight": 1, "Tooltip": 1});
-		this._layers = {};
+		this.layers = [];
+		this._layerReg = {};
 		// initialize basic factories
 		this._initBasicFactories(new Placemark({
 			map: this.map,
@@ -61,7 +82,14 @@ return declare([Engine], {
 	
 	initialize: function(/* Function */readyFunction) {
 		var map = this.map;
-		this.surface = gfx.createSurface(map.container, map.width, map.height);
+		this.map.container.style.overflow = "hidden";
+		this.container = domConstruct.create("div", {style:{
+			width: "100%",
+			height: "100%",
+			position: "relative"
+		}}, map.container);
+		this.surface = gfx.createSurface(this.container, map.width, map.height);
+		this.surface.rawNode.style.position = "absolute";
 		this.group = this.surface.createGroup();
 		
 		if (map.resizePoints !== undefined) this.resizePoints = map.resizePoints;
@@ -120,32 +148,84 @@ return declare([Engine], {
 		this.surface.destroy();
 	},
 	
-	enableLayer: function(layer, enabled) {
+	enableLayer: function(/* String|Object */layer, enabled) {
 		if (enabled === undefined) enabled = true;
 		if (enabled) {
 			if (lang.isString(layer)) {
 				// we've got a layer id
-				// check if know the layer id
-				if (!supportedLayers[layer]) return;
+				layer = layer.toLowerCase();
 				// check if the layer already has been enabled
-				if (this._layers[layer]) return;
+				if (this._layerReg[layer]) return;
 
-				var layerDef = supportedLayers[layer];
-				if (lang.isString(layerDef)) {
-					layerDef = [layerDef, {}];
+				var colonIndex = layer.indexOf(":")
+					classId = (colonIndex > 0) ? layer.substring(0, colonIndex) : layer
+				;
+				
+				// check if know the layer class id
+				if (!supportedLayers[classId]) return;
+				var layerDef = supportedLayers[classId];
+				var kwArgs = layerDef[1];
+				if (colonIndex > 0) {
+					kwArgs.paramStr = layer.substring(colonIndex+1);
 				}
-				require([layerDef[0]], function(Layer){
-					console.debug("Layer:"+Layer);
-				});
+
+				if (this._layerCtrs[classId]) {
+					// layer constructor is already available
+					// proceed directly to layer initialization
+					this._createLayer(layer, this._layerCtrs[classId], kwArgs);
+				}
+				else {
+					// load layer module
+					require([layerDef[0]], lang.hitch(this, function(layerCtor){
+						this._layerCtrs[classId] = layerCtor;
+						this._createLayer(layer, layerCtor, kwArgs);
+					}));
+				}
 			}
 			else {
 				// we've got a layer instance
 				// check if the layer already has been enabled
-				for (var id in this.layers) {
-					if (this.layers[id] === layer) return;
+				for (var i=0; i<this.layers.length; i++) {
+					if (this.layers[i] === layer) return;
 				}
 			}
 		}
+	},
+	
+	_createLayer: function(/* String */layerId, /* Function */layerCtor, kwArgs) {
+		// create container for the layer
+		var container = domConstruct.create("div", {style:{
+			top: 0,
+			left: 0,
+			width: "100%",
+			height: "100%",
+			position: "absolute"
+		}}, this.container, 0);
+		if (!kwArgs) {
+			kwArgs = {};
+		}
+		kwArgs.container = container;
+		var layer = new layerCtor(kwArgs, this.map);
+		// TODO: check if the layer supports bottom layer projection
+		if (!this.bottomLayer) {
+			this.bottomLayer = layer;
+			if (layer.projection) {
+				this.map.projection = layer.projection;
+			}
+		}
+		layer.init();
+		this.layers.push(layer);
+		this._layerReg[layerId] = layer;
+	},
+	
+	isValidLayerId: function(/* String */layerId) {
+		var classId = getLayerClassId(layerId.toLowerCase());
+		return classId in supportedLayers;
+	},
+	
+	getLayerModuleId: function(/* String */layerId) {
+		var classId = getLayerClassId(layerId.toLowerCase());
+		return this._require.toAbsMid(supportedLayers[classId][0]);
 	},
 	
 	zoomTo: function(/* Array */extent) {
@@ -157,7 +237,8 @@ return declare([Engine], {
 			scale = Math.min(map.width/extentWidth, map.height/extentHeight),
 			pf = this.factories.Placemark,
 			x1 = pf.getX(extent[0]),
-			y2 = pf.getY(extent[3]);
+			y2 = pf.getY(extent[3])
+		;
 		
 		if (extentWidth==0 && extentHeight==0) {
 			// we've got a point
@@ -179,10 +260,30 @@ return declare([Engine], {
 			x1 = pf.getX(extent[0] - extentWidth/2);
 			y2 = pf.getY(extent[3] + extentHeight/2);
 		}
+		else if (extentWidth == 0) {
+			// we've got a vertical line
+			
+		}
+		else if (extentHeight == 0) {
+			// we've got a horizontal line
+		}
+		else {
+			
+		}
 		
+		// check if we need to adjust scale if we have a bottom layer
+		// and if the bottom layer supports only discrete zooms
+		var bottomLayer = this.bottomLayer;
+		if (bottomLayer && bottomLayer.discreteScales) {
+			scale = bottomLayer.getScale();
+		}
+		// backup scale to perform the scale correction in the next line
+		var _scale =  scale;
 		if (this.correctScale) scale /= this.correctionScale;
 
+	
 		this.group.setTransform([
+			matrix.translate( (map.width-_scale*extentWidth)/2, (map.height-_scale*extentHeight)/2 ),
 			matrix.scale(scale),
 			matrix.translate(-x1, -y2)
 		]);

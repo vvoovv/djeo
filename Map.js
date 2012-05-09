@@ -191,21 +191,49 @@ return declare(null, {
 				requireModules.push(moduleId);
 			}
 		}
+		var layers = this.layers,
+			// layerIndex is used to find the layer object for a layer id in the require callback
+			layerIndex = requireModules.length
+		;
+		if (layers) {
+			if (lang.isString(layers)) {
+				layers = [layers];
+			}
+			// processing layer ids;
+			// finding module id for the layers
+			var _layers = [];
+			array.forEach(layers, function(layer){
+				if (lang.isString(layer)) {
+					if (this.engine.isValidLayerId(layer)) {
+						var layerModuleId = this.engine.getLayerModuleId(layer);
+						if (layerModuleId) {
+							requireModules.push(layerModuleId);
+						}
+						_layers.push(layer);
+					}
+				}
+				else {
+					_layers.push(layer);
+				}
+			}, this);
+		}
+		layers = _layers;
 		require(requireModules, lang.hitch(this, function() {
 			// Ok, all preliminary work is finished
 			// Now loads layer and perform rendering
 
 			// load layers
-			if (this.layers) {
-				if (lang.isString(this.layers)) this.layers = [this.layers];
-				if (this.layers.length) {
-					array.forEach(this.layers, function(layerId){
-						this.enableLayer(layerId, true);
-					}, this);
-				}
-				else this.enableLayer(djeo.defaultLayerID);
+			if (layers && layers.length) {
+				var args = arguments;
+				array.forEach(layers, function(layer){
+					if (lang.isString(layer) && this.engine.getLayerModuleId(layer)) {
+						// args[layerIndex] is layer constructor
+						this.engine.setLayerConstructor(layer, args[layerIndex])
+						layerIndex++;
+					}
+					this.engine.enableLayer(layer, true);
+				}, this);
 			}
-			else this.enableLayer(djeo.defaultLayerID);
 
 			// perform rendering
 			if (this.document.features.length) this.render();
@@ -505,7 +533,7 @@ return declare(null, {
 	getCoords: function(/* Array */coords, /* String? */type) {
 		// summary:
 		//		Returns feature coordinates in the map projection.
-		//		If module djeo.projection is loaded, the coordinates are converted to
+		//		If module djeo/projection is loaded, the coordinates are converted to
 		//		the map projection. Otherwise it is returned intact
 		// returns:
 		//		feature coordinates in the map projection

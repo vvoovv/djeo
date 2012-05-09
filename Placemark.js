@@ -192,7 +192,7 @@ var p = declare([Feature], {
 		var factory = this.map.engine.factories.Placemark;
 		if (factory.translate) {
 			// convert coordinates to the map projection if it is relevant here
-			position = this.map.getCoords(position, "Point");
+			position = this.map.getCoords(position);
 			factory.translate(position, this);
 			this.setCoords(position);
 			//FIXME publish("djeo.placemark.translate", [this, position]);

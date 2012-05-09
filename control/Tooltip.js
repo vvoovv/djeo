@@ -10,7 +10,7 @@ define([
 ], function(declare, lang, on, domGeom, Tooltip, place, djeo, Base){
 
 var dependency = "Tooltip";
-djeo.registerDependency("Tooltip");
+djeo.registerDependency(dependency);
 
 var DEFAULT_CONTENT = function(feature){
 	return feature.tooltip || feature.name || feature.id;

@@ -5,7 +5,7 @@ define([
 ], function(declare, djeo, Base) {
 
 var dependency = "Highlight";
-djeo.registerDependency("Highlight");
+djeo.registerDependency(dependency);
 
 return declare([Base], {
 	//	summary:

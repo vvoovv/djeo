@@ -5,7 +5,7 @@ define([
 ], function(declare, lang, djeo){
 
 var dependency = "Navigation";
-djeo.registerDependency("Navigation");
+djeo.registerDependency(dependency);
 
 return declare(null, {
 	
