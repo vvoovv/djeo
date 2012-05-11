@@ -10,6 +10,8 @@ var symbolizers = ["points", "lines"],
 	styleAttributes = {theme:1, name: 1, legend: 1},
 	noStyleMixin = {id:1, filter:1, styleClass:1, fid:1, composer: 1, composerOptions: 1};
 
+var filterPattern = /\$(?:(\w+)|\[([^\]]+)\])/g;
+
 var Style = declare(null, {
 	
 	// json style definition
@@ -104,7 +106,16 @@ var Style = declare(null, {
 
 		// prepare filter function
 		var filter = def.filter;
-		if (filter) this.filter = lang.isString(filter) ? eval("_=function(){return "+filter+";}" ) : filter;
+		if (filter) {
+			if (lang.isString(filter)) {
+				// replace $attribute or $[attribute] with this.get('attribute')
+				filter = filter.replace(filterPattern, function(match, attr1, attr2){
+					return "this.get('" + (attr1||attr2) + "')";
+				});
+				filter = eval("_=function(){return "+filter+";}");
+			}
+			this.filter = filter;
+		}
 
 		// prepare styleClass and fid
 		var styleClass = def.styleClass;

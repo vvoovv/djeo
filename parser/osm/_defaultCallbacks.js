@@ -2,17 +2,31 @@ define([
 	"dojo/_base/lang", // isString
 	"dojo/_base/array" // array
 ], function(lang, array){
+
+var filterPattern = /\$(?:(\w+)|\[([^\]]+)\])/g;
 	
 var _onBegin = function(){
-	if (!this.style) return;
+	if (!this.style) {
+		// this is need for correct operation of _onElement
+		this.container = this;
+		return;
+	}
 	// building registry of style filter functions
 	var filters = {};
 	array.forEach(this.style, function(style){
 		var filter = style.filter;
 		if (style.id && filter) {
+			// process filter, the related code is take from djeo/Style
+			if (lang.isString(filter)) {
+				// replace $attribute or $[attribute] with this.get('attribute')
+				filter = filter.replace(filterPattern, function(match, attr1, attr2){
+					return "this['" + (attr1||attr2) + "']";
+				});
+				filter = eval("_=function(){return "+filter+";}");
+			}
 			// the first element of the array is filter function itself
 			// the second element of the array is reserved for a feature container
-			filters[style.id] = [(lang.isString(filter)) ? eval("_=function(){return "+filter+";}" ) : filter, 0];
+			filters[style.id] = [filter, 0];
 		}
 	});
 	this._filters = filters;
@@ -57,8 +71,9 @@ var _onComplete = function(){
 };
 
 var _onElement = function(element, feature) {
+	// default value for container variable
+	var container = this.container;
 	// check if filter is evaluated to true
-	var container;
 	for (var filterId in this._filters){
 		if (this._filters[filterId][0].call(feature)) {
 			container = this._filters[filterId][1];

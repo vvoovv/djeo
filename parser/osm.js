@@ -41,7 +41,7 @@ var Parser = function(elements, args) {
 			if (type == "#text") continue;
 			// action normally can be equal to "delete" or "modify"
 			// we don't consider elements with action attribute
-			if (e.getAttribute("action")) continue;
+			if (e.getAttribute("action") == "delete") continue;
 
 			var id = e.getAttribute("id");
 			// save id for future reference
@@ -66,7 +66,7 @@ var Parser = function(elements, args) {
 			if (type == "#text") continue;
 			// action normally can be equal to "delete" or "modify"
 			// we don't consider elements with action attribute
-			if (e.getAttribute("action")) continue;
+			if (e.getAttribute("action") == "delete") continue;
 
 			var id = e.id,
 				attrs = this.getAttrs(e),

@@ -25,6 +25,12 @@ define([], [
 			"name:de": "Geschäfte"
 		},
 		{
+			sid: "bank",
+			name: "Banks",
+			"name:ru": "Банки",
+			"name:de": "Banken"
+		},
+		{
 			sid: "hotel",
 			name: "Hotels",
 			"name:ru": "Гостиницы"

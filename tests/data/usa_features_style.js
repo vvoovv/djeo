@@ -23,7 +23,7 @@ style: [
 		// in addition, the style attributes are applied only if
 		// the filter is evaluated to true for the map feature;
 		// "pd" (i.e. population density) is supposed to be an attribute of the map feature
-		filter: "this.pd<=52.38",
+		filter: "$pd<=52.38",
 		// if applied, the style attributes override the attributes from the previous style block;
 		// in this case fill="orange" overrides fill="lightgrey" from the previous style block
 		fill: "orange"
@@ -31,7 +31,7 @@ style: [
 	{
 		// see explanations in the previous style block
 		styleClass: "styleForAreas",
-		filter: "this.pd>52.38 && this.pd<=188.64",
+		filter: "$pd>52.38 && $pd<=188.64",
 		fill: "lime",
 		stroke: "blue",
 		strokeWidth: 2

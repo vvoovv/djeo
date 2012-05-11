@@ -57,7 +57,7 @@ return {
 			else {
 				var gfxStroke = shape.getStroke();
 				if (stroke) {
-					if (!gfxStroke) gfxStroke = {join: "round", cap: "round"};
+					if (!gfxStroke) gfxStroke = {join: "round", cap: "butt"};
 					gfxStroke.color = new Color(stroke);
 				}
 				if (gfxStroke) {

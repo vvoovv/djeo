@@ -17,18 +17,17 @@ var _osm = ["./WebTiles", {url: "http://[a,b,c].tile.openstreetmap.org"}];
 var _mqOsm = ["./WebTiles", {url: "http://otile[1,2,3,4].mqcdn.com/tiles/1.0.0/osm"}];
 
 // MapQuest Open Aerial Tiles
-var _mqOe = ["./WebTiles", {url: "http://oatile[1,2,3,4].mqcdn.com/tiles/1.0.0/sat"}];
+var _mqOa = ["./WebTiles", {url: "http://oatile[1,2,3,4].mqcdn.com/tiles/1.0.0/sat"}];
 
 var supportedLayers = {
 	"webtiles": ["./WebTiles", {}],
 	"roadmap": _osm,
-	"satellite": _mqOe,
 	"osm": _osm,
 	"openstreetmap": _osm,
 	"osm.org": _osm,
 	"openstreetmap.org": _osm,
 	"mapquest-osm": _mqOsm,
-	"mapquest-oa": _mqOe
+	"mapquest-oa": _mqOa
 };
 
 var engineEvents = {mouseover: "onmouseover", mouseout: "onmouseout", click: "onclick"};
