@@ -168,7 +168,22 @@ var Parser = function(elements, args) {
 			coords.push([node.lon, node.lat])
 		}
 		return feature;
-	}
+	};
+	
+	// The following 3 functions: isPoint, isArea, isLine are used as substitutions
+	// for the same functions from djeo/Placemark
+	
+	this.isPoint = function(f) {
+		return (f.type == "Point");
+	};
+	
+	this.isArea = function(f) {
+		return (f.type == "Polygon" || f.type == "MultiPolygon");
+	};
+	
+	this.isLine = function(f) {
+		return (f.type == "LineString" || f.type == "MultiLineString");
+	};
 };
 
 osm.parse = function(str, args) {

@@ -1,11 +1,12 @@
 define([
 	"dojo/_base/declare", // declare
+	"require",
 	"dojo/_base/lang", // isArray, isObject
 	"dojo/_base/array", // forEach
 	"../_base",
 	"../util/_base",
 	"../Style"
-], function(declare, lang, array, djeo, u) {
+], function(declare, require, lang, array, djeo, u) {
 	
 var P = declare(null, {
 	

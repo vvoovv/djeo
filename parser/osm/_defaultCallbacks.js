@@ -3,7 +3,8 @@ define([
 	"dojo/_base/array" // array
 ], function(lang, array){
 
-var filterPattern = /\$(?:(\w+)|\[([^\]]+)\])/g;
+// search for $attribute or $[attribute] or 
+var filterPattern = /\$(?:(\w+)|\[([^\]]+)\])|this\.(\w+)\(\)/g;
 	
 var _onBegin = function(){
 	if (!this.style) {
@@ -16,13 +17,15 @@ var _onBegin = function(){
 	array.forEach(this.style, function(style){
 		var filter = style.filter;
 		if (style.id && filter) {
-			// process filter, the related code is take from djeo/Style
+			// process filter, the related code is taken from djeo/Style
 			if (lang.isString(filter)) {
-				// replace $attribute or $[attribute] with this.get('attribute')
-				filter = filter.replace(filterPattern, function(match, attr1, attr2){
-					return "this['" + (attr1||attr2) + "']";
+				// replace $attribute or $[attribute] with f['attribute']
+				filter = filter.replace(filterPattern, function(match, attr1, attr2, functionName){
+					// f stands for feature
+					return functionName ? "this."+functionName+"(f)" : "f['"+(attr1||attr2)+"']";
 				});
-				filter = eval("_=function(){return "+filter+";}");
+				// parameter f stands for feature
+				filter = eval("_=function(f){return "+filter+";}");
 			}
 			// the first element of the array is filter function itself
 			// the second element of the array is reserved for a feature container
@@ -75,7 +78,7 @@ var _onElement = function(element, feature) {
 	var container = this.container;
 	// check if filter is evaluated to true
 	for (var filterId in this._filters){
-		if (this._filters[filterId][0].call(feature)) {
+		if (this._filters[filterId][0].call(this, feature)) {
 			container = this._filters[filterId][1];
 			break;
 		}
