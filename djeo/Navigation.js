@@ -1,17 +1,18 @@
 define([
 	"dojo/_base/declare", // declare
 	"dojo/has", // has
+	"dojo/on",
+	"dojo/_base/lang", // hitch
 	"dojo/_base/event", // stop
 	"dojo/dom-geometry",
 	"../dojox/gfx",
 	"./Moveable",
 	"dojo/_base/sniff"
-], function(declare, has, event, domGeom, gfx, Moveable) {
+], function(declare, has, on, lang, event, domGeom, gfx, Moveable) {
 
 return declare(null, {
 
 	moveable: null,
-	wheelConnection: null,
 
 	enable: function(enable) {
 		if (enable === undefined) enable = true;
@@ -28,16 +29,31 @@ return declare(null, {
 
 	enableZoom: function(enable) {
 		if (enable) {
-			var wheelEventName = !has("mozilla") ? "onmousewheel" : "DOMMouseScroll";
-			this.wheelConnection = this.map.engine.surface.connect(wheelEventName, this, this._onWheel);
+			var engine = this.map.engine;
+			// wheel event
+			var wheelEventName = !has("mozilla") ? "mousewheel" : "DOMMouseScroll";
+			this.wheelHandler = on(engine.container, wheelEventName, lang.hitch(this, this._onWheel));
+			// double click
+			this.dblclickHandler = on(engine.container, "dblclick", lang.hitch(this, function(mouseEvent){
+				this._onZoom(mouseEvent, engine.scaleFactor);
+			}));
 		}
 		else {
-			this.map.engine.surface.disconnect(this.wheelConnection);
-			this.wheelConnection = null;
+			this.dblclickHandler.remove();
+			this.wheelHandler.remove();
+			this.wheelHandler = this.dblclickHandler = null;
 		}
 	},
-
+	
 	_onWheel: function(mouseEvent) {
+		// zoom increment power
+		var power = mouseEvent[ has("mozilla") ? "detail" : "wheelDelta" ] / (has("mozilla") ? -3 : 120),
+			scaleFactor = Math.pow(this.map.engine.scaleFactor, power)
+		;
+		this._onZoom(mouseEvent, scaleFactor);
+	},
+
+	_onZoom: function(mouseEvent, scaleFactor) {
 		// prevent browser interaction
 		event.stop(mouseEvent);
 		
@@ -47,15 +63,10 @@ return declare(null, {
 			y = mouseEvent.pageY - coords.y
 		;
 
-		// zoom increment power
-		var power = mouseEvent[ has("mozilla") ? "detail" : "wheelDelta" ] / (has("mozilla") ? -3 : 120),
-			scaleFactor = Math.pow(this.map.engine.scaleFactor, power)
-		;
-
 		var engine = this.map.engine;
 		
-		for (var layerId in engine.layers) {
-			engine.layers[layerId].doZoom(scaleFactor, mouseEvent);
+		for (var i=0; i<engine.layers.length; i++) {
+			engine.layers[i].doZoom(scaleFactor, mouseEvent);
 		}
 
 		engine.group.applyLeftTransform({xx:scaleFactor,yy:scaleFactor, dx: x*(1-scaleFactor), dy: y*(1-scaleFactor)});
