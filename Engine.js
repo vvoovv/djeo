@@ -2,8 +2,13 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/has", // has
 	"dojo/_base/lang", // mixin, hitch, isArray, isString, isObject
-	"dojo/_base/array" // forEach
-], function(declare, has, lang, array){
+	"dojo/_base/array", // forEach
+	"./_base"
+], function(declare, has, lang, array, djeo){
+	
+var defaultCenter = [0,0],
+	defaultZoom = 3
+;
 
 return declare(null, {
 	// summary:
@@ -87,9 +92,49 @@ return declare(null, {
 
 	prepare: function() {
 		// summary:
-		//		Normally called by _render method of djeo/Map.
+		//		Normally called by this.render() method.
 		//		Should include some preparatory code for rendering.
 		//		Should be implemented in the inherited class
+	},
+	
+	_setCamera: function() {
+		var map = this.map;
+		if (map.extent) {
+			this.zoomTo(map.extent);
+		}
+		else {
+			// finding map center
+			var center = map.center || (map.lookAt && map.lookAt.coords),
+				bbox
+			;
+			if (!center || !("zoom" in map)) {
+				bbox = map.getBbox();
+			}
+			if ("zoom" in map) {
+				this.zoom = map.zoom;
+				if (!center) {
+					center = bbox ? [(bbox[2] + bbox[0])/2, (bbox[3] + bbox[1])/2] : [defaultCenter[0], defaultCenter[1]];
+				}
+			}
+			else {
+				if (center || !bbox) {
+					this.zoom = defaultZoom;
+					if (!bbox) {
+						center = [defaultCenter[0], defaultCenter[1]];
+					}
+				}
+				// If center is not set bbox has been calculated,
+				// the center of the bounding box will be used as a map center
+			}
+			if (center) {
+				this.center = map.getCoords(center);
+			}
+			// now actually set the camera
+			if (!center) {
+				this.zoomTo(bbox);
+			}
+		}
+		
 	},
 	
 	getFactory: function(/* String */dependency) {
@@ -145,9 +190,9 @@ return declare(null, {
 		// theme:
 		//		See description in the render method of djeo/Map
 		var map = this.map;
-		if (!map.extent) map.extent = map.getBbox();
 		map._calculateViewport();
 		this.prepare();
+		this._setCamera();
 		map.document.render(stylingOnly, theme);
 	},
 	
@@ -202,7 +247,8 @@ return declare(null, {
 	},
 	
 	setLayerConstructor: function(/* String */layerId, /* Function */ctr) {
-		this._layerCtrs[layerId.toLowerCase()] = ctr;
+		var classId = djeo.getLayerClassId(layerId.toLowerCase());
+		this._layerCtrs[classId] = ctr;
 	}
 });
 

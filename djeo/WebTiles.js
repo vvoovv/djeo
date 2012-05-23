@@ -17,8 +17,6 @@ for(var i=1; i<20; i++) {
 	scales[i] = 2 * scales[i-1];
 }
 
-var defaultCenter = [0,0];
-
 return declare(null, {
 	
 	zoom: 3,
@@ -64,65 +62,58 @@ return declare(null, {
 			map.coordsProjection = "EPSG:4326";
 		}
 		map.engine.scaleFactor = 2;
-		// finding center, zoom, scale
-		var center = map.center;
-		if (center) {
-			center = map.getCoords(center);
+		
+		this.tileable = new Tileable({
+			wrapHor: true,
+			setTileContent: lang.hitch(this, this.setTileContent),
+			extraTiles: 1
+		}, this.container);
+
+		this.tileable._mixin();
+		this.tileable._buildRendering();
+	},
+
+	zoomTo: function(extent) {
+		var map = this.map,
+			center = [(extent[2] + extent[0])/2, (extent[3] + extent[1])/2],
+			scale = Math.min(map.width/(extent[2] - extent[0]), map.height/(extent[3] - extent[1]))
+		;
+		// find which zoom is the closest to the scale
+		if (scale <= scales[0]) {
+			this.zoom = 0;
 		}
 		else {
-			var bbox = map.getBbox();
-			if (bbox) {
-				center = [(bbox[2] + bbox[0])/2, (bbox[3] + bbox[1])/2];
+			var maxZoom = scales.length - 1;
+			if (scale > scales[maxZoom]) {
+				this.zoom = maxZoom;
 			}
 			else {
-				center = [defaultCenter[0], defaultCenter[1]];
-			}
-		}
-		if (map.zoom === undefined) {
-			scale = Math.min(map.width/(bbox[2] - bbox[0]), map.height/(bbox[3] - bbox[1]));
-			// find which zoom is the closest to the scale
-			if (scale <= scales[0]) {
-				this.zoom = 0;
-			}
-			else {
-				var maxZoom = scales.length - 1;
-				if (scale > scales[maxZoom]) {
-					this.zoom = maxZoom;
-				}
-				else {
-					for (var i = 0; i<maxZoom; i++) {
-						if (scales[i] < scale && scale <= scales[i+1]) {
-							this.zoom = ( (scale - scales[i]) <= (scales[i+1] - scale) ) ? i : i+1;
-							break;
-						}
+				for (var i = 0; i<maxZoom; i++) {
+					if (scales[i] < scale && scale <= scales[i+1]) {
+						this.zoom = i;
+						break;
 					}
 				}
 			}
 		}
-		else {
-			this.zoom = map.zoom;
-		}
-		
-		this.tileable = new Tileable({
-			wrapHor: true,
-			zoom: this.zoom, //3,
-			setTileContent: lang.hitch(this, this.setTileContent),
-			extraTiles: 1
-		}, this.container);
 		
 		// calculating center for this.tileable
-		var extent = this.tileable.extent,
-			x = center[0]/(2*Math.PI*u.earthRadius/extent[2]),
-			y = center[1]/(2*Math.PI*u.earthRadius/extent[3])
+		var tileable = this.tileable,
+			_pow = Math.pow(2, this.zoom)
+		;
+		tileable.extent = [0, 0, tileable.tileSize[0] * _pow, tileable.tileSize[1] * _pow];
+		tileable._calculateTileBounds();
+		var tExtent = tileable.extent,
+			x = center[0]/(2*Math.PI*u.earthRadius/tExtent[2]),
+			y = center[1]/(2*Math.PI*u.earthRadius/tExtent[3])
 		;
 		// map center relative to the top left corner of the tiles set
-		x += extent[2]/2;
-		y = -y + extent[3]/2;
-		this.tileable.center = [x, y];
-
-		this.tileable._mixin();
-		this.tileable._buildRendering();
-		this.tileable._startup();
+		x += tExtent[2]/2;
+		y = -y + tExtent[3]/2;
+		
+		tileable.center = [x, y];
+		tileable.zoom = this.zoom;
+		this.tileable.updateTileDivs();
 	},
 	
 	onMove: function(shiftX, shiftY) {

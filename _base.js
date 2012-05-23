@@ -37,7 +37,13 @@ djeo.defaultStyle = [
 		area: {strokeWidth: 3},
 		rScale: 1.5
 	}
-]
+];
+
+djeo.getLayerClassId = function(/* String */layerId) {
+	// check if we've got a complex structure like "layerClassId:url"
+	var colonIndex = layerId.indexOf(":");
+	return (colonIndex > 0) ? layerId.substring(0, colonIndex) : layerId;
+};
 
 return djeo;
 	

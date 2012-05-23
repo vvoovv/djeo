@@ -1,9 +1,11 @@
 define([
+	"dojo/has",
 	"dojo/_base/Color",
 	"./dojox/gfx",
 	"./_base",
-	"./common/Placemark"
-], function(Color, gfx, djeo, P){
+	"./common/Placemark",
+	"dojo/_base/sniff"
+], function(has, Color, gfx, djeo, P){
 
 // center of each shape must be 0,0
 djeo.shapes = {
@@ -47,7 +49,9 @@ return {
 		}
 	},
 	applyStroke: function(shape, calculatedStyle, specificStyle, specificShapeStyle, widthMultiplier) {
-		if (gfx.renderer == "vml") widthMultiplier=1;
+		if (gfx.renderer == "vml" || (gfx.renderer=="svg" && (has("webkit") || has("opera")))) {
+			widthMultiplier=1;
+		}
 		var stroke = P.get("stroke", calculatedStyle, specificStyle, specificShapeStyle),
 			strokeWidth = P.get("strokeWidth", calculatedStyle, specificStyle, specificShapeStyle),
 			strokeOpacity = P.get("strokeOpacity", calculatedStyle, specificStyle, specificShapeStyle);
@@ -57,7 +61,7 @@ return {
 			else {
 				var gfxStroke = shape.getStroke();
 				if (stroke) {
-					if (!gfxStroke) gfxStroke = {join: "round", cap: "butt"};
+					if (!gfxStroke) gfxStroke = {join: "round", cap: "round"};
 					gfxStroke.color = new Color(stroke);
 				}
 				if (gfxStroke) {

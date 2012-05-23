@@ -1,0 +1,97 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<link rel="stylesheet" href="../../dijit/themes/claro/claro.css"/>
+
+<script>
+	dojoConfig = {
+		isDebug: true,
+		async: true,
+		parseOnLoad: false,
+		djeoEngine: "djeo",
+		ymapsKey: "AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=="
+	};
+</script>
+<script src="util.js"></script>
+<script src="../../dojo/dojo.js"></script>
+
+<script>
+var features = [
+	{
+		features: [
+			{
+				type: "Circle",
+				center:[0, -80],
+				radius: 400000
+			},
+			{
+				type: "Circle",
+				center: [0, -60],
+				radius: 400000
+			},
+			{
+				type: "Circle",
+				center: [0, -40],
+				radius: 400000
+			},
+			{
+				type: "Circle",
+				center: [0, 0],
+				radius: 400000
+			},
+			{
+				type: "Circle",
+				center: [0, 40],
+				radius: 400000
+			},
+			{
+				type: "Circle",
+				center: [0, 60],
+				radius: 400000
+			},
+			{
+				type: "Circle",
+				center: [0, 80],
+				radius: 400000
+			}
+		]
+	}
+];
+
+DebugUtil.timer.start("loading");
+
+require([
+	"djeo/Map",
+	"djeo/control/Navigation",
+	"djeo/Circle",
+	"dijit/form/Button",
+	"dojo/domReady!"
+],
+function(Map, Navigation, Button) {
+	DebugUtil.timer.end("loading");
+	DebugUtil.timer.start("render");
+    var map = new Map("map", {
+		layers: "mapquest-osm",
+		style: {
+			type: "circle",
+			fill: "red"
+		},
+		features: features
+	});
+	map.ready(function() {
+		DebugUtil.timer.end("render");
+		new Navigation(map);
+	});
+});
+
+</script>
+
+</head>
+
+<body class="claro">
+
+<div id="map" style="width:800px;height:400px;"></div>
+
+</body>
+</html>

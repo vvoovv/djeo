@@ -66,14 +66,14 @@ return declare(null, {
 	onMoveStart: function(/* dojo.dnd.Mover */ mover){
 		// summary:
 		//		called before every move operation
-		domClass.add(this.node, "djeoMove");
+		//domClass.add(this.node, "djeoMove");
 		this.node.style.cursor = "move";
 	},
 	onMoveStop: function(/* dojo.dnd.Mover */ mover){
 		// summary:
 		//		called after every move operation
 		this.node.style.cursor = "";
-		domClass.remove(this.node, "djeoMove");
+		//domClass.remove(this.node, "djeoMove");
 	},
 	onFirstMove: function(/* dojo.dnd.Mover */ mover, /* Event */ e){
 		// summary:

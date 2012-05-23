@@ -2,12 +2,22 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/_base/lang", // mixin, isObject
 	"dojo/_base/array", // forEach
+	"../dojox/gfx",
 	"../dojox/gfx/matrix",
 	"../_base",
 	"../common/Placemark",
 	"../util/geometry",
 	"../gfx"
-], function(declare, lang, array, matrix, djeo, P, geom, dx) {
+], function(declare, lang, array, gfx, matrix, djeo, P, geom, dx) {
+	
+var patchStroke = function(shape) {
+	if (gfx.renderer=="svg") {
+		// non-scaling-stroke is supported by WebKit and Opera at the moment
+		// support by Firefox is coming soon: https://bugzilla.mozilla.org/show_bug.cgi?id=528332
+		shape.rawNode.setAttribute("vector-effect", "non-scaling-stroke");
+	}
+	return shape;
+};
 
 return declare([P], {
 	
@@ -35,13 +45,13 @@ return declare([P], {
 	},
 	
 	getX: function(x) {
-		var result = x-this.map.extent[0];
+		var result = x-this.engine.extent[0];
 		if (this.engine.correctScale) result *= this.engine.correctionScale;
 		return parseInt(result);
 	},
 	
 	getY: function(y) {
-		var result = this.map.extent[3]-y;
+		var result = this.engine.extent[3]-y;
 		if (this.engine.correctScale) result *= this.engine.correctionScale;
 		return parseInt(result);
 	},
@@ -53,19 +63,19 @@ return declare([P], {
 	},
 	
 	makeLineString: function(feature, coords) {
-		return this.lines.createPath({path: this.makePathString(coords, 1)});
+		return patchStroke( this.lines.createPath({path: this.makePathString(coords, 1)}) );
 	},
 
 	makePolygon: function(feature, coords) {
-		return this.areas.createPath({path: this.makePathString(coords, 2)});
+		return patchStroke( this.areas.createPath({path: this.makePathString(coords, 2)}) );
 	},
 	
 	makeMultiLineString: function(feature, coords) {
-		return this.lines.createPath({path: this.makePathString(coords, 2)});
+		return patchStroke( this.lines.createPath({path: this.makePathString(coords, 2)}) );
 	},
 	
 	makeMultiPolygon: function(feature, coords) {
-		return this.areas.createPath({path: this.makePathString(coords, 3)});
+		return patchStroke( this.areas.createPath({path: this.makePathString(coords, 3)}) );
 	},
 	
 	applyPointStyle: function(feature, calculatedStyle, coords) {
@@ -170,7 +180,7 @@ return declare([P], {
 				}
 				var circleDef = {cx:0, cy:0, r:1};
 				if (shape) shape.setShape(circleDef);
-				else shape = this.points.createCircle(circleDef);
+				else shape = patchStroke( this.points.createCircle(circleDef) );
 			}
 			else {
 				if (shape && shape.shape.type != "polyline") {
@@ -182,7 +192,7 @@ return declare([P], {
 					shape = null;
 				}
 				if (shape) shape.setShape({points: shapeDef.points});
-				else shape = this.points.createPolyline(shapeDef.points);
+				else shape = patchStroke( this.points.createPolyline(shapeDef.points) );
 			}
 			dx.applyFill(shape, calculatedStyle, specificStyle, specificShapeStyle);
 			dx.applyStroke(shape, calculatedStyle, specificStyle, specificShapeStyle, shapeSize/Math.max(size[0], size[1])/scale);

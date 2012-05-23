@@ -46,7 +46,7 @@ var P = declare(null, {
 		}
 
 		// apply style to the base geometry
-		var styleType = feature.isPoint() ? "point" : (feature.isArea() ? "polygon" : "line");
+		var styleType = feature.isPoint() ? "point" : (feature.isArea() ? "area" : "line");
 		if (stylingOnly) {
 			this.applyStyle(feature, style, styleType, coords);
 		}
@@ -113,7 +113,7 @@ var P = declare(null, {
 			case "line":
 				this.applyLineStyle(feature, style, coords);
 				break;
-			case "polygon":
+			case "area":
 				this.applyPolygonStyle(feature, style, coords);
 				break;
 		}

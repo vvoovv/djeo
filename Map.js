@@ -236,7 +236,7 @@ return declare(null, {
 			}
 
 			// perform rendering
-			if (this.document.features.length) this.render();
+			this.render();
 
 			this._ready = true;
 			this._afterOnEngineReady();
@@ -576,6 +576,18 @@ return declare(null, {
 			validExtent = extent.getBbox();
 		}
 		if (validExtent) this.engine.zoomTo(validExtent);
+	},
+	
+	set: function(attr, value) {
+		var setter = "_set_"+attr;
+		setter = this.engine[setter] || this["_set_"+setter];
+		return setter && setter(value);
+	},
+	
+	get: function(attr) {
+		var getter = "_get_"+attr;
+		getter = this.engine[getter] || this[getter];
+		return getter && getter.call(this.engine);
 	}
 });
 

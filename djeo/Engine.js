@@ -1,15 +1,17 @@
 define([
 	"require",
 	"dojo/_base/declare", // declare
+	"dojo/has",
 	"dojo/_base/lang", // mixin, isString, hitch
 	"dojo/_base/array", // forEach
 	"dojo/dom-construct", // create
+	"../_base",
 	"../dojox/gfx",
 	"../dojox/gfx/matrix",
 	"../Engine",
 	"./Placemark",
 	"../util/geometry"
-], function(require, declare, lang, array, domConstruct, gfx, matrix, Engine, Placemark, geom) {
+], function(require, declare, has, lang, array, domConstruct, djeo, gfx, matrix, Engine, Placemark, geom) {
 
 var _osm = ["./WebTiles", {url: "http://[a,b,c].tile.openstreetmap.org"}];
 
@@ -31,12 +33,6 @@ var supportedLayers = {
 };
 
 var engineEvents = {mouseover: "onmouseover", mouseout: "onmouseout", click: "onclick"};
-
-var getLayerClassId = function(/* String */layerId) {
-	// check if we've got a complex structure like "layerClassId:url"
-	var colonIndex = layerId.indexOf(":");
-	return (colonIndex > 0) ? layerId.substring(0, colonIndex) : layerId;
-};
 
 return declare([Engine], {
 	
@@ -109,16 +105,19 @@ return declare([Engine], {
 	},
 
 	prepare: function() {
-		//transform the map to fit container
-		var mapExtent = this.map.extent,
-			mapWidth = mapExtent[2] - mapExtent[0],
-			mapHeight = mapExtent[3] - mapExtent[1];
+		var map = this.map,
+			extent = map.extent || map.getBbox()
+		;
+		if (extent) {
+			this.extent = extent;
+		}
+		var mapWidth = extent[2] - extent[0],
+			mapHeight = extent[3] - extent[1];
 
 		// check if we need to apply a corrective scaling
 		if (mapWidth<1000 || mapHeight<1000) this.correctScale = true;
 
 		this.factories.Placemark.init();
-		this.zoomTo(mapExtent);
 		this.factories.Placemark.prepare();
 	},
 	
@@ -218,12 +217,12 @@ return declare([Engine], {
 	},
 	
 	isValidLayerId: function(/* String */layerId) {
-		var classId = getLayerClassId(layerId.toLowerCase());
+		var classId = djeo.getLayerClassId(layerId.toLowerCase());
 		return classId in supportedLayers;
 	},
 	
 	getLayerModuleId: function(/* String */layerId) {
-		var classId = getLayerClassId(layerId.toLowerCase());
+		var classId = djeo.getLayerClassId(layerId.toLowerCase());
 		return this._require.toAbsMid(supportedLayers[classId][0]);
 	},
 	
@@ -241,7 +240,7 @@ return declare([Engine], {
 		
 		if (extentWidth==0 && extentHeight==0) {
 			// we've got a point
-			var mapExtent = map.extent,
+			var mapExtent = map.extent || map.getBbox(),
 				mapWidth = mapExtent[2] - mapExtent[0],
 				mapHeight = mapExtent[3] - mapExtent[1],
 				extentSize = this.pointZoomFactor * Math.min(mapWidth, mapHeight);
@@ -270,17 +269,19 @@ return declare([Engine], {
 			
 		}
 		
-		// check if we need to adjust scale if we have a bottom layer
-		// and if the bottom layer supports only discrete zooms
-		var bottomLayer = this.bottomLayer;
-		if (bottomLayer && bottomLayer.discreteScales) {
-			scale = bottomLayer.getScale();
+		var layers = this.layers;
+		if (layers.length) {
+			layers[0].zoomTo(extent);
+			// check if we need to adjust scale if the bottom layer supports only discrete zooms
+			if (layers[0].discreteScales) {
+				scale = layers[0].getScale();
+			}
 		}
+
 		// backup scale to perform the scale correction in the next line
 		var _scale =  scale;
 		if (this.correctScale) scale /= this.correctionScale;
 
-	
 		this.group.setTransform([
 			matrix.translate( (map.width-_scale*extentWidth)/2, (map.height-_scale*extentHeight)/2 ),
 			matrix.scale(scale),
@@ -308,7 +309,7 @@ return declare([Engine], {
 				shape.applyRightTransform(matrix.scale(scaleFactor));
 			});
 		}
-		else if ( gfx.renderer!="vml" && (
+		else if ( gfx.renderer!="vml" && !(gfx.renderer=="svg" && (has("webkit") || has("opera"))) && (
 				(this.resizeLines && feature.isLine()) ||
 				(this.resizeAreas && feature.isArea()) )) {
 			array.forEach(feature.baseShapes, function(shape){
@@ -329,6 +330,15 @@ return declare([Engine], {
 				t.applyRightTransform(matrix.scaleAt(scaleFactor, x, y));
 			});
 		}
+	},
+	
+	_set_center: function(center) {
+		center = this.map.getCoords(center);
+		this.group.applyRightTransform(matrix.translate(-pf.getX(center[0]), -pf.getY(center[1])));
+	},
+	
+	_get_center: function(center) {
+		return this.group.getTransform();
 	}
 });
 
