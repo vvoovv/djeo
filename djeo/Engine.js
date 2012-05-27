@@ -323,11 +323,26 @@ return declare([Engine], {
 		
 		if (feature.textShapes) {
 			var factory = this.map.engine.factories.Placemark,
-				center = geom.center(feature),
-				x = factory.getX(center[0]),
+				type = feature.getCoordsType(),
+				x,
+				y
+			;
+			if (type == "Point") {
+				var coords = feature.getCoords(),
+					tr = feature.baseShapes[0].getTransform()
+				;
+				x = factory.getX(coords[0]);
+				y = factory.getY(coords[1]);
+			}
+			else {
+				var center = geom.center(feature);
+				x = factory.getX(center[0]);
 				y = factory.getY(center[1]);
+			}
 			array.forEach(feature.textShapes, function(t){
-				t.applyRightTransform(matrix.scaleAt(scaleFactor, x, y));
+				t.applyLeftTransform(matrix.translate(0, -12));
+				//t.applyRightTransform(matrix.scaleAt(scaleFactor, x, y));
+				t.setTransform([matrix.scaleAt(1/factory.lengthDenominator, x, y ), matrix.translate(0, -12)]);
 			});
 		}
 	},

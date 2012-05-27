@@ -374,7 +374,6 @@ return declare([P], {
 				t.removeShape();
 			});
 		}
-		feature.textShapes = [];
 
 		var specificStyle,
 			type = feature.getCoordsType();
@@ -396,6 +395,8 @@ return declare([P], {
 				coords = feature.getCoords(),
 				halo = textStyle.halo;
 
+			feature.textShapes = [];
+
 			// for halo effect we need two text shapes: the lower one with stroke and the upper one without stroke
 			if (halo && halo.fill && halo.radius) {
 				this._makeTextShape(feature, type, label, null, textStyle.font, {color: halo.fill, width: 2*halo.radius});
@@ -408,20 +409,22 @@ return declare([P], {
 	_makeTextShape: function(feature, type, label, fill, font, stroke) {
 		var shape = feature.baseShapes[0],
 			textDef = {},
-			textShape,
-			coords = feature.getCoords(),
 			x,
-			y;
+			y
+		;
 	
 		if (type == "Point") {
-			var x = this.getX(coords[0]),
-				y = this.getY(coords[1]);
+			var coords = feature.getCoords(),
+				tr = feature.baseShapes[0].getTransform()
+			;
+			x = this.getX(coords[0]);
+			y = this.getY(coords[1]);
+			textDef.align = "end";
 		}
 		else if (feature.isArea()) {
-			var center = geom.center(feature),
-				x = this.getX(center[0]),
-				y = this.getY(center[1]);
-	
+			var center = geom.center(feature);
+			x = this.getX(center[0]);
+			y = this.getY(center[1]);
 			textDef.align = "middle";
 		}
 		
@@ -430,7 +433,8 @@ return declare([P], {
 			textDef.y = y;
 			textDef.text = label;
 
-			textShape = this.text.createText(textDef).setTransform(matrix.scaleAt(1/this.lengthDenominator, x, y ));
+			//var textShape = this.text.createText(textDef).setTransform(matrix.scaleAt(1/this.lengthDenominator, x, y ));
+			var textShape = this.text.createText(textDef).setTransform([matrix.scaleAt(1/this.lengthDenominator, x, y), matrix.translate(0, -12)]);
 
 			if (fill) textShape.setFill(fill);
 			if (font) textShape.setFont(font);
