@@ -64,17 +64,15 @@ DebugUtil.timer.start("loading");
 require([
 	"djeo/Map",
 	"djeo/control/Navigation",
-	"djeo/Circle",
-	"dijit/form/Button",
+	"djeo/Circle", // djeo/Circle is not loaded by default
 	"dojo/domReady!"
 ],
-function(Map, Navigation, Button) {
+function(Map, Navigation) {
 	DebugUtil.timer.end("loading");
 	DebugUtil.timer.start("render");
     var map = new Map("map", {
 		layers: "mapquest-osm",
 		style: {
-			type: "circle",
 			fill: "red"
 		},
 		features: features
