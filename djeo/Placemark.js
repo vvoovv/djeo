@@ -397,8 +397,8 @@ return declare([P], {
 			feature.state.ts = textStyle;
 
 			// for halo effect we need two text shapes: the lower one with stroke and the upper one without stroke
-			if (halo && halo.fill && halo.radius) {
-				this._makeTextShape(feature, label, null, {color: halo.fill, width: 2*halo.radius}, textStyle);
+			if (textStyle.haloFill && textStyle.haloRadius) {
+				this._makeTextShape(feature, label, null, {color: textStyle.haloFill, width: 2*textStyle.haloRadius}, textStyle);
 			}
 
 			this._makeTextShape(feature, label, textStyle.fill, null, textStyle);
