@@ -8,7 +8,7 @@ define([
 	"../common/Placemark",
 	"../util/geometry",
 	"../gfx"
-], function(declare, lang, array, gfx, matrix, djeo, P, geom, dx) {
+], function(declare, lang, array, gfx, matrix, djeo, P, geom, dgfx) {
 	
 var patchStroke = function(shape) {
 	if (gfx.renderer=="svg") {
@@ -194,8 +194,8 @@ return declare([P], {
 				if (shape) shape.setShape({points: shapeDef.points});
 				else shape = patchStroke( this.points.createPolyline(shapeDef.points) );
 			}
-			dx.applyFill(shape, calculatedStyle, specificStyle, specificShapeStyle);
-			dx.applyStroke(shape, calculatedStyle, specificStyle, specificShapeStyle, shapeSize/Math.max(size[0], size[1])/scale);
+			dgfx.applyFill(shape, calculatedStyle, specificStyle, specificShapeStyle);
+			dgfx.applyStroke(shape, calculatedStyle, specificStyle, specificShapeStyle, shapeSize/Math.max(size[0], size[1])/scale);
 		}
 		else if (isVectorShape === false) {
 			if (shape && shape.shape.type != "image") {
@@ -222,8 +222,8 @@ return declare([P], {
 		else if (shape) {
 			if (shape.shape.type != "image") {
 				// apply stroke and fill to the existing vector shape
-				dx.applyFill(shape, calculatedStyle, specificStyle, specificShapeStyle);
-				//dx.applyStroke(shape, calculatedStyle, specificStyle, specificShapeStyle, shapeSize/Math.max(size[0], size[1])/scale);
+				dgfx.applyFill(shape, calculatedStyle, specificStyle, specificShapeStyle);
+				//dgfx.applyStroke(shape, calculatedStyle, specificStyle, specificShapeStyle, shapeSize/Math.max(size[0], size[1])/scale);
 			}
 			if (rScale !== undefined) {
 				shape.applyRightTransform(matrix.scale(calculatedStyle.rScale));
@@ -270,7 +270,7 @@ return declare([P], {
 	},
 	
 	_applyLineStyle: function(shape, calculatedStyle, specificStyle, specificShapeStyle) {
-		dx.applyStroke(shape, calculatedStyle, specificStyle, specificShapeStyle, 1/this.lengthDenominator);
+		dgfx.applyStroke(shape, calculatedStyle, specificStyle, specificShapeStyle, 1/this.lengthDenominator);
 	},
 	
 	applyPolygonStyle: function(feature, calculatedStyle, coords) {
@@ -280,8 +280,8 @@ return declare([P], {
 	},
 	
 	_applyPolygonStyle: function(shape, calculatedStyle, specificStyle) {
-		dx.applyFill(shape, calculatedStyle, specificStyle);
-		dx.applyStroke(shape, calculatedStyle, specificStyle, null, 1/this.lengthDenominator);
+		dgfx.applyFill(shape, calculatedStyle, specificStyle);
+		dgfx.applyStroke(shape, calculatedStyle, specificStyle, null, 1/this.lengthDenominator);
 	},
 	
 	_updateShapes: function(feature, coords, calculatedStyle, specificStyles, preventAddingShapes) {
@@ -375,15 +375,12 @@ return declare([P], {
 			});
 		}
 
-		var specificStyle,
-			type = feature.getCoordsType();
-		switch (type) {
-			case "Point":
-				specificStyle = calculatedStyle.point;
-				break
-			case "Polygon":
-			case "MultiPolygon":
-				specificStyle = calculatedStyle.area;
+		var specificStyle;
+		if (feature.isPoint()) {
+			specificStyle = calculatedStyle.point;
+		}
+		else if (feature.isArea()) {
+			specificStyle = calculatedStyle.area;
 		}
 		var textStyle = P.get("text", calculatedStyle, specificStyle);
 		if (!textStyle) return;
@@ -396,30 +393,34 @@ return declare([P], {
 				halo = textStyle.halo;
 
 			feature.textShapes = [];
+			// ts states for "text style"
+			feature.state.ts = textStyle;
 
 			// for halo effect we need two text shapes: the lower one with stroke and the upper one without stroke
 			if (halo && halo.fill && halo.radius) {
-				this._makeTextShape(feature, type, label, null, textStyle.font, {color: halo.fill, width: 2*halo.radius});
+				this._makeTextShape(feature, label, null, {color: halo.fill, width: 2*halo.radius}, textStyle);
 			}
 
-			this._makeTextShape(feature, type, label, textStyle.fill, textStyle.font);
+			this._makeTextShape(feature, label, textStyle.fill, null, textStyle);
 		}
 	},
 	
-	_makeTextShape: function(feature, type, label, fill, font, stroke) {
+	_makeTextShape: function(feature, label, fill, stroke, textStyle) {
 		var shape = feature.baseShapes[0],
 			textDef = {},
 			x,
 			y
 		;
 	
-		if (type == "Point") {
+		if (feature.isPoint()) {
 			var coords = feature.getCoords(),
 				tr = feature.baseShapes[0].getTransform()
 			;
 			x = this.getX(coords[0]);
 			y = this.getY(coords[1]);
-			textDef.align = "end";
+			if (textStyle.hAlign) {
+				textDef.align = textStyle.hAlign;
+			}
 		}
 		else if (feature.isArea()) {
 			var center = geom.center(feature);
@@ -433,11 +434,18 @@ return declare([P], {
 			textDef.y = y;
 			textDef.text = label;
 
-			//var textShape = this.text.createText(textDef).setTransform(matrix.scaleAt(1/this.lengthDenominator, x, y ));
-			var textShape = this.text.createText(textDef).setTransform([matrix.scaleAt(1/this.lengthDenominator, x, y), matrix.translate(0, -12)]);
+			var transforms = [matrix.scaleAt(1/this.lengthDenominator, x, y)],
+				// determing label offset
+				dx = ("dx" in textStyle) ? textStyle.dx : 0,
+				dy = ("dy" in textStyle) ? -textStyle.dy : 0
+			;
+			if (dx || dy) {
+				transforms.push(matrix.translate(dx, dy));
+			}
+			var textShape = this.text.createText(textDef).setTransform(transforms);
 
 			if (fill) textShape.setFill(fill);
-			if (font) textShape.setFont(font);
+			if (textStyle.font) textShape.setFont(textStyle.font);
 			if (stroke) textShape.setStroke(stroke);
 			
 			feature.textShapes.push(textShape);

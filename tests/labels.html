@@ -1,0 +1,106 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<link rel="stylesheet" href="../../dijit/themes/claro/claro.css"/>
+
+<script>
+	dojoConfig = {
+		isDebug: true,
+		async: true,
+		parseOnLoad: false,
+		djeoEngine: "djeo",
+		ymapsKey: "AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=="
+	};
+</script>
+<script src="../../dojo/dojo.js"></script>
+
+<script>
+var features = [
+	{
+		features: [
+			{
+				name: "New York",
+				type: "Point",
+				coords:[-74, 40.71]
+			},
+			{
+				name: "Seattle",
+				type: "Point",
+				coords: [-122.33, 47.61]
+			},
+			{
+				name: "San Jose",
+				type: "Point",
+				coords: [-122.42, 37.77]
+			},
+			{
+				name: "Los Angeles",
+				type: "Point",
+				coords: [-118.24, 34.05]
+			},
+			{
+				name: "Denver",
+				type: "Point",
+				coords: [-104.98, 39.74]
+			},
+			{
+				name: "Dallas",
+				type: "Point",
+				coords: [-96.8, 32.78]
+			},
+			{
+				name: "Chicago",
+				type: "Point",
+				coords: [-87.65, 41.85]
+			},
+			{
+				name: "Memphis",
+				type: "Point",
+				coords: [-90.05, 35.15]
+			}
+		]
+	}
+];
+
+require([
+	"djeo/Map",
+	"djeo/control/Navigation",
+	"djeo/control/Highlight",
+	"dojo/domReady!"
+],
+function(Map, Navigation, Highlight) {
+    var map = new Map("map", {
+		layers: "mapquest-osm",
+		style: {
+			type: "circle",
+			fill: "red",
+			size: [15, 15],
+			text: {
+				fill: "black",
+				halo: {
+					fill: "white",
+					radius: 2
+				},
+				hAlign: "middle",
+				dy: -18
+			}
+		},
+		features: features
+	});
+	map.ready(function() {
+		new Navigation(map);
+		new Highlight(map);
+	});
+});
+
+</script>
+
+</head>
+
+<body class="claro">
+
+<div id="map" style="width:800px;height:400px;"></div>
+
+</body>
+</html>

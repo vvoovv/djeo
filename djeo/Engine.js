@@ -323,26 +323,33 @@ return declare([Engine], {
 		
 		if (feature.textShapes) {
 			var factory = this.map.engine.factories.Placemark,
-				type = feature.getCoordsType(),
+				// getting test style
+				ts = feature.state.ts,
+				// determing label offset
+				dx = ("dx" in ts) ? ts.dx : 0,
+				dy = ("dy" in ts) ? -ts.dy : 0,
 				x,
 				y
 			;
-			if (type == "Point") {
+			if (feature.isPoint()) {
 				var coords = feature.getCoords(),
 					tr = feature.baseShapes[0].getTransform()
 				;
 				x = factory.getX(coords[0]);
 				y = factory.getY(coords[1]);
 			}
-			else {
+			else if (feature.isArea()) {
 				var center = geom.center(feature);
 				x = factory.getX(center[0]);
 				y = factory.getY(center[1]);
 			}
-			array.forEach(feature.textShapes, function(t){
-				t.applyLeftTransform(matrix.translate(0, -12));
-				//t.applyRightTransform(matrix.scaleAt(scaleFactor, x, y));
-				t.setTransform([matrix.scaleAt(1/factory.lengthDenominator, x, y ), matrix.translate(0, -12)]);
+
+			var transforms = [matrix.scaleAt(1/factory.lengthDenominator, x, y)];
+			if (dx || dy) {
+				transforms.push(matrix.translate(dx, dy));
+			}
+			array.forEach(feature.textShapes, function(t) {
+				t.setTransform(transforms);
 			});
 		}
 	},
