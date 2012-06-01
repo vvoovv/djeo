@@ -6,7 +6,7 @@ var djeo = lang.getObject("djeo", true);
 
 lang.mixin(djeo, {
 	defaultLayerID: "ROADMAP",
-	defaultEngine: {type: "djeo", options:{}}
+	defaultEngine: "djeo"
 });
 
 // registry of feature constructors

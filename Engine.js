@@ -98,9 +98,15 @@ return declare(null, {
 	},
 	
 	_setCamera: function() {
-		var map = this.map;
-		if (map.extent) {
-			this.zoomTo(map.extent);
+		var map = this.map,
+			extent = map.extent
+		;
+		if (extent) {
+			// converting extent to the map's projection
+			var lb = this.map.getCoords([extent[0], extent[1]]),
+				rt = this.map.getCoords([extent[2], extent[3]])
+			;
+			this.zoomTo([lb[0], lb[1], rt[0], rt[1]]);
 		}
 		else {
 			// finding map center

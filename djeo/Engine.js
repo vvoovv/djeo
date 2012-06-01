@@ -106,13 +106,14 @@ return declare([Engine], {
 
 	prepare: function() {
 		var map = this.map,
-			extent = map.extent || map.getBbox()
+			extent = map.getBbox()
 		;
 		if (extent) {
 			this.extent = extent;
 		}
 		var mapWidth = extent[2] - extent[0],
-			mapHeight = extent[3] - extent[1];
+			mapHeight = extent[3] - extent[1]
+		;
 
 		// check if we need to apply a corrective scaling
 		if (mapWidth<1000 || mapHeight<1000) this.correctScale = true;
