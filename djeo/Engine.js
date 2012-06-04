@@ -2,6 +2,7 @@ define([
 	"require",
 	"dojo/_base/declare", // declare
 	"dojo/has",
+	"dojo/on",
 	"dojo/_base/lang", // mixin, isString, hitch
 	"dojo/_base/array", // forEach
 	"dojo/dom-construct", // create
@@ -11,7 +12,7 @@ define([
 	"../Engine",
 	"./Placemark",
 	"../util/geometry"
-], function(require, declare, has, lang, array, domConstruct, djeo, gfx, matrix, Engine, Placemark, geom) {
+], function(require, declare, has, on, lang, array, domConstruct, djeo, gfx, matrix, Engine, Placemark, geom) {
 
 var _osm = ["./WebTiles", {url: "http://[a,b,c].tile.openstreetmap.org"}];
 
@@ -30,6 +31,10 @@ var supportedLayers = {
 	"openstreetmap.org": _osm,
 	"mapquest-osm": _mqOsm,
 	"mapquest-oa": _mqOa
+};
+
+var mapEvents = {
+	"zoom_changed": 1
 };
 
 var engineEvents = {mouseover: "onmouseover", mouseout: "onmouseout", click: "onclick"};
@@ -126,7 +131,7 @@ return declare([Engine], {
 		return this.group;
 	},
 	
-	on: function(feature, event, method, context) {
+	onForFeature: function(feature, event, method, context) {
 		var connections = [];
 		// normalize the callback function
 		method = this.normalizeCallback(feature, event, method, context);
@@ -135,6 +140,11 @@ return declare([Engine], {
 			connections.push([shape, shape.connect(event, method)]);
 		});
 		return connections;
+	},
+	
+	onForMap: function(event, method, context) {
+		if (!event in mapEvents) return;
+		on(this, event, method);
 	},
 	
 	disconnect: function(connections) {
@@ -293,6 +303,13 @@ return declare([Engine], {
 			pf.calculateLengthDenominator();
 			this.resizeFeatures(this.map.document, oldScale/scale);
 		}
+		
+		this.onzoom_changed();
+	},
+	
+	onzoom_changed: function() {
+		console.debug("onzoom_changed");
+		// "zoom_changed" is emited here autmatically (see documentation for dojo/Evented)
 	},
 	
 	resizeFeatures: function(featureContainer, scaleFactor) {

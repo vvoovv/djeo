@@ -421,12 +421,12 @@ return declare(null, {
 		return this.features[id];
 	},
 
-	on: function(/* String|Array? */events, /*Function*/ method, /*Object?*/ context) {
+	on: function(/* String */event, /*Function*/ method, /*Object?*/ context) {
 		// summary:
-		//		Adds a listener for an event or an array of events for all features in the map
-		// returns: Number
-		//		A handle that identifies this particular connection
-		return this.document.on(events, method, context);
+		//		Adds a listener for a map event (e.g. zoom_changed, center_changed)
+		// returns: Object
+		//		A handle for the listener
+		return this.engine.onForMap(event, method, context);
 	},
 
 	onForHandle: function(/* String|Number */ handle, /* Object */kwArgs) {

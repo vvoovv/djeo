@@ -3,14 +3,15 @@ define([
 	"dojo/has", // has
 	"dojo/_base/lang", // mixin, hitch, isArray, isString, isObject
 	"dojo/_base/array", // forEach
+	"dojo/Evented", //emit
 	"./_base"
-], function(declare, has, lang, array, djeo){
+], function(declare, has, lang, array, Evented, djeo){
 	
 var defaultCenter = [0,0],
 	defaultZoom = 3
 ;
 
-return declare(null, {
+return declare([Evented], {
 	// summary:
 	//		The base class for engines. An engine class is supposed to be a singleton
 	

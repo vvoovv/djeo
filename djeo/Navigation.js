@@ -73,6 +73,8 @@ return declare(null, {
 
 		engine.factories.Placemark.calculateLengthDenominator();
 		engine.resizeFeatures(this.map.document, 1/scaleFactor);
+
+		engine.onzoom_changed();
 	}
 });
 

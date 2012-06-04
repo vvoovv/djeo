@@ -8,7 +8,7 @@ define([
 
 var symbolizers = ["points", "lines"],
 	styleAttributes = {theme:1, name: 1, legend: 1},
-	noStyleMixin = {id:1, filter:1, styleClass:1, fid:1, composer: 1, composerOptions: 1};
+	noStyleMixin = {id:1, filter:1, styleClass:1, fid:1, composer: 1, composerOptions: 1, zoom: 1};
 
 var filterPattern = /\$(?:(\w+)|\[([^\]]+)\])/g;
 
@@ -116,6 +116,26 @@ var Style = declare(null, {
 			}
 			this.filter = filter;
 		}
+		
+		// process zoom
+		if ("zoom" in def) {
+			var z = def.zoom;
+			if (lang.isArray(z)) {
+				if (z.length == 0) {
+					z = [-Infinity, Infinity];
+				}
+				else {
+					var z1 = z[0]===undefined ? -Infinity : z[0],
+						z2 = z[1]===undefined ? Infinity : z[1]
+					;
+					z = [z1, z2];
+				}
+			}
+			else {
+				z = [z, z];
+			}
+			this.zoom = z;
+		}
 
 		// prepare styleClass and fid
 		var styleClass = def.styleClass;
@@ -199,9 +219,19 @@ djeo.calculateStyle = function(feature, theme) {
 		appendFeatureStyle(features[i], styles, theme);
 	}
 	
+	var zoom = feature.map.engine.zoom;
+	
 	// now do actual style calculation
 	var resultStyle = {};
-	array.forEach(styles, function(style) {
+	for (var i=0, num=styles.length; i<num; i++) {
+		// check if the style defines a zoom range
+		var style = styles[i],
+			z = style.zoom
+		;
+		if (z && z[0]<=zoom && zoom<=z[1]) {
+			continue;
+		}
+		// evaluate filter
 		var applyStyle = style.filter ? evaluateFilter(style.filter, feature) : true;
 		if (applyStyle) {
 			styleMixin(resultStyle, style.def);
@@ -209,7 +239,7 @@ djeo.calculateStyle = function(feature, theme) {
 				style.composer(feature, style.composerOptions, resultStyle, style._updated);
 			}
 		}
-	});
+	};
 	
 	// final adjustments
 	array.forEach(symbolizers, function(styleType){

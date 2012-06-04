@@ -142,7 +142,7 @@ var p = declare([Feature], {
 			array.forEach(events, function(event) {
 				if (djeo.events[event]) {
 					eventConnections.push(
-						this.map.engine.on(this, event, kwArgs.method, kwArgs.context)
+						this.map.engine.onForFeature(this, event, kwArgs.method, kwArgs.context)
 					);
 					numEvents++;
 				}
