@@ -19,6 +19,13 @@ var patchStroke = function(shape) {
 	return shape;
 };
 
+var fontAttrs = {
+	family: 1,
+	size: 1,
+	weight: 1,
+	style: 1
+};
+
 return declare([P], {
 	
 	multipleSymbolizers: true,
@@ -318,7 +325,7 @@ return declare([P], {
 				method = handles[handle][2],
 				eventConnections = handles[handle][3];
 			array.forEach(events, function(event, eventIndex){
-				eventConnections[eventIndex].push( [shape, shape.connect(event, this.engine.normalizeCallback(feature, event, context, method))] );
+				eventConnections[eventIndex].push( [shape, shape.connect(event, this.engine.normalizeCallback(feature, event, method, context))] );
 			}, this);
 		}
 	},
@@ -368,7 +375,7 @@ return declare([P], {
 
 	makeText: function(feature, calculatedStyle) {
 		// ignore VML due to problems with text scaling
-		if (dojox.gfx.renderer == "vml") return;
+		if (gfx.renderer == "vml") return;
 		if (feature.textShapes) {
 			array.forEach(feature.textShapes, function(t) {
 				t.removeShape();
@@ -390,7 +397,8 @@ return declare([P], {
 		if (label) {
 			var shape = feature.baseShapes[0],
 				coords = feature.getCoords(),
-				halo = textStyle.halo;
+				scale = P.getScale(calculatedStyle)
+			;
 
 			feature.textShapes = [];
 			// ts states for "text style"
@@ -398,14 +406,14 @@ return declare([P], {
 
 			// for halo effect we need two text shapes: the lower one with stroke and the upper one without stroke
 			if (textStyle.haloFill && textStyle.haloRadius) {
-				this._makeTextShape(feature, label, null, {color: textStyle.haloFill, width: 2*textStyle.haloRadius}, textStyle);
+				this._makeTextShape(feature, label, null, {color: textStyle.haloFill, width: 2*textStyle.haloRadius}, textStyle, scale);
 			}
 
-			this._makeTextShape(feature, label, textStyle.fill, null, textStyle);
+			this._makeTextShape(feature, label, textStyle.fill, null, textStyle, scale);
 		}
 	},
 	
-	_makeTextShape: function(feature, label, fill, stroke, textStyle) {
+	_makeTextShape: function(feature, label, fill, stroke, textStyle, scale) {
 		var shape = feature.baseShapes[0],
 			textDef = {},
 			x,
@@ -436,8 +444,8 @@ return declare([P], {
 
 			var transforms = [matrix.scaleAt(1/this.lengthDenominator, x, y)],
 				// determing label offset
-				dx = ("dx" in textStyle) ? textStyle.dx : 0,
-				dy = ("dy" in textStyle) ? -textStyle.dy : 0
+				dx = ("dx" in textStyle) ? scale*textStyle.dx : 0,
+				dy = ("dy" in textStyle) ? -scale*textStyle.dy : 0
 			;
 			if (dx || dy) {
 				transforms.push(matrix.translate(dx, dy));
@@ -445,10 +453,26 @@ return declare([P], {
 			var textShape = this.text.createText(textDef).setTransform(transforms);
 
 			if (fill) textShape.setFill(fill);
-			if (textStyle.font) textShape.setFont(textStyle.font);
+			this._makeFont(textShape, textStyle, scale);
 			if (stroke) textShape.setStroke(stroke);
 			
 			feature.textShapes.push(textShape);
+		}
+	},
+	
+	_makeFont: function(textShape, textStyle, scale) {
+		var font;
+		for (var attr in fontAttrs) {
+			if (attr in textStyle) {
+				if (!font) font = {};
+				font[attr] = textStyle[attr];
+			}
+		}
+		if (font) {
+			if (font.size) {
+				font.size *= scale;
+			}
+			textShape.setFont(font);
 		}
 	},
 

@@ -78,7 +78,7 @@ return declare(null, {
 			center = [(extent[2] + extent[0])/2, (extent[3] + extent[1])/2],
 			scale = Math.min(map.width/(extent[2] - extent[0]), map.height/(extent[3] - extent[1]))
 		;
-		// find which zoom is the closest to the scale
+		// find which zoom is the closest one to the scale
 		if (scale <= scales[0]) {
 			this.zoom = 0;
 		}
@@ -133,7 +133,9 @@ return declare(null, {
 			divX = Math.floor(event.pageX - borderBox.x - style.get(this.container, "borderLeftWidth")),
 			divY = Math.floor(event.pageY - borderBox.y - style.get(this.container, "borderTopWidth"))
 		;
-		this.tileable.doZoom(scaleFactor>1 ? scaleFactor : -1/scaleFactor, divX, divY);
+		var zoomAmount = scaleFactor>1 ? scaleFactor : -1/scaleFactor
+		this.zoom += zoomAmount/2;
+		this.tileable.doZoom(zoomAmount, divX, divY);
 	},
 	
 	setTileContent: function(tile, zoom, x, y) {

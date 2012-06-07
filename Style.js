@@ -135,6 +135,10 @@ var Style = declare(null, {
 				z = [z, z];
 			}
 			this.zoom = z;
+			// notify map that there is a style depending on zoom
+			if (!m._hasZoomStyle) {
+				m._hasZoomStyle = true;
+			}
 		}
 
 		// prepare styleClass and fid
@@ -219,7 +223,9 @@ djeo.calculateStyle = function(feature, theme) {
 		appendFeatureStyle(features[i], styles, theme);
 	}
 	
-	var zoom = feature.map.engine.zoom;
+	var engine = feature.map.engine,
+		zoom = engine._get_zoom && engine._get_zoom()
+	;
 	
 	// now do actual style calculation
 	var resultStyle = {};
@@ -228,7 +234,7 @@ djeo.calculateStyle = function(feature, theme) {
 		var style = styles[i],
 			z = style.zoom
 		;
-		if (z && z[0]<=zoom && zoom<=z[1]) {
+		if (z && zoom!==undefined && !(z[0]<=zoom && zoom<=z[1])) {
 			continue;
 		}
 		// evaluate filter

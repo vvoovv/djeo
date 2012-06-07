@@ -41,6 +41,8 @@ var engineEvents = {mouseover: "onmouseover", mouseout: "onmouseout", click: "on
 
 return declare([Engine], {
 	
+	supportsZoomStyling: true,
+	
 	scaleFactor: 1.2,
 	
 	correctionScale: 100000,
@@ -58,10 +60,6 @@ return declare([Engine], {
 	
 	// registry of layers
 	_layerReg: null,
-	
-	// the bottom layer may set projection for the whole map
-	// it may also set discrete zooms for the whole map
-	bottomLayer: null,
 	
 	// container: Object
 	//		Container for all map's divs
@@ -216,8 +214,10 @@ return declare([Engine], {
 		kwArgs.container = container;
 		var layer = new layerCtor(kwArgs, this.map);
 		// TODO: check if the layer supports bottom layer projection
-		if (!this.bottomLayer) {
-			this.bottomLayer = layer;
+		var layers = this.layers;
+		if (layers.length == 0) {
+			// it will be the bottom layer
+			// so set map's projection to the layer's one
 			if (layer.projection) {
 				this.map.projection = layer.projection;
 			}
@@ -308,8 +308,10 @@ return declare([Engine], {
 	},
 	
 	onzoom_changed: function() {
-		console.debug("onzoom_changed");
-		// "zoom_changed" is emited here autmatically (see documentation for dojo/Evented)
+		if (!this._renderingDisabled && this.map._hasZoomStyle) {
+			this.map.document.render(true);
+		}
+		// "zoom_changed" is emited here automatically (see documentation for dojo/Evented)
 	},
 	
 	resizeFeatures: function(featureContainer, scaleFactor) {
@@ -371,14 +373,18 @@ return declare([Engine], {
 			});
 		}
 	},
-	
+
 	_set_center: function(center) {
 		center = this.map.getCoords(center);
 		this.group.applyRightTransform(matrix.translate(-pf.getX(center[0]), -pf.getY(center[1])));
 	},
-	
+
 	_get_center: function(center) {
 		return this.group.getTransform();
+	},
+
+	_get_zoom: function() {
+		return this.layers.length && this.layers[0].zoom;
 	}
 });
 

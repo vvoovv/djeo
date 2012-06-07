@@ -102,6 +102,9 @@ return declare([Evented], {
 		var map = this.map,
 			extent = map.extent
 		;
+		// the following attribute checked in the onzoom_changed function
+		// if this._renderingDisabled == true, then no rendering due to style change will occur in the onzoom_changed
+		this._renderingDisabled = true;
 		if (extent) {
 			// converting extent to the map's projection
 			var lb = this.map.getCoords([extent[0], extent[1]]),
@@ -141,7 +144,7 @@ return declare([Evented], {
 				this.zoomTo(bbox);
 			}
 		}
-		
+		this._renderingDisabled = false;
 	},
 	
 	getFactory: function(/* String */dependency) {
