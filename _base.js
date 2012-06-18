@@ -1,13 +1,9 @@
-define([
-	"dojo/_base/lang" // getObject
-], function(lang){
+define([], function(lang){
 
-var djeo = lang.getObject("djeo", true);
-
-lang.mixin(djeo, {
+var djeo = {
 	defaultLayerID: "ROADMAP",
 	defaultEngine: "djeo"
-});
+};
 
 // registry of feature constructors
 djeo.featureTypes = {};
