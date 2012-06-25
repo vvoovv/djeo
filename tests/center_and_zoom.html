@@ -1,0 +1,108 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<link rel="stylesheet" href="../../dijit/themes/claro/claro.css"/>
+
+<script>
+	dojoConfig = {
+		isDebug: true,
+		async: true,
+		parseOnLoad: false,
+		djeoEngine: "djeo",
+		ymapsKey: "AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=="
+	};
+</script>
+<script src="util.js"></script>
+<script src="../../dojo/dojo.js"></script>
+
+<script>
+	
+var map;
+
+var place2Coords = {
+	"San Francisco": [-122.42, 37.77],
+	"Seattle": [-122.33, 47.61],
+	"New York City": [-74, 40.71],
+	"Los Angeles": [-118.24, 34.05],
+	"Denver": [-104.98, 39.74],
+	"Dallas": [-96.8, 32.78],
+	"Chicago": [-87.65, 41.85],
+	"Memphis": [-90.05, 35.15]
+}
+function setCenter() {
+	map.set("center", place2Coords[document.getElementById("centerSelect").value]);
+	console.debug("New center via map.get('center'):"+map.get("center"));
+}
+
+function setZoom() {
+	map.set("zoom", parseInt(document.getElementById("zoomSelect").value));
+	console.debug("New zoom via map.get('zoom'):"+map.get("zoom"));
+}
+
+DebugUtil.timer.start("loading");
+
+require([
+	"djeo/tests/data/usa_features_style",
+	"djeo/Map",
+	"djeo/control/Highlight",
+	"djeo/control/Tooltip",
+	"djeo/control/Navigation",
+	"dojo/domReady!"
+],
+function(mapConfig, Map, Highlight, Tooltip, Navigation){
+	DebugUtil.timer.end("loading");
+	
+	mapConfig.zoom = 5;
+	mapConfig.center = [-96.8, 32.78];
+	mapConfig.layers = "ROADMAP";
+	DebugUtil.timer.start("render");
+	map = new Map("map", mapConfig);
+	map.ready(function() {
+		DebugUtil.timer.end("render");
+		new Highlight(map);
+		new Tooltip(map);
+		new Navigation(map);
+	});
+});
+</script>
+
+</head>
+
+<body class="claro">
+
+<select id="centerSelect">
+	<option>San Francisco</option>
+	<option>Seattle</option>
+	<option>New York City</option>
+	<option>Los Angeles</option>
+	<option>Denver</option>
+	<option>Dallas</option>
+	<option>Chicago</option>
+	<option>Memphis</option>
+</select>
+<button onclick="setCenter()">set center</button>
+
+<br/>
+
+<select id="zoomSelect">
+	<option>0</option>
+	<option>1</option>
+	<option>2</option>
+	<option>3</option>
+	<option>4</option>
+	<option>5</option>
+	<option>6</option>
+	<option>7</option>
+	<option>8</option>
+	<option>9</option>
+	<option>10</option>
+	<option>11</option>
+	<option>12</option>
+<select>
+<button onclick="setZoom()">set zoom</button>
+
+<div id="map" style="width:800px;height:400px;"></div>
+
+</body>
+</html>

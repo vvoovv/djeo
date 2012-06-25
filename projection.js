@@ -167,6 +167,27 @@ p.getCoords = function() {
 lang.extend(Placemark, {
 	getProjection: function() {
 		return this.projection || this.parent.getProjection();
+	},
+	
+	getBbox: function() {
+		// summary:
+		//		Returns the feature bounding box in the current map projection
+		var bb = this._bbox;
+		if (!bb) {
+			// this.bbox is normally supplied as input parameter when a feature is created
+			if (this.bbox) {
+				// check if we can use this.bbox, i.e. this.bbox is in the map projection
+				var projection = this.getProjection();
+				// compare projections of this.bbox and the map
+				var mapProjection = this.map.projection;
+				if (projection && mapProjection && projection !== mapProjection) {
+					// discard this.bbox
+					bb = null;
+				}
+			}
+		}
+		if (!bb) bb = bbox.get(this);
+		return bb;
 	}
 });
 
@@ -187,12 +208,12 @@ lang.extend(FeatureContainer, {
 // patch the Map class
 lang.extend(Map, {
 	getProjection: function() {
-		return this.coordsProjection || this.projection;
+		return this.dataProjection || this.projection;
 	},
 	getCoords: function(coords, type) {
-		var userProjection = this.userProjection || this.coordsProjection || this.projection;
-		if (this.projection && userProjection != this.projection) {
-			coords = proj.transform(userProjection, this.projection, coords, type || "Point");
+		var appProjection = this.appProjection || this.dataProjection || this.projection;
+		if (this.projection && appProjection != this.projection) {
+			coords = proj.transform(appProjection, this.projection, coords, type || "Point");
 		}
 		return coords;
 	}

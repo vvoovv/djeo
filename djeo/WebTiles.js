@@ -4,18 +4,11 @@ define([
 	"dojo/dom-geometry",
 	"dojo/dom-style",
 	"dojo/dom-construct",
+	"../_base",
 	"tiles/BaseTileable",
 	"../util/_base",
 	"../projection" // load projection machinery and transformations for Spherical Mercator projection (aka EPSG:3857)
-], function(declare, lang, geometry, style, domConstruct, Tileable, u, proj) {
-
-// building array of scales; array index corresponds to zoom
-// scale is the number of pixels per map projection unit
-// scale = 256*2^zoom/(2*Math.PI*earthRadius)
-var scales = [1/156543.034];
-for(var i=1; i<20; i++) {
-	scales[i] = 2 * scales[i-1];
-}
+], function(declare, lang, geometry, style, domConstruct, djeo, Tileable, u, proj) {
 
 return declare(null, {
 	
@@ -30,7 +23,7 @@ return declare(null, {
 
 	constructor: function(kwArgs, map) {
 		this.map = map;
-		this.discreteScales = scales;
+		this.discreteScales = djeo.scales;
 		lang.mixin(this, kwArgs);
 
 		// paramStr is actually url
@@ -58,8 +51,8 @@ return declare(null, {
 	
 	init: function() {
 		var map = this.map;
-		if (!map.coordsProjection) {
-			map.coordsProjection = "EPSG:4326";
+		if (!map.dataProjection) {
+			map.dataProjection = "EPSG:4326";
 		}
 		map.engine.scaleFactor = 2;
 		
@@ -75,31 +68,37 @@ return declare(null, {
 
 	zoomTo: function(extent) {
 		var map = this.map,
+			scales = djeo.scales,
 			center = [(extent[2] + extent[0])/2, (extent[3] + extent[1])/2],
-			scale = Math.min(map.width/(extent[2] - extent[0]), map.height/(extent[3] - extent[1]))
+			scale = Math.min(map.width/(extent[2] - extent[0]), map.height/(extent[3] - extent[1])),
+			zoom
 		;
 		// find which zoom is the closest one to the scale
 		if (scale <= scales[0]) {
-			this.zoom = 0;
+			zoom = 0;
 		}
 		else {
 			var maxZoom = scales.length - 1;
 			if (scale > scales[maxZoom]) {
-				this.zoom = maxZoom;
+				zoom = maxZoom;
 			}
 			else {
 				for (var i = 0; i<maxZoom; i++) {
 					if (scales[i] < scale && scale <= scales[i+1]) {
-						this.zoom = i;
+						zoom = i;
 						break;
 					}
 				}
 			}
 		}
 		
+		this._setCenterAndZoom(center, zoom);
+	},
+	
+	_setCenterAndZoom: function(center, zoom) {
 		// calculating center for this.tileable
 		var tileable = this.tileable,
-			_pow = Math.pow(2, this.zoom)
+			_pow = Math.pow(2, zoom)
 		;
 		tileable.extent = [0, 0, tileable.tileSize[0] * _pow, tileable.tileSize[1] * _pow];
 		tileable._calculateTileBounds();
@@ -112,10 +111,20 @@ return declare(null, {
 		y = -y + tExtent[3]/2;
 		
 		tileable.center = [x, y];
-		tileable.zoom = this.zoom;
+		tileable.zoom = zoom;
 		this.tileable.updateTileDivs();
+		this.zoom = zoom;
 	},
 	
+	setCenter: function(center) {
+		this._setCenterAndZoom(center, this.zoom);
+	},
+	
+	setZoom: function(zoom) {
+		this.tileable.doZoom(zoom);
+		this.zoom = zoom;
+	},
+
 	onMove: function(shiftX, shiftY) {
 		this.tileable.onTouchMove(shiftX, shiftY);
 	},
@@ -135,7 +144,7 @@ return declare(null, {
 		;
 		var zoomAmount = scaleFactor>1 ? scaleFactor : -1/scaleFactor
 		this.zoom += zoomAmount/2;
-		this.tileable.doZoom(zoomAmount, divX, divY);
+		this.tileable.doZoom(this.zoom, divX, divY);
 	},
 	
 	setTileContent: function(tile, zoom, x, y) {

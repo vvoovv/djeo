@@ -113,8 +113,8 @@ var p = declare([Feature], {
 
 	getBbox: function() {
 		// summary:
-		//		Returns the feature boundings box in the current map projection
-		var bb = this.bbox || this._bbox;
+		//		Returns the feature bounding box in the current map projection
+		var bb = this._bbox || this.bbox;
 		if (!bb) bb = bbox.get(this);
 		return bb;
 	},

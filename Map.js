@@ -579,9 +579,10 @@ return declare(null, {
 	},
 	
 	set: function(attr, value) {
-		var setter = "_set_"+attr;
-		setter = this.engine[setter] || this["_set_"+setter];
-		return setter && setter(value);
+		var setter = "_set_"+attr,
+			e = this.engine
+		;
+		return e[setter] && e[setter](value);
 	},
 	
 	get: function(attr) {

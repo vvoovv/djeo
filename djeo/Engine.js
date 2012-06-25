@@ -282,7 +282,9 @@ return declare([Engine], {
 		
 		var layers = this.layers;
 		if (layers.length) {
-			layers[0].zoomTo(extent);
+			array.forEach(layers, function(layer){
+				layer.zoomTo(extent);
+			});
 			// check if we need to adjust scale if the bottom layer supports only discrete zooms
 			if (layers[0].discreteScales) {
 				scale = layers[0].getScale();
@@ -373,14 +375,80 @@ return declare([Engine], {
 			});
 		}
 	},
+	
+	_setCamera: function(kwArgs) {
+		var map = this.map,
+			factory = map.engine.factories.Placemark,
+			scale = djeo.scales[kwArgs.zoom],
+			x = factory.getX(kwArgs.center[0] - map.width/scale/2),
+			y = factory.getY(kwArgs.center[1] + map.height/scale/2),
+			_scale =  scale
+		;
+
+		var layers = this.layers;
+		if (layers.length) {
+			array.forEach(layers, function(layer){
+				layer._setCenterAndZoom(kwArgs.center, kwArgs.zoom);
+			}, this);
+		}
+
+		if (this.correctScale) scale /= this.correctionScale;
+		
+		this.group.setTransform([
+			matrix.scale(scale),
+			matrix.translate(-x, -y)
+		]);
+		factory.calculateLengthDenominator();
+		this.resizeFeatures(map.document, 1/scale);
+	},
 
 	_set_center: function(center) {
 		center = this.map.getCoords(center);
-		this.group.applyRightTransform(matrix.translate(-pf.getX(center[0]), -pf.getY(center[1])));
+		var map = this.map,
+			factory = map.engine.factories.Placemark,
+			scale = (this.group.getTransform()||{xx:1}).xx,
+			_scale = scale
+		;
+		
+		var layers = this.layers;
+		if (layers.length) {
+			array.forEach(layers, function(layer){
+				layer.setCenter(center);
+			}, this);
+		}
+		// performing a reverse action in comparison to zoomTo function
+		if (this.correctScale) _scale *= this.correctionScale;
+		var x = factory.getX(center[0] - map.width/_scale/2),
+			y = factory.getY(center[1] + map.height/_scale/2)
+		;
+		
+		this.group.setTransform([
+			matrix.scale(scale),
+			matrix.translate(-x, -y)
+		]);
 	},
 
 	_get_center: function(center) {
-		return this.group.getTransform();
+
+	},
+	
+	_set_zoom: function(zoom) {
+		var map = this.map,
+			oldScale = (this.group.getTransform()||{xx:1}).xx,
+			newScale = djeo.scales[zoom],
+			scaleFactor = newScale/oldScale
+		;
+		var layers = this.layers;
+		if (layers.length) {
+			array.forEach(layers, function(layer){
+				layer.setZoom(zoom);
+			});
+		}
+		this.group.applyLeftTransform({xx:scaleFactor,yy:scaleFactor, dx: map.width/2*(1-scaleFactor), dy: map.height/2*(1-scaleFactor)});
+		this.factories.Placemark.calculateLengthDenominator();
+		this.resizeFeatures(this.map.document, 1/scaleFactor);
+
+		this.onzoom_changed();
 	},
 
 	_get_zoom: function() {

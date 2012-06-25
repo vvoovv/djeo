@@ -98,9 +98,12 @@ return declare([Evented], {
 		//		Should be implemented in the inherited class
 	},
 	
-	_setCamera: function() {
+	_initCamera: function() {
 		var map = this.map,
-			extent = map.extent
+			extent = map.extent,
+			zoom,
+			// do we need to project center to the map's projection?
+			projectCenter = true
 		;
 		// the following attribute checked in the onzoom_changed function
 		// if this._renderingDisabled == true, then no rendering due to style change will occur in the onzoom_changed
@@ -121,14 +124,21 @@ return declare([Evented], {
 				bbox = map.getBbox();
 			}
 			if ("zoom" in map) {
-				this.zoom = map.zoom;
+				zoom = map.zoom;
 				if (!center) {
-					center = bbox ? [(bbox[2] + bbox[0])/2, (bbox[3] + bbox[1])/2] : [defaultCenter[0], defaultCenter[1]];
+					if (bbox) {
+						center = [(bbox[2] + bbox[0])/2, (bbox[3] + bbox[1])/2];
+						// bbox is already in the map's projection
+						projectCenter = false;
+					}
+					else {
+						center = [defaultCenter[0], defaultCenter[1]];
+					}
 				}
 			}
 			else {
 				if (center || !bbox) {
-					this.zoom = defaultZoom;
+					zoom = defaultZoom;
 					if (!bbox) {
 						center = [defaultCenter[0], defaultCenter[1]];
 					}
@@ -136,11 +146,14 @@ return declare([Evented], {
 				// If center is not set bbox has been calculated,
 				// the center of the bounding box will be used as a map center
 			}
-			if (center) {
-				this.center = map.getCoords(center);
+			if (center && projectCenter) {
+				center = map.getCoords(center);
 			}
 			// now actually set the camera
-			if (!center) {
+			if (center) {
+				this._setCamera({center: center, zoom: zoom});
+			}
+			else {
 				this.zoomTo(bbox);
 			}
 		}
@@ -202,7 +215,7 @@ return declare([Evented], {
 		var map = this.map;
 		map._calculateViewport();
 		this.prepare();
-		this._setCamera();
+		this._initCamera();
 		map.document.render(stylingOnly, theme);
 	},
 	
