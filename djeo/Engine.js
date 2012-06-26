@@ -421,7 +421,6 @@ return declare([Engine], {
 		var x = factory.getX(center[0] - map.width/_scale/2),
 			y = factory.getY(center[1] + map.height/_scale/2)
 		;
-		
 		this.group.setTransform([
 			matrix.scale(scale),
 			matrix.translate(-x, -y)
@@ -429,7 +428,21 @@ return declare([Engine], {
 	},
 
 	_get_center: function(center) {
-
+		var map = this.map,
+			t = this.group.getTransform(),
+			scale = t.xx, // same as t.yy
+			x = -t.dx/scale,
+			y = -t.dy/scale
+		;
+		// now getting coordinates in the map projection, i.e. performing a reverse action in comparison to zoomTo function
+		if (this.correctScale) {
+			x /= this.correctionScale;
+			y /= this.correctionScale;
+		}
+		if (this.correctScale) scale *= this.correctionScale;
+		x += this.extent[0] + map.width/scale/2;
+		y = this.extent[3] - y - map.height/scale/2;
+		return [x, y];
 	},
 	
 	_set_zoom: function(zoom) {

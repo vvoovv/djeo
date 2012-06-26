@@ -163,6 +163,19 @@ p.getCoords = function() {
 	return coords;
 };
 
+p = Map.prototype;
+// patch _get_center method of the Map class
+var _get_center = p._get_center; // original _get_center
+p._get_center = function() {
+	var center = _get_center.call(this),
+		appProjection = this.appProjection || this.dataProjection || this.projection
+	;
+	if (this.projection && appProjection != this.projection) {
+		center = proj.transform(this.projection, appProjection, center, "Point");
+	}
+	return center;
+}
+
 // patch the Placemark class
 lang.extend(Placemark, {
 	getProjection: function() {

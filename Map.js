@@ -579,16 +579,40 @@ return declare(null, {
 	},
 	
 	set: function(attr, value) {
-		var setter = "_set_"+attr,
-			e = this.engine
+		// setter name
+		var name = "_set_"+attr,
+			setter,
+			context
 		;
-		return e[setter] && e[setter](value);
+		if (this[name]) {
+			setter = this[name];
+			context = this;
+		}
+		else if (this.engine[name]) {
+			setter = this.engine[name];
+			context = this.engine;
+		}
+		return setter && setter.call(context, value);
 	},
 	
 	get: function(attr) {
-		var getter = "_get_"+attr;
-		getter = this.engine[getter] || this[getter];
-		return getter && getter.call(this.engine);
+		var name = "_get_"+attr,
+			getter,
+			context
+		;
+		if (this[name]) {
+			getter = this[name];
+			context = this;
+		}
+		else if (this.engine[name]) {
+			getter = this.engine[name];
+			context = this.engine;
+		}
+		return getter && getter.call(context);
+	},
+	
+	_get_center: function() {
+		return this.engine._get_center();
 	}
 });
 
