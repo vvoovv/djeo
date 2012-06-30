@@ -32,11 +32,10 @@ return declare([Base], {
 	rtl: false,
 
 	constructor: function(map, kwArgs) {
-		this._dependency = dependency;
-
 		this.content = kwArgs && kwArgs.content ? kwArgs.content : DEFAULT_CONTENT;
 		
-		this.attachFactory(this.enabled);
+		this.init();
+		if (this.enabled) this.enable();
 	},
 
 	init: function() {

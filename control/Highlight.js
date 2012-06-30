@@ -16,11 +16,7 @@ return declare([Base], {
 	highlightedFeature: null,
 
 	constructor: function(map, kwArgs){
-		this.attachFactory(this.enabled);
-	},
-	
-	init: function() {
-
+		if (this.enabled) this.enable();
 	},
 
 	pointeroverAction: function(newfeature, oldFeature) {

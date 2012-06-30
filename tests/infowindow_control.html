@@ -1,0 +1,62 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<link rel="stylesheet" href="../../dijit/themes/claro/claro.css"/>
+
+<script>
+	dojoConfig = {
+		isDebug: true,
+		async: true,
+		parseOnLoad: false,
+		djeoEngine: "djeo",
+		ymapsKey: "AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=="
+	};
+</script>
+<script src="util.js"></script>
+<script src="../../dojo/dojo.js"></script>
+
+<script>
+var infoWindowControl;
+
+DebugUtil.timer.start("loading");
+
+require([
+	"djeo/tests/data/usa_features_style",
+	"djeo/Map",
+	"djeo/control/Navigation",
+	"djeo/control/InfoWindow",
+	"dijit/form/ToggleButton",
+	"dojo/domReady!"
+],
+function(mapConfig, Map, Navigation, InfoWindowControl, ToggleButton){
+	DebugUtil.timer.end("loading");
+	
+	new ToggleButton({
+		checked: true,
+		onChange: function(value){
+			infoWindowControl.enable(value);
+		},
+		iconClass: "dijitRadioIcon"
+	}, "infowindow");
+	
+	DebugUtil.timer.start("render");
+	var map = new Map("map", mapConfig);
+	map.ready(function() {
+		DebugUtil.timer.end("render");
+		new Navigation(map);
+		infoWindowControl = new InfoWindowControl(map);
+	});
+});
+</script>
+
+</head>
+
+<body class="claro">
+
+<div id="infowindow">InfoWindow control</div>
+
+<div id="map" style="width:800px;height:400px;"></div>
+
+</body>
+</html>
