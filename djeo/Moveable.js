@@ -95,6 +95,14 @@ return declare(null, {
 		//s.top  = top + "px";
 		var engine = this.map.engine;
 		engine.group.applyLeftTransform({dx: shiftX, dy: shiftY});
+		if (engine._infoWindow) {
+			s = engine._infoWindow.domNode.style;
+			var l = s.left,
+				t = s.top
+			;
+			s.left = l ? parseInt(l.substr(0, l.length-2)) + shiftX : shiftX;
+			s.top = t ? parseInt(t.substr(0, t.length-2)) + shiftY : shiftY;
+		}
 		for (var i=0; i<engine.layers.length; i++) {
 			engine.layers[i].onMove(left, top);
 		}

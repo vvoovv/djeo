@@ -427,7 +427,7 @@ return declare([Engine], {
 		]);
 	},
 
-	_get_center: function(center) {
+	_get_center: function() {
 		var map = this.map,
 			t = this.group.getTransform(),
 			scale = t.xx, // same as t.yy

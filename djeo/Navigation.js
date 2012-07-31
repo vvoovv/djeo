@@ -73,6 +73,11 @@ return declare(null, {
 
 		engine.factories.Placemark.calculateLengthDenominator();
 		engine.resizeFeatures(this.map.document, 1/scaleFactor);
+		
+		// update info window position
+		if (engine._infoWindow) {
+			engine._infoWindow._doZoom(scaleFactor, x, y);
+		}
 
 		engine.onzoom_changed();
 	}

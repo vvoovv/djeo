@@ -7,7 +7,7 @@ define([
 return declare(null, {
 	
 	init: function() {
-		this.infoWindow = new InfoWindow();
+		this.infoWindow = new InfoWindow({map: this.map});
 	},
 
 	process: function(event){
