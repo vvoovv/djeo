@@ -73,9 +73,33 @@ var p = declare([Feature], {
 		return coords;
 	},
 	
-	setCoords: function(coords) {
-		delete this._coords, this._bb;
+	set: function(attr, value) {
+		// setter name
+		var name = "_set_"+attr,
+			setter = this[name]
+		;
+		return setter && setter.call(this, value);
+	},
+	
+	get: function(attr) {
+		var name = "_get_"+attr,
+			getter = this[name],
+			context
+		;
+		return getter && getter.call(this);
+	},
+	
+	_set_coords: function(coords) {
+		// convert coordinates to the map projection if it is relevant here
+		var _coords = this.map.getCoords(coords);
+		this.map.engine.factories.Placemark.setCoords(_coords, this);
+		delete this._bb;
 		this.coords = coords;
+		this._coords = _coords;
+	},
+	
+	_get_coords: function() {
+		return this.getCoords();
 	},
 	
 	render: function(stylingOnly, theme) {
@@ -185,17 +209,6 @@ var p = declare([Feature], {
 				this.map.engine.disconnect(eventConnection);
 			}, this);
 			delete this.handles[handle];
-		}
-	},
-
-	translate: function(position) {
-		var factory = this.map.engine.factories.Placemark;
-		if (factory.translate) {
-			// convert coordinates to the map projection if it is relevant here
-			position = this.map.getCoords(position);
-			factory.translate(position, this);
-			this.setCoords(position);
-			//FIXME publish("djeo.placemark.translate", [this, position]);
 		}
 	},
 

@@ -476,11 +476,12 @@ return declare([P], {
 		}
 	},
 
-	translate: function(position, feature) {
+	setCoords: function(coords, feature) {
 		var baseShapes = feature.baseShapes,
 			textShapes = feature.textShapes,
-			oldPosition = feature.getCoords(),
-			transform = {dx:this.getX(position[0])-this.getX(oldPosition[0]), dy:this.getY(position[1])-this.getY(oldPosition[1])};
+			oldCoords = feature.getCoords(),
+			transform = {dx:this.getX(coords[0])-this.getX(oldCoords[0]), dy:this.getY(coords[1])-this.getY(oldCoords[1])}
+		;
 
 		array.forEach(baseShapes, function(shape){
 			shape.applyLeftTransform(transform);

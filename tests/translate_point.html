@@ -1,0 +1,99 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<link rel="stylesheet" href="../../dijit/themes/claro/claro.css"/>
+
+<script>
+	dojoConfig = {
+		isDebug: true,
+		async: true,
+		parseOnLoad: false,
+		djeoEngine: "djeo",
+		ymapsKey: "AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=="
+	};
+</script>
+<script src="util.js"></script>
+<script src="../../dojo/dojo.js"></script>
+
+<script>
+	
+var map, feature;
+
+var place2Coords = {
+	"San Francisco": [-122.42, 37.77],
+	"Seattle": [-122.33, 47.61],
+	"New York City": [-74, 40.71],
+	"Los Angeles": [-118.24, 34.05],
+	"Denver": [-104.98, 39.74],
+	"Dallas": [-96.8, 32.78],
+	"Chicago": [-87.65, 41.85],
+	"Memphis": [-90.05, 35.15]
+}
+function moveHere() {
+	feature.set("coords", place2Coords[document.getElementById("centerSelect").value]);
+}
+
+DebugUtil.timer.start("loading");
+
+require([
+	"djeo/Map",
+	"djeo/control/Highlight",
+	"djeo/control/Tooltip",
+	"djeo/control/Navigation",
+	"djeo/tests/data/usa_features",
+	"djeo/tests/data/usa_geometries",
+	"dojo/domReady!"
+],
+function(Map, Highlight, Tooltip, Navigation, usaFeatures, usaGeometries){
+	DebugUtil.timer.end("loading");
+
+	DebugUtil.timer.start("render");
+	map = new Map("map", {
+		layers: "roadmap",
+		geometries: usaGeometries,
+		features: [
+			{
+				features: usaFeatures,
+			},
+			{
+				id: "point",
+				type: "Point",
+				coords: place2Coords["Denver"],
+				style: {
+					img: "resources/icons/load.png",
+					size: [28, 22]
+				}
+			}
+		]
+	});
+	map.ready(function() {
+		DebugUtil.timer.end("render");
+		feature = map.getFeatureById("point");
+		new Highlight(map);
+		new Tooltip(map);
+		new Navigation(map);
+	});
+});
+</script>
+
+</head>
+
+<body class="claro">
+
+<select id="centerSelect">
+	<option>San Francisco</option>
+	<option>Seattle</option>
+	<option>New York City</option>
+	<option>Los Angeles</option>
+	<option>Denver</option>
+	<option>Dallas</option>
+	<option>Chicago</option>
+	<option>Memphis</option>
+</select>
+<button onclick="moveHere()">move there</button>
+
+<div id="map" style="width:800px;height:400px;"></div>
+
+</body>
+</html>
