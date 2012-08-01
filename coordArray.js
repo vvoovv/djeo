@@ -1,11 +1,12 @@
-dojo.provide("djeo.coordArray");
+define([
+	"dojo/_base/declare",
+	"./_base"
+], function(declare, djeo){
+	
+var dependency = "CoordArray";
+djeo.registerDependency(dependency);
 
-(function() {
-	
-djeo.coordArray = {
-	
-	type: "CoordArray",
-	
+return {
 	push: function(feature, point) {
 		var factory = this._getFactory(feature);
 		if (!factory) return;
@@ -19,11 +20,8 @@ djeo.coordArray = {
 	},
 
 	_getFactory: function(feature) {
-		var factory = feature.map.engine.factories.CoordArray;
-		if (!factory) factory = feature.map.engine.getFactory(this.type);
-		return factory;
+		return feature.map.engine.getFactory(dependency);
 	}
-
 };
-
-}());
+	
+});

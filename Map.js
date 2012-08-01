@@ -420,6 +420,12 @@ return declare(null, {
 		//		An instance of a class inherited from djeo.Feature or undefined
 		return this.features[id];
 	},
+	
+	$: function(id) {
+		// summary:
+		//		An alias for getFeatureById
+		return this.getFeatureById(id);
+	},
 
 	on: function(/* String */event, /*Function*/ method, /*Object?*/ context) {
 		// summary:

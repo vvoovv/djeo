@@ -69,7 +69,7 @@ function(Map, Highlight, Tooltip, Navigation, usaFeatures, usaGeometries){
 	});
 	map.ready(function() {
 		DebugUtil.timer.end("render");
-		feature = map.getFeatureById("point");
+		feature = map.$("point");
 		new Highlight(map);
 		new Tooltip(map);
 		new Navigation(map);
