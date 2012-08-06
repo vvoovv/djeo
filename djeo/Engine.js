@@ -354,9 +354,7 @@ return declare([Engine], {
 				y
 			;
 			if (feature.isPoint()) {
-				var coords = feature.getCoords(),
-					tr = feature.baseShapes[0].getTransform()
-				;
+				var coords = feature.getCoords();
 				x = factory.getX(coords[0]);
 				y = factory.getY(coords[1]);
 			}
