@@ -73,22 +73,6 @@ var p = declare([Feature], {
 		return coords;
 	},
 	
-	set: function(attr, value) {
-		// setter name
-		var name = "_set_"+attr,
-			setter = this[name]
-		;
-		return setter && setter.call(this, value);
-	},
-	
-	get: function(attr) {
-		var name = "_get_"+attr,
-			getter = this[name],
-			context
-		;
-		return getter && getter.call(this);
-	},
-	
 	_set_coords: function(coords) {
 		// convert coordinates to the map projection if it is relevant here
 		var _coords = this.map.getCoords(coords);

@@ -48,8 +48,27 @@ return declare(null, {
 		this.parent = parent;
 	},
 	
+	set: function(attr, value) {
+		// setter name
+		var name = "_set_"+attr,
+			setter = this[name]
+		;
+		return setter && setter.call(this, value);
+	},
+	
 	get: function(attr) {
-		return this.map.useAttrs ? (this.attrs && this.attrs[attr]!==undefined ? this.attrs[attr] : this[attr]) : this[attr];
+		// check if we have a getter function
+		var name = "_get_"+attr,
+			getter = this[name],
+			result
+		;
+		if (getter) {
+			result = getter.call(this);
+		}
+		else {
+			result = this.map.useAttrs ? (this.attrs && this.attrs[attr]!==undefined ? this.attrs[attr] : this[attr]) : this[attr];
+		}
+		return result;
 	},
 	
 	addStyle: function(/* Array|Object */style, /* Boolean */preventRendering) {
