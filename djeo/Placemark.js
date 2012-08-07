@@ -494,12 +494,14 @@ return declare([P], {
 		}
 	},
 
-	rotate: function(orientation, feature) {
+	setOrientation: function(o, feature) {
+		// orientation is actually heading
 		var baseShapes = feature.baseShapes,
-			heading = lang.isObject(orientation) ? orientation.heading : orientation,
+			heading = lang.isObject(o) ? o.heading : o,
 			state = feature.state,
 			oldHeading = state.orientation ? state.orientation.heading : state.heading,
-			deltaHeading = -oldHeading + heading;
+			deltaHeading = -oldHeading + heading
+		;
 
 		array.forEach(baseShapes, function(shape){
 			shape.applyRightTransform(matrix.rotate(deltaHeading));
