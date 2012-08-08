@@ -395,69 +395,88 @@ return declare([P], {
 		var label = textStyle.label || this._getLabel(feature, textStyle);
 
 		if (label) {
-			var shape = feature.baseShapes[0],
-				coords = feature.getCoords(),
-				scale = P.getScale(calculatedStyle)
-			;
-
 			feature.textShapes = [];
 			// ts states for "text style"
 			feature.state.ts = textStyle;
 
 			// for halo effect we need two text shapes: the lower one with stroke and the upper one without stroke
 			if (textStyle.haloFill && textStyle.haloRadius) {
-				this._makeTextShape(feature, label, null, {color: textStyle.haloFill, width: 2*textStyle.haloRadius}, textStyle, scale);
+				this._makeTextShape(feature, label, null, {color: textStyle.haloFill, width: 2*textStyle.haloRadius}, textStyle);
 			}
 
-			this._makeTextShape(feature, label, textStyle.fill, null, textStyle, scale);
+			this._makeTextShape(feature, label, textStyle.fill, null, textStyle);
 		}
 	},
 	
-	_makeTextShape: function(feature, label, fill, stroke, textStyle, scale) {
+	_makeTextShape: function(feature, label, fill, stroke, textStyle) {
 		var shape = feature.baseShapes[0],
 			textDef = {},
-			x,
-			y
+			createShape = true
 		;
 	
 		if (feature.isPoint()) {
-			var coords = feature.getCoords(),
-				tr = feature.baseShapes[0].getTransform()
-			;
-			x = this.getX(coords[0]);
-			y = this.getY(coords[1]);
 			if (textStyle.hAlign) {
 				textDef.align = textStyle.hAlign;
 			}
 		}
 		else if (feature.isArea()) {
-			var center = geom.center(feature);
-			x = this.getX(center[0]);
-			y = this.getY(center[1]);
 			textDef.align = "middle";
 		}
+		else {
+			createShape = false;
+		}
 		
-		if (x!==undefined) {
-			textDef.x = x;
-			textDef.y = y;
+		if (createShape) {
 			textDef.text = label;
 
-			var transforms = [matrix.scaleAt(1/this.lengthDenominator, x, y)],
-				// determing label offset
-				dx = ("dx" in textStyle) ? scale*textStyle.dx : 0,
-				dy = ("dy" in textStyle) ? -scale*textStyle.dy : 0
+			var transforms = this._calculateTextPosition(feature, textDef),
+				textShape = this.text.createText(textDef).setTransform(transforms)
 			;
-			if (dx || dy) {
-				transforms.push(matrix.translate(dx, dy));
-			}
-			var textShape = this.text.createText(textDef).setTransform(transforms);
 
 			if (fill) textShape.setFill(fill);
-			this._makeFont(textShape, textStyle, scale);
+			this._makeFont(textShape, textStyle, P.getScale(feature.state.cs));
 			if (stroke) textShape.setStroke(stroke);
 			
 			feature.textShapes.push(textShape);
 		}
+	},
+	
+	_calculateTextPosition: function(feature, textDef, coords) {
+		// calculate transforms for the text shape
+		// set x and y for the textDef if textDef is given
+		
+		var x,y;
+		if (x === undefined) {
+			if (!coords) {
+				coords = feature.getCoords();
+			}
+			x = this.getX(coords[0]);
+			y = this.getY(coords[1]);
+		}
+		else {
+			var center = geom.center(feature);
+			x = this.getX(center[0]);
+			y = this.getY(center[1]);
+		}
+		
+		var textStyle = feature.state.ts,
+			calculatedStyle = feature.state.ts,
+			scale = P.getScale(calculatedStyle),
+			transforms = [matrix.scaleAt(1/this.lengthDenominator, x, y)],
+			// determing label offset
+			dx = ("dx" in textStyle) ? scale*textStyle.dx : 0,
+			dy = ("dy" in textStyle) ? -scale*textStyle.dy : 0
+		;
+		if (dx || dy) {
+			transforms.push(matrix.translate(dx, dy));
+		}
+
+		if (textDef) {
+			textDef.x = x;
+			textDef.y = y;
+		}
+		
+		return transforms;
 	},
 	
 	_makeFont: function(textShape, textStyle, scale) {
@@ -489,8 +508,11 @@ return declare([P], {
 		
 		if (textShapes) {
 			array.forEach(textShapes, function(t){
-				t.applyLeftTransform(transform);
-			});
+				var textDef = t.getShape(),
+					transforms = this._calculateTextPosition(feature, textDef, coords)
+				;
+				t.setShape(textDef).setTransform(transforms);
+			}, this);
 		}
 	},
 

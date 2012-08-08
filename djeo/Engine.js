@@ -345,29 +345,9 @@ return declare([Engine], {
 		
 		if (feature.textShapes) {
 			var factory = this.map.engine.factories.Placemark,
-				// getting test style
-				ts = feature.state.ts,
-				// determing label offset
-				dx = ("dx" in ts) ? ts.dx : 0,
-				dy = ("dy" in ts) ? -ts.dy : 0,
-				x,
-				y
+				transforms = factory._calculateTextPosition(feature)
 			;
-			if (feature.isPoint()) {
-				var coords = feature.getCoords();
-				x = factory.getX(coords[0]);
-				y = factory.getY(coords[1]);
-			}
-			else if (feature.isArea()) {
-				var center = geom.center(feature);
-				x = factory.getX(center[0]);
-				y = factory.getY(center[1]);
-			}
 
-			var transforms = [matrix.scaleAt(1/factory.lengthDenominator, x, y)];
-			if (dx || dy) {
-				transforms.push(matrix.translate(dx, dy));
-			}
 			array.forEach(feature.textShapes, function(t) {
 				t.setTransform(transforms);
 			});
