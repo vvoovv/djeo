@@ -1,24 +1,17 @@
-dojo.provide("djeo.Model");
-
-dojo.require("djeo.Placemark");
-
-(function() {
-
-var g = djeo;
-
-dojo.declare("djeo.Model", djeo.Placemark, {
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"./Placemark",
+	"./_base",
+], function(declare, lang, Placemark, djeo) {
 	
-	type: "Model",
+var dependency = "Model";
+djeo.registerDependency(dependency);
+
+var Model = declare([Placemark], {
 
 	constructor: function(/* Object? */featureDef, /* Object? */kwArgs) {
-	},
-	
-	setFactory: function() {
-		var map = this.map;
-		if (map.engine.canRenderModels && map.renderModels) {
-			this.factory = map.engine.getFactory(this.type);
-		}
-		else this.factory = this.map.engine.factories.Placemark;
+		lang.mixin(this, kwArgs);
 	},
 	
 	getCoordsType: function() {
@@ -26,8 +19,18 @@ dojo.declare("djeo.Model", djeo.Placemark, {
 	},
 
 	_render: function(stylingOnly, theme) {
+		// set factory
+		if (!this.factory) {
+			var map = this.map;
+			if (map.engine.canRenderModels && map.renderModels) {
+				this.factory = map.engine.getFactory(dependency);
+			}
+			else this.factory = this.map.engine.factories.Placemark;
+		}
+		
 		if (this.map.engine.canRenderModels && this.map.renderModels) {
-			this.factory.render(this);
+			// return Deferred
+			return this.factory.render(this);
 		}
 		else {
 			this.inherited(arguments);
@@ -43,20 +46,12 @@ dojo.declare("djeo.Model", djeo.Placemark, {
 				roll: 0
 			};
 			factory.rotate(orientation, this);
-			dojo.mixin(this.orientation, orientation);
+			lang.mixin(this.orientation, orientation);
 		}
 	}
 });
 
-
-// default methods;
-var p = g.Model.prototype;
-if (!g.methods) g.methods = {};
-g.methods.Model = {
-	render: p._render
-}
-
 // register the constructor
-g.featureTypes.Model = g.Model;
-
-}());
+djeo.featureTypes.Model = Model;
+return Model;
+});

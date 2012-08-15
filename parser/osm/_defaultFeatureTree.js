@@ -83,7 +83,9 @@ define([], [
 	sid: "building",
 	name: "Buildings",
 	"name:ru": "Здания",
-	"name:de": "Gebäude"
+	"name:de": "Gebäude",
+	altitudeMode: "relativeToGround",
+	extrude: true
 },
 {
 	name: "Highways",

@@ -216,7 +216,7 @@ return declare([Evented], {
 		map._calculateViewport();
 		this.prepare();
 		this._initCamera();
-		map.document.render(stylingOnly, theme);
+		return map.document.render(stylingOnly, theme);
 	},
 	
 	renderFeatures: function(/* Array|Object */features, /* Boolean */stylingOnly, /* String? */theme) {

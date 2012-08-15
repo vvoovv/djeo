@@ -34,6 +34,12 @@ return declare([Base], {
 	constructor: function(map, kwArgs) {
 		this.content = kwArgs && kwArgs.content ? kwArgs.content : DEFAULT_CONTENT;
 		
+		// attach factory if it exists
+		var factory = this.map.engine.getFactory(dependency);
+		if (factory) {
+			lang.mixin(this, factory);
+		}
+		
 		this.init();
 		if (this.enabled) this.enable();
 	},

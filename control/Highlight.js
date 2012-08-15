@@ -12,8 +12,6 @@ return declare([Base], {
 	//		A basic highlighting control for the map
 	
 	theme: "highlight",
-	
-	highlightedFeature: null,
 
 	constructor: function(map, kwArgs){
 		if (this.enabled) this.enable();
@@ -23,7 +21,7 @@ return declare([Base], {
 		if (oldFeature) {
 			oldFeature.render(true);
 		}
-		newfeature.render(true, "highlight");
+		newfeature.render(true, this.theme);
 	},
 	
 	pointeroutAction: function(feature) {

@@ -2,6 +2,8 @@ define([
 	"dojo/_base/lang", // isString
 	"dojo/_base/array" // array
 ], function(lang, array){
+	
+var defaultBuildingHeight = 10;
 
 // search for $attribute or $[attribute] or 
 var filterPattern = /\$(?:(\w+)|\[([^\]]+)\])|this\.(\w+)\(\)/g;
@@ -75,7 +77,9 @@ var _onComplete = function(){
 
 var _onElement = function(element, feature) {
 	// default value for container variable
-	var container = this.container;
+	var container = this.container,
+		elementAdded = false;
+	;
 	// check if filter is evaluated to true
 	for (var filterId in this._filters){
 		if (this._filters[filterId][0].call(this, feature)) {
@@ -85,7 +89,9 @@ var _onElement = function(element, feature) {
 	}
 	if (container) {
 		container.features.push(feature);
+		elementAdded = true;
 	}
+	return elementAdded;
 };
 
 var _onNode = function(node, feature) {
@@ -93,7 +99,22 @@ var _onNode = function(node, feature) {
 };
 
 var _onWay = function(way, feature) {
-	_onElement.call(this, way, feature);
+	var elementAdded = _onElement.call(this, way, feature);
+	if (elementAdded && feature.building) {
+		if (this.assignBuildingHeight && feature["building:levels"]) {
+			feature.height = 2.5 * parseInt(feature["building:levels"]);
+		}
+		else if (feature.height) {
+			var h = feature.height;
+			// strip out units
+			var parts = h.split(" ");
+			h = (parts.length == 1) ? h : parts[0];
+			feature.height = parseFloat(h);
+		}
+		else if (this.assignBuildingHeight) {
+			feature.height = this.defaultBuildingHeight || defaultBuildingHeight;
+		}
+	}
 };
 
 var _onRelation = function(node) {

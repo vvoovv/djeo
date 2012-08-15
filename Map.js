@@ -8,11 +8,11 @@ define([
 	"dojo/dom-geometry", // getContentBox, position
 	"dojo/_base/xhr", // get
 	"dojo/_base/kernel", // global
-	"dojo/aspect", // after
+	"dojo/_base/Deferred", // Deferred
 	"./_base",
 	"./FeatureContainer",
 	"./Placemark" // just request it, no actual use of djeo.Placemark
-], function(require, declare, lang, has, dom, array, domGeom, xhr, kernel, aspect, djeo, FeatureContainer){
+], function(require, declare, lang, has, dom, array, domGeom, xhr, kernel, Deferred, djeo, FeatureContainer){
 
 return declare(null, {
 	// summary:
@@ -176,7 +176,8 @@ return declare(null, {
 			callback();
 		}
 		else {
-			aspect.after(this, "_afterOnEngineReady", callback);
+			this._readyDeferred = new Deferred();
+			this._readyDeferred.then(callback);
 		}
 	},
 	
@@ -236,15 +237,19 @@ return declare(null, {
 			}
 
 			// perform rendering
-			this.render();
+			var renderDeferred = this.render();
 
-			this._ready = true;
-			this._afterOnEngineReady();
+			if (renderDeferred) {
+				renderDeferred.then(lang.hitch(this, function(){
+					this._ready = true;
+					this._readyDeferred.resolve();
+				}));
+			}
+			else {
+				this._ready = true;
+				this._readyDeferred.resolve();
+			}
 		}));
-	},
-	
-	_afterOnEngineReady: function() {
-		
 	},
 	
 	addFeatures: function(/* Array|Object */features, /* Boolean? */preventRendering) {
@@ -271,7 +276,7 @@ return declare(null, {
 		// theme:
 		//		Specifies which theme to use for map rendering.
 		//		If theme is not set, the map will be rendered with the theme set for the "normal" map mode
-		this.engine.render(stylingOnly, theme);
+		return this.engine.render(stylingOnly, theme);
 	},
 	
 	renderFeatures: function(/* Array|Object */features, /* Boolean */stylingOnly, /* String? */theme) {
@@ -602,6 +607,7 @@ return declare(null, {
 	},
 	
 	get: function(attr) {
+		// check if we have a getter function
 		var name = "_get_"+attr,
 			getter,
 			context
@@ -614,7 +620,7 @@ return declare(null, {
 			getter = this.engine[name];
 			context = this.engine;
 		}
-		return getter && getter.call(context);
+		return (getter && getter.call(context)) || this[attr];
 	},
 	
 	_get_center: function() {

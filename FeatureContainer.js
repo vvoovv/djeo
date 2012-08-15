@@ -119,11 +119,11 @@ var fc = declare([Feature], {
 	},
 	
 	render: function(stylingOnly, theme) {
-		this.map.engine.renderContainer(this, stylingOnly, theme);
+		return this.map.engine.renderContainer(this, stylingOnly, theme);
 	},
 	
 	_render: function(stylingOnly, theme) {
-		this.map.engine._renderContainer(this, stylingOnly, theme);
+		return this.map.engine._renderContainer(this, stylingOnly, theme);
 	},
 	
 	getContainer: function() {

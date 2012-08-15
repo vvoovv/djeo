@@ -1,6 +1,6 @@
 define([], function(lang){
 
-var djeo = {
+var d = {
 	defaultLayerID: "ROADMAP",
 	defaultEngine: "djeo",
 	// registry of feature constructors
@@ -10,12 +10,12 @@ var djeo = {
 };
 
 var deps = {};
-djeo.dependencies = deps;
-djeo.registerDependency = function(moduleId) {
+d.dependencies = deps;
+d.registerDependency = function(moduleId) {
 	deps[moduleId] = 1;
 };
 
-djeo.defaultStyle = [
+d.defaultStyle = [
 	{
 		stroke: "black",
 		strokeWidth: 0.5,
@@ -33,11 +33,23 @@ djeo.defaultStyle = [
 	}
 ];
 
-djeo.getLayerClassId = function(/* String */layerId) {
+d.getLayerClassId = function(/* String */layerId) {
 	// check if we've got a complex structure like "layerClassId:url"
 	var colonIndex = layerId.indexOf(":");
 	return (colonIndex > 0) ? layerId.substring(0, colonIndex) : layerId;
 };
+
+d.getTraversedAttr = function(feature, attr) {
+	// current feature
+	var f = feature;
+	while (f) {
+		var attrValue = f[attr];
+		if (attrValue !== undefined) {
+			return attrValue;
+		}
+		f = f.parent;
+	}
+}
 
 // building array of scales; array index corresponds to zoom
 // scale is the number of pixels per map projection unit
@@ -46,8 +58,8 @@ var scales = [1/156543.034];
 for(var i=1; i<20; i++) {
 	scales[i] = 2 * scales[i-1];
 }
-djeo.scales = scales;
+d.scales = scales;
 
-return djeo;
+return d;
 	
 });

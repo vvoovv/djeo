@@ -25,11 +25,12 @@ require([
 	"djeo/tests/data/usa_features_style",
 	"djeo/Map",
 	"djeo/control/Navigation",
+	"djeo/control/Highlight",
 	"djeo/control/InfoWindow",
 	"dijit/form/ToggleButton",
 	"dojo/domReady!"
 ],
-function(mapConfig, Map, Navigation, InfoWindowControl, ToggleButton){
+function(mapConfig, Map, Navigation, Highlight, InfoWindowControl, ToggleButton){
 	DebugUtil.timer.end("loading");
 	
 	new ToggleButton({
@@ -45,6 +46,7 @@ function(mapConfig, Map, Navigation, InfoWindowControl, ToggleButton){
 	map.ready(function() {
 		DebugUtil.timer.end("render");
 		new Navigation(map);
+		new Highlight(map);
 		infoWindowControl = new InfoWindowControl(map);
 	});
 });
