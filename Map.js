@@ -480,6 +480,10 @@ return declare(null, {
 				"./djeo/Engine" :
 				(packageDefined ? engine+"/Engine" : "djeo-"+engine+"/Engine");
 			;
+			var engineMid = (engine == "djeo") ?
+				"./djeo/Engine" :
+				"djeo-"+engine+"/Engine"
+			;
 			// Check what we need to load
 			// If we have a built version (has("djeo-built")==true), load built basic modules for the engine,
 			// e.g Engine, Navigation, Highlight, Tooltip

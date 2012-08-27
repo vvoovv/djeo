@@ -409,8 +409,7 @@ return declare([P], {
 	},
 	
 	_makeTextShape: function(feature, label, fill, stroke, textStyle) {
-		var shape = feature.baseShapes[0],
-			textDef = {},
+		var textDef = {},
 			createShape = true
 		;
 	
@@ -460,7 +459,7 @@ return declare([P], {
 		}
 		
 		var textStyle = feature.state.ts,
-			calculatedStyle = feature.state.ts,
+			calculatedStyle = feature.state.cs,
 			scale = P.getScale(calculatedStyle),
 			transforms = [matrix.scaleAt(1/this.lengthDenominator, x, y)],
 			// determing label offset
