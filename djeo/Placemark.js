@@ -23,7 +23,8 @@ var fontAttrs = {
 	family: 1,
 	size: 1,
 	weight: 1,
-	style: 1
+	style: 1,
+	variant: 1
 };
 
 return declare([P], {

@@ -242,12 +242,18 @@ return declare(null, {
 			if (renderDeferred) {
 				renderDeferred.then(lang.hitch(this, function(){
 					this._ready = true;
-					this._readyDeferred.resolve();
+					if (this._readyDeferred) {
+						this._readyDeferred.resolve();
+						delete this._readyDeferred;
+					}
 				}));
 			}
 			else {
 				this._ready = true;
-				this._readyDeferred.resolve();
+				if (this._readyDeferred) {
+					this._readyDeferred.resolve();
+					delete this._readyDeferred;
+				}
 			}
 		}));
 	},
