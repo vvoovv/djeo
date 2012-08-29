@@ -272,6 +272,13 @@ return declare([Evented], {
 	setLayerConstructor: function(/* String */layerId, /* Function */ctr) {
 		var classId = djeo.getLayerClassId(layerId.toLowerCase());
 		this._layerCtrs[classId] = ctr;
+	},
+	
+	onzoom_changed: function() {
+		if (!this._renderingDisabled && this.map._hasZoomStyle) {
+			this.map.document.render(true);
+		}
+		// "zoom_changed" is emited here automatically (see documentation for dojo/Evented)
 	}
 });
 

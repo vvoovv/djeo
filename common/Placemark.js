@@ -75,7 +75,8 @@ var P = declare(null, {
 		// add text label if the text style is specified
 		var textShape = this.makeText(feature, style);
 		if (textShape) {
-			feature.textShapes = textShape;
+			if (!feature.textShapes) feature.textShapes = [];
+			feature.textShapes.push(textShape);
 			this.map.engine.appendChild(textShape, feature);
 		}
 	},

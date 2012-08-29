@@ -309,13 +309,6 @@ return declare([Engine], {
 		this.onzoom_changed();
 	},
 	
-	onzoom_changed: function() {
-		if (!this._renderingDisabled && this.map._hasZoomStyle) {
-			this.map.document.render(true);
-		}
-		// "zoom_changed" is emited here automatically (see documentation for dojo/Evented)
-	},
-	
 	resizeFeatures: function(featureContainer, scaleFactor) {
 		array.forEach(featureContainer.features, function(feature){
 			if (feature.isPlacemark) this._resizePlacemark(feature, scaleFactor);
