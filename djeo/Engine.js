@@ -437,6 +437,11 @@ return declare([Engine], {
 
 	_get_zoom: function() {
 		return this.layers.length && this.layers[0].zoom;
+	},
+	
+	_appendDiv: function(div) {
+		// we append the div to this.container
+		this.container.children[0].appendChild(div);
 	}
 });
 

@@ -546,8 +546,6 @@ return declare(null, {
 	destroy: function() {
 		// summary:
 		//		Destroys the map
-		
-		// TODO: provide more thorough implementation
 		this.engine.destroy();
 	},
 
@@ -635,6 +633,10 @@ return declare(null, {
 	
 	_get_center: function() {
 		return this.engine._get_center();
+	},
+	
+	_appendDiv: function(div) {
+		this.engine._appendDiv(div);
 	}
 });
 
