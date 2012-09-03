@@ -2,7 +2,6 @@ define([
 	"require",
 	"dojo/_base/declare", // declare
 	"dojo/has",
-	"dojo/on",
 	"dojo/_base/lang", // mixin, isString, hitch
 	"dojo/_base/array", // forEach
 	"dojo/dom-construct", // create
@@ -12,7 +11,7 @@ define([
 	"../Engine",
 	"./Placemark",
 	"../util/geometry"
-], function(require, declare, has, on, lang, array, domConstruct, djeo, gfx, matrix, Engine, Placemark, geom) {
+], function(require, declare, has, lang, array, domConstruct, djeo, gfx, matrix, Engine, Placemark, geom) {
 
 var _osm = ["./WebTiles", {url: "http://[a,b,c].tile.openstreetmap.org"}];
 
@@ -31,10 +30,6 @@ var supportedLayers = {
 	"openstreetmap.org": _osm,
 	"mapquest-osm": _mqOsm,
 	"mapquest-oa": _mqOa
-};
-
-var mapEvents = {
-	"zoom_changed": 1
 };
 
 var engineEvents = {mouseover: "onmouseover", mouseout: "onmouseout", click: "onclick"};
@@ -138,11 +133,6 @@ return declare([Engine], {
 			connections.push([shape, shape.connect(event, method)]);
 		});
 		return connections;
-	},
-	
-	onForMap: function(event, method, context) {
-		if (!event in mapEvents) return;
-		on(this, event, method);
 	},
 	
 	disconnect: function(connections) {

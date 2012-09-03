@@ -2,14 +2,19 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/has", // has
 	"dojo/_base/lang", // mixin, hitch, isArray, isString, isObject
+	"dojo/on",
 	"dojo/_base/array", // forEach
 	"dojo/Evented", //emit
 	"./_base"
-], function(declare, has, lang, array, Evented, djeo){
+], function(declare, has, lang, on, array, Evented, djeo){
 	
 var defaultCenter = [0,0],
 	defaultZoom = 3
 ;
+
+var mapEvents = {
+	"zoom_changed": 1
+};
 
 return declare([Evented], {
 	// summary:
@@ -96,6 +101,11 @@ return declare([Evented], {
 		//		Normally called by this.render() method.
 		//		Should include some preparatory code for rendering.
 		//		Should be implemented in the inherited class
+	},
+
+	onForMap: function(event, method, context) {
+		if (!event in mapEvents) return;
+		on(this, event, lang.hitch(context, method));
 	},
 	
 	_initCamera: function() {

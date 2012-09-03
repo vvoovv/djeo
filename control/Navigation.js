@@ -21,6 +21,10 @@ return declare(null, {
 
 	enable: function(enable) {
 		
+	},
+	
+	_onZoom: function() {
+		this.map.engine.onzoom_changed();
 	}
 });
 
