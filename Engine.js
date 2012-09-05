@@ -56,7 +56,10 @@ return declare([Evented], {
 		lang.mixin(this, kwArgs);
 		this.factories = {};
 		this.ignoredDependencies = {};
+		// layers stuff
+		this.layers = [];
 		this._layerCtrs = {};
+		this._layerReg = {};
 	},
 
 	initialize: function(/* Function */readyFunction) {
@@ -268,7 +271,66 @@ return declare([Evented], {
 	},
 	
 	enableLayer: function(/* String|Object */layer, enabled) {
+		if (enabled === undefined) enabled = true;
+		if (enabled) {
+			if (lang.isString(layer)) {
+				// we've got a layer id
+				layer = layer.toLowerCase();
+				// check if the layer already has been enabled
+				if (this._layerReg[layer]) return;
 
+				var colonIndex = layer.indexOf(":"),
+					classId = (colonIndex > 0) ? layer.substring(0, colonIndex) : layer
+				;
+				
+				// check if know the layer class id
+				if (!this._supportedLayers[classId]) return;
+				var layerDef = this._supportedLayers[classId];
+				var kwArgs = layerDef[1];
+				if (colonIndex > 0) {
+					kwArgs.paramStr = layer.substring(colonIndex+1);
+				}
+
+				if (this._layerCtrs[classId]) {
+					// layer constructor is already available
+					// proceed directly to layer initialization
+					this._createLayer(layer, this._layerCtrs[classId], kwArgs);
+				}
+				else {
+					// load layer module
+					this._require([layerDef[0]], lang.hitch(this, function(layerCtor){
+						this._layerCtrs[classId] = layerCtor;
+						this._createLayer(layer, layerCtor, kwArgs);
+					}));
+				}
+			}
+			else {
+				// we've got a layer instance
+				// check if the layer already has been enabled
+				for (var i=0; i<this.layers.length; i++) {
+					if (this.layers[i] === layer) return;
+				}
+			}
+		}
+	},
+	
+	_createLayer: function(/* String */layerId, /* Function */layerCtor, kwArgs) {
+		if (!kwArgs) {
+			kwArgs = {};
+		}
+		var layer = new layerCtor(kwArgs, this.map);
+		// TODO: check if the layer supports bottom layer projection
+		var layers = this.layers;
+		if (layers.length == 0) {
+			// it will be the bottom layer
+			// so set map's projection to the layer's one
+			if (layer.projection) {
+				this.map.projection = layer.projection;
+			}
+		}
+		layer.init();
+		this.layers.push(layer);
+		this._layerReg[layerId] = layer;
 	},
 	
 	isValidLayerId: function(/* String */layerId) {

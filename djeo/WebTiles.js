@@ -1,16 +1,17 @@
 define([
 	"dojo/_base/declare", // declare
-	"dojo/_base/lang", // mixin, hitch, isString
+	"dojo/_base/lang", // hitch
 	"dojo/dom-geometry",
 	"dojo/dom-style",
 	"dojo/dom-construct",
 	"../_base",
+	"../WebTiles",
 	"tiles/BaseTileable",
 	"../util/_base",
 	"../projection" // load projection machinery and transformations for Spherical Mercator projection (aka EPSG:3857)
-], function(declare, lang, geometry, style, domConstruct, djeo, Tileable, u, proj) {
+], function(declare, lang, geometry, style, domConstruct, djeo, WebTiles, Tileable, u, proj) {
 
-return declare(null, {
+return declare([WebTiles], {
 	
 	zoom: 3,
 	
@@ -22,30 +23,16 @@ return declare(null, {
 	projection: "EPSG:3857",
 
 	constructor: function(kwArgs, map) {
-		this.map = map;
-		this.discreteScales = djeo.scales;
-		lang.mixin(this, kwArgs);
+		// create container for the layer
+		this.container = domConstruct.create("div", {style:{
+			top: 0,
+			left: 0,
+			width: "100%",
+			height: "100%",
+			position: "absolute"
+		}}, map.engine.container, 0);
 
-		// paramStr is actually url
-		var url = kwArgs.paramStr ? kwArgs.paramStr : this.url;
-		if (lang.isString(url)) {
-			// check if url contains the left square bracket
-			var lBracket = url.indexOf("[");
-			if (lBracket > -1) {
-				// we have a template in the url
-				// the right square bracket is supposed to close the left square bracket
-				var rBracket = url.indexOf("]")
-					parts = url.substring(lBracket+1, rBracket).split(",")
-				;
-				this.url = [];
-				for (var i=0; i<parts.length; i++) {
-					this.url[i] = url.substring(0, lBracket) + parts[i] + url.substring(rBracket+1);
-				}
-			}
-			else {
-				this.url = [url];
-			}
-		}
+		this.discreteScales = djeo.scales;
 		this._lastUrlIndex = this.url.length - 1;
 	},
 	

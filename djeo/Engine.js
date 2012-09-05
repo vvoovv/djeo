@@ -10,33 +10,13 @@ define([
 	"../dojox/gfx/matrix",
 	"../Engine",
 	"./Placemark",
-	"../util/geometry"
-], function(require, declare, has, lang, array, domConstruct, djeo, gfx, matrix, Engine, Placemark, geom) {
-
-var _osm = ["./WebTiles", {url: "http://[a,b,c].tile.openstreetmap.org"}];
-
-// MapQuest-OSM Tiles
-var _mqOsm = ["./WebTiles", {url: "http://otile[1,2,3,4].mqcdn.com/tiles/1.0.0/osm"}];
-
-// MapQuest Open Aerial Tiles
-var _mqOa = ["./WebTiles", {url: "http://oatile[1,2,3,4].mqcdn.com/tiles/1.0.0/sat"}];
-
-var supportedLayers = {
-	"webtiles": ["./WebTiles", {}],
-	"roadmap": _osm,
-	"osm": _osm,
-	"openstreetmap": _osm,
-	"osm.org": _osm,
-	"openstreetmap.org": _osm,
-	"mapquest-osm": _mqOsm,
-	"mapquest-oa": _mqOa
-};
+	"../util/geometry",
+	"../_tiles"
+], function(require, declare, has, lang, array, domConstruct, djeo, gfx, matrix, Engine, Placemark, geom, supportedLayers) {
 
 var engineEvents = {mouseover: "onmouseover", mouseout: "onmouseout", click: "onclick"};
 
 return declare([Engine], {
-	
-	supportsZoomStyling: true,
 	
 	scaleFactor: 1.2,
 	
@@ -64,8 +44,7 @@ return declare([Engine], {
 		this._require = require;
 		// set ignored dependencies
 		lang.mixin(this.ignoredDependencies, {"Highlight": 1, "Tooltip": 1});
-		this.layers = [];
-		this._layerReg = {};
+		this._supportedLayers = supportedLayers;
 		// initialize basic factories
 		this._initBasicFactories(new Placemark({
 			map: this.map,
@@ -143,78 +122,6 @@ return declare([Engine], {
 	
 	destroy: function() {
 		this.surface.destroy();
-	},
-	
-	enableLayer: function(/* String|Object */layer, enabled) {
-		if (enabled === undefined) enabled = true;
-		if (enabled) {
-			if (lang.isString(layer)) {
-				// we've got a layer id
-				layer = layer.toLowerCase();
-				// check if the layer already has been enabled
-				if (this._layerReg[layer]) return;
-
-				var colonIndex = layer.indexOf(":")
-					classId = (colonIndex > 0) ? layer.substring(0, colonIndex) : layer
-				;
-				
-				// check if know the layer class id
-				if (!supportedLayers[classId]) return;
-				var layerDef = supportedLayers[classId];
-				var kwArgs = layerDef[1];
-				if (colonIndex > 0) {
-					kwArgs.paramStr = layer.substring(colonIndex+1);
-				}
-
-				if (this._layerCtrs[classId]) {
-					// layer constructor is already available
-					// proceed directly to layer initialization
-					this._createLayer(layer, this._layerCtrs[classId], kwArgs);
-				}
-				else {
-					// load layer module
-					require([layerDef[0]], lang.hitch(this, function(layerCtor){
-						this._layerCtrs[classId] = layerCtor;
-						this._createLayer(layer, layerCtor, kwArgs);
-					}));
-				}
-			}
-			else {
-				// we've got a layer instance
-				// check if the layer already has been enabled
-				for (var i=0; i<this.layers.length; i++) {
-					if (this.layers[i] === layer) return;
-				}
-			}
-		}
-	},
-	
-	_createLayer: function(/* String */layerId, /* Function */layerCtor, kwArgs) {
-		// create container for the layer
-		var container = domConstruct.create("div", {style:{
-			top: 0,
-			left: 0,
-			width: "100%",
-			height: "100%",
-			position: "absolute"
-		}}, this.container, 0);
-		if (!kwArgs) {
-			kwArgs = {};
-		}
-		kwArgs.container = container;
-		var layer = new layerCtor(kwArgs, this.map);
-		// TODO: check if the layer supports bottom layer projection
-		var layers = this.layers;
-		if (layers.length == 0) {
-			// it will be the bottom layer
-			// so set map's projection to the layer's one
-			if (layer.projection) {
-				this.map.projection = layer.projection;
-			}
-		}
-		layer.init();
-		this.layers.push(layer);
-		this._layerReg[layerId] = layer;
 	},
 	
 	isValidLayerId: function(/* String */layerId) {
