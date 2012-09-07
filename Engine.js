@@ -334,7 +334,7 @@ return declare([Evented], {
 	},
 	
 	isValidLayerId: function(/* String */layerId) {
-		return true;
+		return layerId.toLowerCase() in this._supportedLayers;
 	},
 	
 	getLayerModuleId: function(/* String */layerId) {

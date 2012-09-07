@@ -15,7 +15,8 @@ return {
 	"osm.org": _osm,
 	"openstreetmap.org": _osm,
 	"mapquest-osm": _mqOsm,
-	"mapquest-oa": _mqOa
+	"mapquest-oa": _mqOa,
+	"arcgis_webtiles": ["./WebTiles", {}]
 };
 
 });

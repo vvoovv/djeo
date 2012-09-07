@@ -217,14 +217,14 @@ return declare(null, {
 					_layers.push(layer);
 				}
 			}, this);
+			layers = _layers;
 		}
-		layers = _layers;
 		require(requireModules, lang.hitch(this, function() {
 			// Ok, all preliminary work is finished
 			// Now loads layer and perform rendering
 
 			// load layers
-			if (layers && layers.length) {
+			if (layers && layers.length && !this._layerLoaded/* ArcGIS Javascript API hack*/) {
 				var args = arguments;
 				array.forEach(layers, function(layer){
 					if (lang.isString(layer) && this.engine.getLayerModuleId(layer)) {
@@ -467,25 +467,6 @@ return declare(null, {
 
 		if (lang.isString(engine)) {
 			// TODO check in the engine cache if engine instance has been created before
-			var config = require.rawConfig,
-				packageDefined = false;
-			// check if name is a package id or defined in the paths attribute of the dojo config
-			if (config.paths && config.paths[engine]) {
-				packageDefined = true;
-			}
-			else if (config.packages) {
-				var packs = config.packages;
-				for(var i=0; i<packs.length; i++) {
-					if (packs[i].name == engine) {
-						packageDefined = true;
-						break;
-					}
-				}
-			}
-			var engineMid = (engine == "djeo") ?
-				"./djeo/Engine" :
-				(packageDefined ? engine+"/Engine" : "djeo-"+engine+"/Engine");
-			;
 			var engineMid = (engine == "djeo") ?
 				"./djeo/Engine" :
 				"djeo-"+engine+"/Engine"
@@ -529,8 +510,8 @@ return declare(null, {
 	
 	_initializeEngine: function(engine) {
 		this._calculateViewport();
+		this.engine = engine;
 		engine.initialize(lang.hitch(this, function(){
-			this.engine = engine;
 			this._onEngineReady();
 		}));
 	},

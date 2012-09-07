@@ -33,12 +33,18 @@ var place2Coords = {
 }
 function setCenter() {
 	map.set("center", place2Coords[document.getElementById("centerSelect").value]);
-	console.debug("New center via map.get('center'):"+map.get("center"));
+	// setting new center takes time, that's why setTimeout
+	setTimeout(function(){
+		console.debug("New center via map.get('center'):"+map.get("center"));
+	}, 1000);
 }
 
 function setZoom() {
 	map.set("zoom", parseInt(document.getElementById("zoomSelect").value));
-	console.debug("New zoom via map.get('zoom'):"+map.get("zoom"));
+	// setting new zoom takes time, that's why setTimeout
+	setTimeout(function(){
+		console.debug("New zoom via map.get('zoom'):"+map.get("zoom"));
+	}, 1000);
 }
 
 DebugUtil.timer.start("loading");
