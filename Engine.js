@@ -275,13 +275,14 @@ return declare([Evented], {
 		if (enabled) {
 			if (lang.isString(layer)) {
 				// we've got a layer id
-				layer = layer.toLowerCase();
-				// check if the layer already has been enabled
-				if (this._layerReg[layer]) return;
 
 				var colonIndex = layer.indexOf(":"),
 					classId = (colonIndex > 0) ? layer.substring(0, colonIndex) : layer
 				;
+				classId = classId.toLowerCase();
+				layer = (colonIndex > 0) ? classId + ":" + layer.substring(colonIndex+1) : classId;
+				// check if the layer already has been enabled
+				if (this._layerReg[layer]) return;
 				
 				// check if know the layer class id
 				if (!this._supportedLayers[classId]) return;
