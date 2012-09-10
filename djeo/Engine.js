@@ -124,11 +124,6 @@ return declare([Engine], {
 		this.surface.destroy();
 	},
 	
-	isValidLayerId: function(/* String */layerId) {
-		var classId = djeo.getLayerClassId(layerId.toLowerCase());
-		return classId in supportedLayers;
-	},
-	
 	getLayerModuleId: function(/* String */layerId) {
 		var classId = djeo.getLayerClassId(layerId.toLowerCase());
 		return this._require.toAbsMid(supportedLayers[classId][0]);

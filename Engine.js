@@ -334,7 +334,8 @@ return declare([Evented], {
 	},
 	
 	isValidLayerId: function(/* String */layerId) {
-		return layerId.toLowerCase() in this._supportedLayers;
+		var classId = djeo.getLayerClassId(layerId.toLowerCase());
+		return classId in this._supportedLayers;
 	},
 	
 	getLayerModuleId: function(/* String */layerId) {
