@@ -1,4 +1,7 @@
-define([], function(lang){
+define([
+	"dojo/_base/lang",
+	"dojo/_base/array"
+], function(lang, array){
 
 var d = {
 	defaultLayerID: "ROADMAP",
@@ -49,6 +52,28 @@ d.getTraversedAttr = function(feature, attr) {
 		}
 		f = f.parent;
 	}
+};
+
+d.forEach = function(features, callback, thisObject) {
+	if (!lang.isArray(features)) features = [features];
+	array.forEach(features, function(feature){
+		if (feature.isContainer) forEachIn(feature, callback, thisObject);
+		else callback.call(thisObject, feature);
+	});
+};
+
+function forEachIn(featureContainer, callback, thisObject) {
+	var features = featureContainer.features,
+		numFeatures = features.length
+	;
+	array.forEach(features, function(feature){
+		if (feature.isContainer) {
+			forEachIn(feature, callback, thisObject)
+		}
+		else {
+			callback.call(thisObject, feature);
+		}
+	});
 }
 
 // building array of scales; array index corresponds to zoom
