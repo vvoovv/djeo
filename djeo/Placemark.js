@@ -2,18 +2,20 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/_base/lang", // mixin, isObject
 	"dojo/_base/array", // forEach
+	"dojo/has",
 	"../dojox/gfx",
 	"../dojox/gfx/matrix",
 	"../_base",
 	"../common/Placemark",
 	"../util/geometry",
 	"../gfx"
-], function(declare, lang, array, gfx, matrix, djeo, P, geom, dgfx) {
+], function(declare, lang, array, has, gfx, matrix, djeo, P, geom, dgfx) {
 	
 var patchStroke = function(shape) {
-	if (gfx.renderer=="svg") {
+	if (gfx.renderer=="svg" && !has("mozilla")) {
 		// non-scaling-stroke is supported by WebKit and Opera at the moment
-		// support by Firefox is coming soon: https://bugzilla.mozilla.org/show_bug.cgi?id=528332
+		// Firefox also supports it since June, 2012: https://bugzilla.mozilla.org/show_bug.cgi?id=528332
+		// However its behavior in Firefox is weird: strokes can't be selected
 		shape.rawNode.setAttribute("vector-effect", "non-scaling-stroke");
 	}
 	return shape;

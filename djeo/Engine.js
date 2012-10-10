@@ -20,7 +20,7 @@ return declare([Engine], {
 	
 	scaleFactor: 1.2,
 	
-	correctionScale: 100000,
+	correctionScale: 10000,
 	
 	pointZoomFactor: 0.01,
 	
@@ -216,16 +216,18 @@ return declare([Engine], {
 				shape.applyRightTransform(matrix.scale(scaleFactor));
 			});
 		}
-		else if ( gfx.renderer!="vml" && !(gfx.renderer=="svg" && (has("webkit") || has("opera"))) && (
+		else {
+			if ( gfx.renderer!="vml" && !(gfx.renderer=="svg" && (has("webkit") || has("opera"))) && (
 				(this.resizeLines && feature.isLine()) ||
 				(this.resizeAreas && feature.isArea()) )) {
-			array.forEach(feature.baseShapes, function(shape){
-				var stroke = shape.getStroke();
-				if (stroke) {
-					stroke.width *= scaleFactor;
-					shape.setStroke(stroke);
-				}
-			});
+				array.forEach(feature.baseShapes, function(shape){
+					var stroke = shape.getStroke();
+					if (stroke) {
+						stroke.width *= scaleFactor;
+						shape.setStroke(stroke);
+					}
+				});
+			}
 		}
 		
 		if (feature.textShapes) {
