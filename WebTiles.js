@@ -29,6 +29,7 @@ return declare(null, {
 				this.url = [url];
 			}
 		}
+		this.numUrls = this.url.length;
 	}
 });
 
