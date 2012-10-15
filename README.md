@@ -68,8 +68,7 @@ Place a file with the code sample in a directory next to dojo, dijit, djeo direc
 	Yandex Maps API - djeoEngine:'ymaps' - apply for a key at http://api.yandex.ru/maps/form.xml
 	-->
 	<script src="../dojo/dojo.js" data-dojo-config="
-		djeoEngine: 'djeo',
-		ymapsKey: 'AMOPgE4BAAAA9Y-BUwMAonjZ5NBRJDj54c-cDVPzQcYlLNAAAAAAAAAAAACPSuKS9WyCiMuXm9An1ZKCx5Pk-A=='
+		djeoEngine: 'djeo'
 	"></script>
 	
 	<script>
