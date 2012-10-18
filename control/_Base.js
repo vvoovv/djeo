@@ -2,10 +2,11 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/_base/lang", // mixin, hitch, isArray, isString
 	"dojo/_base/array", // forEach
+	"dojo/Evented",
 	"../util/_base"
-], function(declare, lang, array, u){
+], function(declare, lang, array, Evented, u){
 
-return declare(null, {
+return declare([Evented], {
 	// summary:
 	//		The base class for controls related to interaction with map features
 

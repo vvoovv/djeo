@@ -212,7 +212,7 @@ return declare([Evented], {
 		return function(nativeEvent){
 			method.call(context, {
 				type: event,
-				event: nativeEvent,
+				nativeEvent: nativeEvent,
 				feature: feature
 			});
 		};
