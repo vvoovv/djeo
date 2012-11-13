@@ -56,18 +56,79 @@ var features = [
 	}
 ];
 
+var map;
+var click, mousemove, zoom_changed;
+
+function listenClick() {
+	click = map.on("click", function(event){
+		console.debug("click:"+event.mapCoords);
+	});
+}
+
+function listenMousemove() {
+	mousemove = map.on("mousemove", function(event){
+		console.debug("mousemove:"+event.mapCoords);
+	});
+}
+
+function listenZoom_changed() {
+	zoom_changed = map.on("zoom_changed", function(){
+		console.debug("zoom changed");
+	});
+}
+
 DebugUtil.timer.start("loading");
 
 require([
 	"djeo/Map",
 	"djeo/control/Navigation",
-	"dijit/form/Button",
+	"dijit/form/ToggleButton",
 	"dojo/domReady!"
 ],
-function(Map, Navigation, Button) {
+function(Map, Navigation, ToggleButton) {
 	DebugUtil.timer.end("loading");
+	
+	new ToggleButton({
+		checked: true,
+		onChange: function(value){
+			if (value) {
+				listenClick();
+			}
+			else {
+				click.remove();
+			}
+		},
+		iconClass: "dijitRadioIcon"
+	}, "click");
+
+	new ToggleButton({
+		checked: true,
+		onChange: function(value){
+			if (value) {
+				listenMousemove();
+			}
+			else {
+				mousemove.remove();
+			}
+		},
+		iconClass: "dijitRadioIcon"
+	}, "mousemove");
+
+	new ToggleButton({
+		checked: true,
+		onChange: function(value){
+			if (value) {
+				listenZoom_changed();
+			}
+			else {
+				zoom_changed.remove();
+			}
+		},
+		iconClass: "dijitRadioIcon"
+	}, "zoom_changed");
+
 	DebugUtil.timer.start("render");
-    var map = new Map("map", {
+    map = new Map("map", {
 		layers: "roadmap",
 		style: {
 			fill: "red"
@@ -77,9 +138,10 @@ function(Map, Navigation, Button) {
 	map.ready(function() {
 		DebugUtil.timer.end("render");
 		new Navigation(map);
-		map.on("zoom_changed", function(){
-			console.debug("zoom changed");
-		});
+
+		listenClick();
+		listenMousemove();
+		listenZoom_changed();
 	});
 });
 
@@ -88,6 +150,10 @@ function(Map, Navigation, Button) {
 </head>
 
 <body class="claro">
+	
+<div id="click">Click</div>
+<div id="mousemove">Mouse Move</div>
+<div id="zoom_changed">Zoom Changed</div>
 
 <div id="map" style="width:800px;height:400px;"></div>
 

@@ -12,10 +12,6 @@ var defaultCenter = [0,0],
 	defaultZoom = 3
 ;
 
-var mapEvents = {
-	"zoom_changed": 1
-};
-
 return declare([Evented], {
 	// summary:
 	//		The base class for engines. An engine class is supposed to be a singleton
@@ -104,11 +100,6 @@ return declare([Evented], {
 		//		Normally called by this.render() method.
 		//		Should include some preparatory code for rendering.
 		//		Should be implemented in the inherited class
-	},
-
-	onForMap: function(event, method, context) {
-		if (!event in mapEvents) return;
-		on(this, event, lang.hitch(context, method));
 	},
 	
 	_initCamera: function() {

@@ -443,7 +443,8 @@ return declare(null, {
 		//		Adds a listener for a map event (e.g. zoom_changed, center_changed)
 		// returns: Object
 		//		A handle for the listener
-		return this.engine.onForMap(event, method, context);
+		var e = this.engine;
+		return e["_on_"+event] ? e["_on_"+event](event, method, context) : e.onForMap(event, method, context);
 	},
 
 	onForHandle: function(/* String|Number */ handle, /* Object */kwArgs) {
