@@ -20,11 +20,13 @@ djeo can be installed via [CPM](https://github.com/kriszyp/cpm) using the follow
 
     cpm install djeo
 
-If you are going to use alternative engines for djeo (Google Maps API, Google Earth Javascript API, Yandex Maps API),
+If you are going to use alternative engines for djeo (Leaflet, Google Maps API, Google Earth Javascript API, ArcGIS API for JavaScript, Yandex Maps API),
 execute one or several of the following commands:
     
+	cpm install djeo-leaflet
 	cpm install djeo-gmaps
 	cpm install djeo-ge
+	cpm install djeo-esri
 	cpm install djeo-ymaps
 
 ### Manual Download
@@ -32,13 +34,15 @@ execute one or several of the following commands:
 Alternatively, djeo and its dependencies can be downloaded individually:
 
 * [djeo](https://github.com/vvoovv/djeo)
-* [The Dojo Toolkit](http://dojotoolkit.org/download/) SDK version 1.7.1
+* [The Dojo Toolkit](http://dojotoolkit.org/download/) SDK version 1.7.3
 
-If you are going to use alternative engines for djeo (Google Maps API, Google Earth Javascript API, Yandex Maps API),
+If you are going to use alternative engines for djeo (Leaflet, Google Maps API, Google Earth Javascript API, ArcGIS API for JavaScript, Yandex Maps API),
 then download one or several of the following items:
 
+* [djeo-leaflet](https://github.com/vvoovv/djeo-leaflet)
 * [djeo-gmaps](https://github.com/vvoovv/djeo-gmaps)
 * [djeo-ge](https://github.com/vvoovv/djeo-ge)
+* [djeo-esri](https://github.com/vvoovv/djeo-esri)
 * [djeo-ymaps](https://github.com/vvoovv/djeo-ymaps)
 
 Arrange all items as siblings, resulting in a directory structure like the following:
@@ -46,8 +50,10 @@ Arrange all items as siblings, resulting in a directory structure like the follo
 * `djeo`
 * `dojo`
 * `dijit`
+* `djeo-leaflet` (optional, Leaflet)
 * `djeo-gmaps` (optional, Google Maps API)
 * `djeo-ge` (optional, Google Earth Javascript API)
+* `djeo-esri` (optional, ArcGIS API for JavaScript)
 * `djeo-ymaps` (optional, Yandex Maps API)
 
 
@@ -62,13 +68,14 @@ Place a file with the code sample in a directory next to dojo, dijit, djeo direc
 	
 	<!--
 	Supported mapping engines (replace the value for djeoEngine parameter)
-	djeo native mapping engine - djeoEngine:'djeo'
+	Leaflet - djeoEngine:'leaflet'
 	Google Maps API - djeoEngine:'gmaps'
 	Google Earth API - djeoEngine:'ge'
-	Yandex Maps API - djeoEngine:'ymaps' - apply for a key at http://api.yandex.ru/maps/form.xml
+	ArcGIS API for JavaScript - djeoEngine: 'esri'
+	Yandex Maps API - djeoEngine:'ymaps'
 	-->
 	<script src="../dojo/dojo.js" data-dojo-config="
-		djeoEngine: 'djeo'
+		djeoEngine: 'leaflet'
 	"></script>
 	
 	<script>
@@ -113,7 +120,9 @@ Place a file with the code sample in a directory next to dojo, dijit, djeo direc
 	],
 	function(Map, Navigation, Highlight, Tooltip){
 		var map = new Map("map", {
-			features: features
+			features: features,
+			layers: "roadmap",
+			//layers: "webtiles:http://[a,b,c].tile.cloudmade.com/8ee2a50541944fb9bcedded5165f09d9/1/256"
 		});
 		map.ready(function(){
 			new Navigation(map);
