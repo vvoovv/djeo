@@ -10,6 +10,9 @@ djeo.registerDependency(dependency);
 return declare(null, {
 	
 	yFirst: false,
+	
+	// this attribute is used by ArcGIS API for JavaScript
+	dependency: dependency,
 
 	constructor: function(kwArgs) {
 		lang.mixin(this, kwArgs);
