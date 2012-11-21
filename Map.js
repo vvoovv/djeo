@@ -183,11 +183,13 @@ return declare(null, {
 	
 	_onEngineReady: function() {
 		// find which dependencies we need and require them
-		var requireModules = [];
+		var engine = this.engine,
+			requireModules = []
+		;
 		// TODO: make optimization for the case of different engines on the same web page:
 		// allow a user to specify module dependencies per each instance of djeo.Map
 		for (var dep in djeo.dependencies) {
-			var moduleId = this.engine.matchModuleId(dep);
+			var moduleId = engine.matchModuleId(dep);
 			if (moduleId) {
 				requireModules.push(moduleId);
 			}
@@ -201,14 +203,16 @@ return declare(null, {
 				layers = [layers];
 			}
 			// processing layer ids;
-			// finding module id for the layers
+			// finding module id for the layers;
+			// we need to load layer modules, so they can perform appropriate adjustments
+			// (e.g. change vector objects projection)
 			var _layers = [];
 			array.forEach(layers, function(layer){
 				if (lang.isString(layer)) {
-					if (this.engine.isValidLayerId(layer)) {
-						var layerModuleId = this.engine.getLayerModuleId(layer);
+					if (engine.isValidLayerId(layer)) {
+						var layerModuleId = engine.getLayerModuleId(layer);
 						if (layerModuleId) {
-							requireModules.push(layerModuleId);
+							requireModules.push("djeo/"+layerModuleId, engine._require.toAbsMid("./"+layerModuleId));
 						}
 						_layers.push(layer);
 					}
@@ -216,7 +220,7 @@ return declare(null, {
 				else {
 					_layers.push(layer);
 				}
-			}, this);
+			});
 			layers = _layers;
 		}
 		require(requireModules, lang.hitch(this, function() {
@@ -227,13 +231,13 @@ return declare(null, {
 			if (layers && layers.length && !this._layerLoaded/* ArcGIS Javascript API hack*/) {
 				var args = arguments;
 				array.forEach(layers, function(layer){
-					if (lang.isString(layer) && this.engine.getLayerModuleId(layer)) {
+					if (lang.isString(layer) && engine.getLayerModuleId(layer)) {
 						// args[layerIndex] is layer constructor
-						this.engine.setLayerConstructor(layer, args[layerIndex])
-						layerIndex++;
+						engine.setLayerConstructor(layer, args[layerIndex])
+						layerIndex += 2;
 					}
-					this.engine.enableLayer(layer, true);
-				}, this);
+					engine.enableLayer(layer, true);
+				});
 			}
 
 			// perform rendering

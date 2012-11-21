@@ -289,8 +289,8 @@ return declare([Evented], {
 					this._createLayer(layer, this._layerCtrs[classId], kwArgs);
 				}
 				else {
-					// load layer module
-					this._require([layerDef[0]], lang.hitch(this, function(layerCtor){
+					// load layer module and its factory
+					this._require(["djeo/"+layerDef[0], "./"+layerDef[0]], lang.hitch(this, function(layerCtor){
 						this._layerCtrs[classId] = layerCtor;
 						this._createLayer(layer, layerCtor, kwArgs);
 					}));
@@ -302,6 +302,9 @@ return declare([Evented], {
 				for (var i=0; i<this.layers.length; i++) {
 					if (this.layers[i] === layer) return;
 				}
+				layer.startup(this.map);
+				this._checkLayerProjection(layer);
+				this.layers.push(layer);
 			}
 		}
 	},
@@ -310,7 +313,16 @@ return declare([Evented], {
 		if (!kwArgs) {
 			kwArgs = {};
 		}
-		var layer = new layerCtor(kwArgs, this.map);
+		var layer = new layerCtor(kwArgs);
+		layer.startup(this.map);
+
+		this._checkLayerProjection(layer);
+
+		this.layers.push(layer);
+		this._layerReg[layerId] = layer;
+	},
+	
+	_checkLayerProjection: function(layer) {
 		// TODO: check if the layer supports bottom layer projection
 		var layers = this.layers;
 		if (layers.length == 0) {
@@ -320,9 +332,6 @@ return declare([Evented], {
 				this.map.projection = layer.projection;
 			}
 		}
-		layer.init();
-		this.layers.push(layer);
-		this._layerReg[layerId] = layer;
 	},
 	
 	isValidLayerId: function(/* String */layerId) {
@@ -331,7 +340,8 @@ return declare([Evented], {
 	},
 	
 	getLayerModuleId: function(/* String */layerId) {
-		return null;
+		var classId = djeo.getLayerClassId(layerId.toLowerCase());
+		return this._supportedLayers[classId][0];
 	},
 	
 	setLayerConstructor: function(/* String */layerId, /* Function */ctr) {

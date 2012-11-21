@@ -1,12 +1,17 @@
 define([
 	"dojo/_base/declare", // declare
-	"dojo/_base/lang" // mixin
-], function(declare, lang) {
+	"dojo/_base/lang", // mixin
+	"./_base"
+], function(declare, lang, djeo) {
+	
+var dependency = "WebTiles";
+djeo.registerDependency(dependency);
 
 return declare(null, {
+	
+	yFirst: false,
 
-	constructor: function(kwArgs, map) {
-		this.map = map;
+	constructor: function(kwArgs) {
 		lang.mixin(this, kwArgs);
 
 		// paramStr is actually url
@@ -30,6 +35,15 @@ return declare(null, {
 			}
 		}
 		this.numUrls = this.url.length;
+	},
+
+	startup: function(map) {
+		this.map = map;
+		var factory = this.map.engine.getFactory(dependency);
+		if (factory) {
+			lang.mixin(this, factory);
+			this.init();
+		}
 	}
 });
 

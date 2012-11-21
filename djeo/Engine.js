@@ -124,11 +124,6 @@ return declare([Engine], {
 		this.surface.destroy();
 	},
 	
-	getLayerModuleId: function(/* String */layerId) {
-		var classId = djeo.getLayerClassId(layerId.toLowerCase());
-		return this._require.toAbsMid(supportedLayers[classId][0]);
-	},
-	
 	zoomTo: function(/* Array */extent) {
 		// extent is array [x1,y1,x2,y2]
 		var map = this.map,

@@ -5,13 +5,12 @@ define([
 	"dojo/dom-style",
 	"dojo/dom-construct",
 	"../_base",
-	"../WebTiles",
 	"tiles/BaseTileable",
 	"../util/_base",
 	"../projection" // load projection machinery and transformations for Spherical Mercator projection (aka EPSG:3857)
-], function(declare, lang, geometry, style, domConstruct, djeo, WebTiles, Tileable, u, proj) {
+], function(declare, lang, geometry, style, domConstruct, djeo, Tileable, u, proj) {
 
-return declare([WebTiles], {
+return declare(null, {
 	
 	zoom: 3,
 	
@@ -21,9 +20,9 @@ return declare([WebTiles], {
 	
 	// Spherical Mercator projection
 	projection: "EPSG:3857",
-
-	constructor: function(kwArgs, map) {
-		// create container for the layer
+	
+	init: function() {
+		var map = this.map;
 		this.container = domConstruct.create("div", {style:{
 			top: 0,
 			left: 0,
@@ -34,10 +33,7 @@ return declare([WebTiles], {
 
 		this.discreteScales = djeo.scales;
 		this._lastUrlIndex = this.url.length - 1;
-	},
-	
-	init: function() {
-		var map = this.map;
+
 		if (!map.dataProjection) {
 			map.dataProjection = "EPSG:4326";
 		}
@@ -138,11 +134,14 @@ return declare([WebTiles], {
 		if (tile.img) {
 			tile.div.removeChild(tile.img);
 		}
-		var img = domConstruct.create("img", {
-			width: 256,
-			height: 256,
-			src: this.url[this._urlCounter]+"/"+zoom+"/"+x+"/"+y+".png"
-		}, tile.div);
+		var _1 = this.yFirst ? y : x,
+			_2 = this.yFirst ? x : y,
+			img = domConstruct.create("img", {
+				width: 256,
+				height: 256,
+				src: this.url[this._urlCounter]+"/"+zoom+"/"+_1+"/"+_2+".png"
+			}, tile.div)
+		;
 		// storing img
 		tile.img = img;
 		if (this._urlCounter == this._lastUrlIndex) {
