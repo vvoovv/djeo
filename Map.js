@@ -156,7 +156,7 @@ return declare(null, {
 		// add user supplied styling definition
 		if (kwArgs.style) this.addStyle(kwArgs.style, /*prevent rendering*/true);
 		// add features
-		if (kwArgs.features) this.addFeatures(kwArgs.features, /*prevent rendering*/true);
+		if (kwArgs.features) this.addFeatures(kwArgs.features, /*ignore events*/true, /*prevent rendering*/true);
 		// set engine
 		this.setEngine(
 			kwArgs.engine ||
@@ -262,14 +262,14 @@ return declare(null, {
 		}));
 	},
 	
-	addFeatures: function(/* Array|Object */features, /* Boolean? */preventRendering) {
+	addFeatures: function(/* Array|Object */features, /* Boolean? */ignoreEvents, /* Boolean? */preventRendering) {
 		// summary:
 		//		Adds features to the top level feature container of the map
 		// preventRendering:
 		//		If set to true prevents immediate rendering of the added features
 		// returns: Array
 		//		Array of added features or an empty array
-		return this.document.addFeatures(features, preventRendering);
+		return this.document.addFeatures(features, ignoreEvents, preventRendering);
 	},
 	
 	removeFeatures: function(/* Array|Object */features) {
@@ -460,10 +460,10 @@ return declare(null, {
 		return this.document.onForHandle(handle, kwArgs);
 	},
 	
-	disconnect: function(/* Number */handle, key, removeEventListener) {
+	disconnect: function(/* Number */handle, key, keepIfKey) {
 		// summary:
 		//		Removes all event listeners associated with the handle for all features in the map
-		this.document.disconnect(handle, key, removeEventListener);
+		this.document.disconnect(handle, key, keepIfKey);
 	},
 
 	setEngine: function(/* String|Object */engine, /* Object? */engineOptions) {

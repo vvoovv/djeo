@@ -16,15 +16,18 @@ var fc = declare([Feature], {
 	
 	features: null,
 	
+	handles: null,
+	
 	numVisibleFeatures: 0,
 	
 	constructor: function(featureDef, kwArgs) {
 		if (this.features) {
 			var features = this.features;
 			this.features = [];
-			this.addFeatures(features, true);
+			this.addFeatures(features, true, true);
 		}
 		else this.features = [];
+		this.handles = {};
 	},
 	
 	show: function(show) {
@@ -66,7 +69,7 @@ var fc = declare([Feature], {
 		}
 	},
 	
-	addFeatures: function(/* Array */features, noRendering) {
+	addFeatures: function(/* Array */features, ignoreEvents, preventRendering) {
 		if (!lang.isArray(features)) features = [features];
 		var addedFeatures = [];
 		array.forEach(features, function(feature){
@@ -90,7 +93,36 @@ var fc = declare([Feature], {
 				addedFeatures.push(feature);
 			}
 		}, this);
-		if (!noRendering) this.map.renderFeatures(addedFeatures);
+
+		if (!preventRendering) {
+			this.map.renderFeatures(addedFeatures);
+			if (!ignoreEvents) {
+				// attach parent's events to the feature
+				array.forEach(addedFeatures, function(feature) {
+					for(var handle in this.handles) {
+						var handleObj = this.handles[handle];
+						if (handleObj.keys) {
+							for (var key in handleObj.keys) {
+								feature.onForHandle(handle, {
+									events: handleObj.events,
+									method: handleObj.method,
+									context: handleObj.context,
+									key: key,
+									value: handleObj.keys[key]
+								});
+							}
+						}
+						else {
+							feature.onForHandle(handle, {
+								events: handleObj.events,
+								method: handleObj.method,
+								context: handleObj.context
+							});
+						}
+					}
+				}, this);
+			}
+		}
 		return addedFeatures;
 	},
 	
@@ -142,14 +174,43 @@ var fc = declare([Feature], {
 		array.forEach(this.features, function(feature) {
 			feature.onForHandle(handle, kwArgs);
 		});
+		var handles = this.handles,
+			handleObj = handles[handle]
+		;
+		if (!handleObj) {
+			handleObj = {
+				events: kwArgs.events,
+				method: kwArgs.method,
+				context: kwArgs.context
+			}
+			handles[handle] = handleObj;
+		}
+		var key = kwArgs.key
+		if (key) {
+			if (!handleObj.keys) handleObj.keys = {};
+			handleObj.keys[key] = kwArgs.value;
+		}
 		return handle;
 	},
 	
-	disconnect: function(handle, key, removeEventListener) {
-		if (!this.features.length) return;
+	disconnect: function(handle, key, keepIfKey) {
+		var deleteHandle = true;
 		array.forEach(this.features, function(feature) {
-			feature.disconnect(handle, key, removeEventListener);
+			feature.disconnect(handle, key, keepIfKey);
+			if (keepIfKey && feature.handles[handle]) {
+				deleteHandle = false;
+			}
 		});
+		if (deleteHandle) {
+			delete this.handles[handle];
+		}
+		else {
+			var handleObj = this.handles[handle];
+			if (handleObj &&handleObj.keys) {
+				// Can keys object be empty? I don't think so
+				delete handleObj.keys[key];
+			}
+		}
 	}
 });
 

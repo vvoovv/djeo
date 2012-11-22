@@ -108,7 +108,7 @@ return declare(null, {
 		
 	},
 	
-	disconnect: function(handle, key, removeEventListener) {
+	disconnect: function(handle, key, keepIfKey) {
 		
 	}
 });

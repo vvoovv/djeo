@@ -170,7 +170,7 @@ var p = declare([Feature], {
 		return handle;
 	},
 
-	disconnect: function(handle, key, removeEventListener) {
+	disconnect: function(handle, key, keepIfKey) {
 		var handleObj = this.handles[handle];
 		if (!handleObj) return;
 
@@ -179,7 +179,7 @@ var p = declare([Feature], {
 		if (key) {
 			if (handleObj.length == 4) return;
 			delete handleObj[4][key];
-			if (removeEventListener) {
+			if (keepIfKey) {
 				// check if there are still keys attached to handleObj
 				for (var k in handleObj[4]) {
 					disconnect = false;
