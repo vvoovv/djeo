@@ -122,8 +122,8 @@ return declare(null, {
 	
 	doZoom: function(scaleFactor, event) {
 		var borderBox = geometry.position(this.container, true),
-			divX = Math.floor(event.pageX - borderBox.x - style.get(this.container, "borderLeftWidth")),
-			divY = Math.floor(event.pageY - borderBox.y - style.get(this.container, "borderTopWidth"))
+			divX = event.pageX - borderBox.x - style.get(this.container, "borderLeftWidth"),
+			divY = event.pageY - borderBox.y - style.get(this.container, "borderTopWidth")
 		;
 		var zoomAmount = scaleFactor>1 ? scaleFactor : -1/scaleFactor
 		this.zoom += zoomAmount/2;
