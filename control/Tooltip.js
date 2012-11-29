@@ -18,6 +18,8 @@ var DEFAULT_CONTENT = function(feature){
 
 var tooltip,
 	tooltipControl,
+	clientX,
+	clientY,
 	aroundRect = {x: 0, y:0, w:0, h:0}
 ;
 
@@ -47,16 +49,18 @@ return declare([Base], {
 	init: function() {
 		if (!tooltip) {
 			tooltip = new Tooltip._MasterTooltip();
-			tooltipControl = this;
 			on(tooltip.domNode, "mousemove", lang.hitch(this, function(domEvent){
-				this.clientX = domEvent.clientX;
-				this.clientY = domEvent.clientY;
+				clientX = domEvent.clientX;
+				clientY = domEvent.clientY;
 				if (tooltipControl) tooltipControl.moveTooltip(domEvent.clientX, domEvent.clientY);
 			}));
 		}
 		on(this.map.container, "mousemove", lang.hitch(this, function(domEvent){
-			this.clientX = domEvent.clientX;
-			this.clientY = domEvent.clientY;
+			if (tooltipControl != this) {
+				tooltipControl = this;
+			}
+			clientX = domEvent.clientX;
+			clientY = domEvent.clientY;
 			if (!tooltipControl.c.timeoutId) tooltipControl.moveTooltip(domEvent.clientX, domEvent.clientY);
 		}));
 	},
@@ -95,8 +99,8 @@ return declare([Base], {
 			p2 = domGeom.position(this.map.container, false)
 		;
 		if (x=== undefined) {
-			x = this.clientX;
-			y = this.clientY;
+			x = clientX;
+			y = clientY;
 		}
 		aroundRect.x = Math.round(x + p1.x - p2.x + this.offsetX);
 		aroundRect.y = Math.round(y + p1.y - p2.y + this.offsetY);
