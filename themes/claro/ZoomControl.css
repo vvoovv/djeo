@@ -1,0 +1,55 @@
+.djeoZoomControl {
+  left: 10px;
+  top: 10px;
+}
+.claro .djeoZoomControlButtonContainer {
+  padding: 3px 1px 2px 1px;
+}
+.claro .djeoZoomControlZoomOut,
+.claro .djeoZoomControlZoomIn {
+  background-image: url("images/zoomButtons.png");
+  background-repeat: no-repeat;
+  background-color: #efefef;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  border: solid 1px #b5bcc7;
+  font-size: 1px;
+}
+.claro .djeoZoomControlZoomOut, .claro .djeoZoomControlZoomIn {
+  height: 16px;
+  width: 16px;
+}
+.claro .djeoZoomControlActive .djeoZoomControlZoomOut,
+.claro .djeoZoomControlActive .djeoZoomControlZoomIn,
+.claro .djeoZoomControlHover .djeoZoomControlZoomOut,
+.claro .djeoZoomControlHover .djeoZoomControlZoomIn {
+  /* djeoZoomControlActive should be treated as djeoZoomControlHover since "clicking the ZoomControl" has no meaning */
+  border: solid 1px #759dc0;
+  background-color: #ffffff;
+}
+
+.claro .djeoZoomControlZoomOut {
+  background-position: -16px 50%;
+}
+
+.claro .djeoZoomControlActive .djeoZoomControlZoomOut.claro .djeoZoomControlHover .djeoZoomControlZoomOut {
+  background-position: -73px 50%;
+}
+
+.claro .djeoZoomControlZoomIn {
+  background-position: 0px 50%;
+}
+
+.claro .djeoZoomControlActive .djeoZoomControlZoomIn.claro .djeoZoomControlHover .djeoZoomControlZoomIn {
+  background-position: -178px 49%;
+}
+.claro .djeoZoomControlButtonContainer .djeoZoomControlZoomOutHover,
+.claro .djeoZoomControlButtonContainer .djeoZoomControlZoomInHover {
+  background-color: #cfe5fa;
+}
+.claro .djeoZoomControlButtonContainer .djeoZoomControlZoomOutActive,
+.claro .djeoZoomControlButtonContainer .djeoZoomControlZoomInActive {
+  background-color: #abd6ff;
+  border-color: #759dc0;
+}
+

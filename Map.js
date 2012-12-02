@@ -614,7 +614,8 @@ return declare(null, {
 			getter = this.engine[name];
 			context = this.engine;
 		}
-		return (getter && getter.call(context)) || this[attr];
+		var result = getter && getter.call(context);
+		return result !== undefined ? result : this[attr];
 	},
 	
 	_get_center: function() {

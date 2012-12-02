@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<link rel="stylesheet" href="../../dijit/themes/claro/claro.css"/>
+<link rel="stylesheet" href="../themes/claro/claro.css"/>
+
+<script>
+	dojoConfig = {
+		isDebug: true,
+		async: true,
+		djeoEngine: "djeo"
+	};
+</script>
+<script src="util.js"></script>
+<script src="../../dojo/dojo.js"></script>
+
+<script>
+DebugUtil.timer.start("loading");
+
+require([
+	"djeo/tests/data/usa_features_style",
+	"djeo/Map",
+	"djeo/control/Highlight",
+	"djeo/control/Tooltip",
+	"djeo/control/Navigation",
+	"djeo/widget/ZoomControl",
+	"dojo/domReady!"
+],
+function(mapConfig, Map, Highlight, Tooltip, Navigation, ZoomControl){
+	DebugUtil.timer.end("loading");
+	
+	mapConfig.layers = "osm";
+	DebugUtil.timer.start("render");
+	var map = new Map("map", mapConfig);
+	map.ready(function() {
+		DebugUtil.timer.end("render");
+		new Highlight(map);
+		new Tooltip(map);
+		new Navigation(map);
+		new ZoomControl({
+			map: map
+		});
+	});
+});
+</script>
+
+</head>
+
+<body class="claro">
+
+<div id="map" style="width:800px;height:400px;"></div>
+
+</body>
+</html>

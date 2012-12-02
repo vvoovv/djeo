@@ -354,6 +354,11 @@ return declare([Evented], {
 			this.map.document.render(true);
 		}
 		// "zoom_changed" is emited here automatically (see documentation for dojo/Evented)
+	},
+	
+	_appendDiv: function(div) {
+		// we append the div directly to this.map.container
+		this.map.container.appendChild(div);
 	}
 });
 
