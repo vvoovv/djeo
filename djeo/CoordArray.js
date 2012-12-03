@@ -10,20 +10,14 @@ return declare(null, {
 	},
 
 	push: function(feature, point) {
-		var coords = feature.getCoords();
-		point = feature.map.getCoords(point);
-		if (feature.getCoordsType() == "LineString") {
-			coords.push(point);
-		}
 		this._setShapes(feature);
 	},
 
 	set: function(feature, index, point) {
-		var coords = feature.getCoords();
-		point = feature.map.getCoords(point);
-		if (feature.getCoordsType() == "LineString") {
-			coords[index] = point;
-		}
+		this._setShapes(feature);
+	},
+	
+	remove: function(feature, index) {
 		this._setShapes(feature);
 	},
 
