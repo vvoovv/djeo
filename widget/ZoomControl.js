@@ -41,9 +41,8 @@ return declare([_Widget, _TemplatedMixin, _CssStateMixin], {
 			this.zoomIn, this, "_typematicCallback", 25, 500));
 		this._connects.push(typematic.addMouseListener(
 			this.zoomOut, this, "_typematicCallback", 25, 500));
-		
-		var style = this.domNode.style;
-		style.zIndex = 1000;
+
+		this.domNode.style.zIndex = 1000;
 		this.map._appendDiv(this.domNode);
 	}
 });

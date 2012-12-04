@@ -1,0 +1,106 @@
+﻿<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<link rel="stylesheet" href="../../dijit/themes/claro/claro.css"/>
+<link rel="stylesheet" href="../themes/claro/claro.css"/>
+
+<!--
+Supported mapping engines (replace the value for the djeoEngine parameter):
+
+Leaflet - djeoEngine: 'leaflet'
+
+Google Maps API - djeoEngine: 'gmaps'
+
+Google Earth API - djeoEngine: 'ge'
+
+ArcGIS API for JavaScript - djeoEngine: 'esri'
+
+Yandex Maps API - djeoEngine: 'ymaps'
+-->
+<script src="../../dojo/dojo.js" data-dojo-config="
+	djeoEngine: 'leaflet'
+"></script>
+
+<script>
+var features = [
+	{
+		name: "Bermuda triangle",
+		type: "Polygon",
+		coords: [ [ [-64.89,32.24], [-80.15,25.7], [-66.07,18.46], [-64.89,32.24] ] ],
+		style: {
+			fill: "lime",
+			fillOpacity: 0.6,
+			stroke: "green",
+			strokeWidth: 3
+		}
+	},
+	{
+		name: "Paris-London railway",
+		type: "LineString",
+		coords: [ [2.36,48.88], [3.08,50.64], [1.81,50.90], [0.87,51.14], [-0.13,51.53] ],
+		style: {
+			stroke: "red",
+			strokeWidth: 2
+		}
+	},
+	{
+		name: "Hello world!",
+		type: "Point",
+		coords: [-30, 30],
+		style: {
+			size: [49, 60],
+			img: "http://vvoovv.github.com/ship.png"
+		}
+	}
+];
+
+require([
+	"djeo/Map",
+	"djeo/control/Navigation",
+	"djeo/control/Highlight",
+	"djeo/control/Tooltip",
+	"dijit/form/HorizontalRule",
+	"djeo/widget/ScaleBar",
+	"dojo/domReady!"
+],
+function(Map, Navigation, Highlight, Tooltip, HorizontalRule, ScaleBar){
+	/*
+	var map = new Map("map", {
+		features: features,
+		layers: "roadmap"
+		//layers: "webtiles:http://[a,b,c].tile.cloudmade.com/8ee2a50541944fb9bcedded5165f09d9/1/256"
+	});
+	map.ready(function(){
+		new Navigation(map);
+		new Highlight(map);
+		new Tooltip(map);
+	});
+	*/
+	new HorizontalRule({
+		count:11,
+		style:{height:".4em"}
+	}, "ruler2");
+	new HorizontalRule({
+		count:6,
+		style:{height:".4em"}
+	}, "ruler1");
+	
+	new ScaleBar({}, "r");
+});
+</script>
+
+</head>
+
+<body class="claro">
+
+<div id="ruler" style="width:5cm;border-bottom:1px solid black;">
+<div id="ruler1"></div>
+<div id="ruler2"></div>
+</div>
+ff
+<p>
+<div id="r"></div>
+
+</body>
+</html>
