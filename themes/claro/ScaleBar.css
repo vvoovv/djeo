@@ -1,7 +1,13 @@
-.djeoScaleBar {
-	width: 5cm;
+.djeoScaleBarContainer {
 	left: 10px;
 	bottom: 10px;
+	position: absolute;
+}
+.djeoScaleBar {
 	border-bottom: 1px solid black;
+	float: left;
+}
+.djeoScaleBarLabel {
+	margin-left: 5px;
 }
 
