@@ -39,9 +39,7 @@ function(mapConfig, Map, Highlight, Tooltip, Navigation, ScaleBar){
 		new Highlight(map);
 		new Tooltip(map);
 		new Navigation(map);
-		new ScaleBar({
-			map: map
-		});
+		new ScaleBar({}, map);
 	});
 });
 </script>

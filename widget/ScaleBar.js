@@ -4,14 +4,15 @@ define([
 	"dijit/_Widget",
 	"dijit/_TemplatedMixin",
 	"dijit/form/HorizontalRule",
-	"djeo/util/_base"
-], function(declare, lang, _Widget, _TemplatedMixin, HorizontalRule, u) {
+	"djeo/util/_base",
+	"./_MapWidgetMixin"
+], function(declare, lang, _Widget, _TemplatedMixin, HorizontalRule, u, _MapWidgetMixin) {
 
 var acceptableMantissas = [1, 2, 5],
 	numMantissas = acceptableMantissas.length - 1
 ;
 
-return declare([_Widget, _TemplatedMixin], {
+return declare([_Widget, _TemplatedMixin, _MapWidgetMixin], {
 	
 	minWidth: 60,
 	
@@ -44,7 +45,9 @@ return declare([_Widget, _TemplatedMixin], {
 			this.calculateLength(this.map.get("zoom"), 0);
 		}));
 		
-		this.map._appendDiv(this.domNode);
+		if (this.appendToMap) {
+			this.map._appendDiv(this.domNode);
+		}
 	},
 	
 	calculateLength: function(zoom, lat) {
