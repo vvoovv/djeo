@@ -68,7 +68,7 @@ return declare([_Widget, _TemplatedMixin], {
 		}
 		if (i == numMantissas) {
 			if (mantissa - acceptableMantissas[numMantissas] < 10 - mantissa) {
-				numMantissas = acceptableMantissas[numMantissas];
+				mantissa = acceptableMantissas[numMantissas];
 			}
 			else {
 				mantissa = 1;
