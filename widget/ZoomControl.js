@@ -4,8 +4,9 @@ define([
 	"dijit/_Widget",
 	"dijit/_TemplatedMixin",
 	"dijit/_CssStateMixin",
-	"dojo/text!./templates/ZoomControl.html"
-], function(declare, typematic, _Widget, _TemplatedMixin, _CssStateMixin, template){
+	"dojo/text!./templates/ZoomControl.html",
+	"./_MapWidgetMixin"
+], function(declare, typematic, _Widget, _TemplatedMixin, _CssStateMixin, template, _MapWidgetMixin){
 
 	// module:
 	//		djeo/widget/ZoomControl
@@ -13,7 +14,7 @@ define([
 	//		A widget that allows one to zoom in or zoom out the map
 
 
-return declare([_Widget, _TemplatedMixin, _CssStateMixin], {
+return declare([_Widget, _TemplatedMixin, _CssStateMixin, _MapWidgetMixin], {
 	// summary:
 	//		A widget that allows one to zoom in or zoom out the map
 
@@ -43,7 +44,10 @@ return declare([_Widget, _TemplatedMixin, _CssStateMixin], {
 			this.zoomOut, this, "_typematicCallback", 25, 500));
 
 		this.domNode.style.zIndex = 1000;
-		this.map._appendDiv(this.domNode);
+
+		if (this.appendToMap) {
+			this.map._appendDiv(this.domNode);
+		}
 	}
 });
 

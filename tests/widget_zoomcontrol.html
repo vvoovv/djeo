@@ -39,9 +39,7 @@ function(mapConfig, Map, Highlight, Tooltip, Navigation, ZoomControl){
 		new Highlight(map);
 		new Tooltip(map);
 		new Navigation(map);
-		new ZoomControl({
-			map: map
-		});
+		new ZoomControl({}, map);
 	});
 });
 </script>

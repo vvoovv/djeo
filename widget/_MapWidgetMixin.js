@@ -6,9 +6,11 @@ define([
 return declare(null, {
 	
 	postscript: function(/*Object?*/params, /*DomNode|String*/srcNodeRef){
-		if (!params.map && srcNodeRef && lang.isObject(srcNodeRef) && !srcNodeRef.tagName) {
+		if (srcNodeRef && lang.isObject(srcNodeRef) && !srcNodeRef.tagName) {
 			// assume that srcNodeRef is actually an instance of djeo/Map
-			this.map = srcNodeRef;
+			if (!params.map) {
+				this.map = srcNodeRef;
+			}
 			this.appendToMap = true;
 			srcNodeRef = null;
 		}
