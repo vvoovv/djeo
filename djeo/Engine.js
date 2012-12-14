@@ -5,6 +5,7 @@ define([
 	"dojo/_base/lang", // mixin, isString, hitch
 	"dojo/_base/array", // forEach
 	"dojo/dom-construct", // create
+	"dojo/on",
 	"../_base",
 	"../dojox/gfx",
 	"../dojox/gfx/matrix",
@@ -12,7 +13,7 @@ define([
 	"./Placemark",
 	"../util/geometry",
 	"../_tiles"
-], function(require, declare, has, lang, array, domConstruct, djeo, gfx, matrix, Engine, Placemark, geom, supportedLayers) {
+], function(require, declare, has, lang, array, domConstruct, on, djeo, gfx, matrix, Engine, Placemark, geom, supportedLayers) {
 
 var engineEvents = {mouseover: "onmouseover", mouseout: "onmouseout", click: "onclick"};
 
@@ -122,6 +123,14 @@ return declare([Engine], {
 	
 	destroy: function() {
 		this.surface.destroy();
+	},
+	
+	onForMap: function(event, method, context) {
+		return on(this.map.container, event, lang.hitch(context, method));
+	},
+	
+	_on_zoom_changed: function(event, method, context) {
+		return on(this, event, lang.hitch(context, method));
 	},
 	
 	zoomTo: function(/* Array */extent) {
