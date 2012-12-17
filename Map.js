@@ -36,6 +36,14 @@ return declare(null, {
 	//		Its format: [smallest horizontal coordinate, smallest vertical coordinate,
 	//		largest horizontal coordinate, largest vertical coordinate]
 	extent: null,
+	
+	// minZoom: Integer
+	//		Minimal map's zoom level
+	minZoom: 0,
+	
+	// maxZoom: Integer
+	//		Maximal map's zoom level
+	maxZoom: 18,
 
     // features: Object
 	//		A registry of features that can be referenced by id.

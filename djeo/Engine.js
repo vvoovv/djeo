@@ -315,8 +315,10 @@ return declare([Engine], {
 	},
 	
 	_set_zoom: function(zoom) {
-		var map = this.map,
-			oldScale = (this.group.getTransform()||{xx:1}).xx,
+		var map = this.map;
+		if (zoom < map.minZoom || zoom > map.maxZoom) return;
+
+		var oldScale = (this.group.getTransform()||{xx:1}).xx,
 			newScale = djeo.scales[zoom],
 			scaleFactor = newScale/oldScale
 		;
@@ -334,7 +336,7 @@ return declare([Engine], {
 	},
 
 	_get_zoom: function() {
-		return this.layers.length && this.layers[0].zoom;
+		return this.layers.length ? this.layers[0].zoom : -1;
 	},
 	
 	_appendDiv: function(div) {

@@ -57,13 +57,19 @@ return declare(null, {
 		// prevent browser interaction
 		event.stop(mouseEvent);
 		
+		var map = this.map,
+			engine = map.engine,
+			zoom = engine._get_zoom()
+		;
+		if (zoom >= 0 && ((zoom == map.minZoom && scaleFactor<1) || (zoom == map.maxZoom && scaleFactor>1)) ) {
+			return;
+		}
+		
 		// position relative to map container
 		var coords = domGeom.position(this.map.engine.container, true),
 			x = mouseEvent.pageX - coords.x,
 			y = mouseEvent.pageY - coords.y
 		;
-
-		var engine = this.map.engine;
 		
 		for (var i=0; i<engine.layers.length; i++) {
 			engine.layers[i].doZoom(scaleFactor, mouseEvent);
