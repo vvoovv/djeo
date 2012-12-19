@@ -1,12 +1,13 @@
 define([
 	"dojo/_base/declare", // declare
 	"dojo/_base/lang", // hitch
+	"dojo/dom-style",
 	"dijit/_Widget",
 	"dijit/_TemplatedMixin",
 	"dijit/form/HorizontalRule",
 	"djeo/util/_base",
 	"./_MapWidgetMixin"
-], function(declare, lang, _Widget, _TemplatedMixin, HorizontalRule, u, _MapWidgetMixin) {
+], function(declare, lang, domStyle, _Widget, _TemplatedMixin, HorizontalRule, u, _MapWidgetMixin) {
 
 var acceptableMantissas = [1, 2, 5],
 	numMantissas = acceptableMantissas.length - 1
@@ -38,21 +39,25 @@ return declare([_Widget, _TemplatedMixin, _MapWidgetMixin], {
 	postCreate: function() {
 		this.inherited(arguments);
 		
-		this.calculateLength(this.map.get("zoom"), 0);
+		var map = this.map;
+		
+		this.calculateLength(this.map.get("zoom"), map.get("extent")[1]);
 		this.domNode.style.zIndex = 1000;
 
-		this.map.on("zoom_changed", lang.hitch(this, function(){
-			this.calculateLength(this.map.get("zoom"), 0);
+		map.on("extent_changed", lang.hitch(this, function(){
+			this.calculateLength(map.get("zoom"), map.get("extent")[1]);
 		}));
 		
 		if (this.appendToMap) {
-			this.map._appendDiv(this.domNode);
+			map._appendDiv(this.domNode);
 		}
 	},
 	
 	calculateLength: function(zoom, lat) {
+		// calculating length for the bottom of the map
+		lat = u.degToRad(lat);
 		var earthDistance = Math.round(
-				2*Math.PI*u.earthRadius*Math.cos(u.degToRad(lat))*this.typicalWidth/(256*Math.pow(2, zoom))
+				2*Math.PI*u.earthRadius*Math.cos(lat)*this.typicalWidth/(256*Math.pow(2, zoom))
 			),
 			// finding the number of digits and the first digit
 			earthDistanceStr = earthDistance.toString(),
