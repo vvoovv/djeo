@@ -2,13 +2,14 @@ define([
 	"dojo/_base/declare", // declare
 	"dojo/has", // has
 	"dojo/on",
+	"dojo/aspect",
 	"dojo/_base/lang", // hitch
 	"dojo/_base/event", // stop
 	"dojo/dom-geometry",
 	"../dojox/gfx",
 	"./Moveable",
 	"dojo/_base/sniff"
-], function(declare, has, on, lang, event, domGeom, gfx, Moveable) {
+], function(declare, has, on, aspect, lang, event, domGeom, gfx, Moveable) {
 
 return declare(null, {
 
@@ -18,10 +19,22 @@ return declare(null, {
 		if (enable === undefined) enable = true;
 		if (enable) {
 			this.moveable = new Moveable(this.map.engine.container, this.map);
+			var engine = this.map.engine;
+			this._onFirstMove = aspect.after(this.moveable, "onFirstMove", lang.hitch(this, function(){
+				this._moved = true;
+			}));
+			this._onMoveStop = aspect.after(this.moveable, "onMoveStop", lang.hitch(this, function(){
+				if (this._moved) {
+					this._moved = false;
+					this.map.engine.emit("extent_changed");
+				}
+			}));
 			if (gfx.renderer!="silverlight") this.enableZoom(true);
 		}
 		else {
 			if (gfx.renderer!="silverlight") this.enableZoom(false);
+			this._onMoveStop.remove();
+			this._onFirstMove.remove();
 			this.moveable.destroy();
 			this.moveable = null;
 		}
@@ -86,6 +99,7 @@ return declare(null, {
 		}
 
 		engine.onzoom_changed();
+		engine.emit("extent_changed");
 	}
 });
 

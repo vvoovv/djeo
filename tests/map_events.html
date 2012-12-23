@@ -57,7 +57,7 @@ var features = [
 ];
 
 var map;
-var click, mousemove, zoom_changed;
+var click, mousemove, zoom_changed, extent_changed;
 
 function listenClick() {
 	click = map.on("click", function(event){
@@ -73,7 +73,13 @@ function listenMousemove() {
 
 function listenZoom_changed() {
 	zoom_changed = map.on("zoom_changed", function(){
-		console.debug("zoom changed");
+		console.debug("zoom changed; new zoom: " + map.get("zoom"));
+	});
+}
+
+function listenExtent_changed() {
+	extent_changed = map.on("extent_changed", function(){
+		console.debug("extent changed, new extent: " + map.get("extent"));
 	});
 }
 
@@ -127,6 +133,19 @@ function(Map, Navigation, ToggleButton) {
 		iconClass: "dijitRadioIcon"
 	}, "zoom_changed");
 
+	new ToggleButton({
+		checked: true,
+		onChange: function(value){
+			if (value) {
+				listenExtent_changed();
+			}
+			else {
+				extent_changed.remove();
+			}
+		},
+		iconClass: "dijitRadioIcon"
+	}, "extent_changed");
+
 	DebugUtil.timer.start("render");
     map = new Map("map", {
 		layers: "roadmap",
@@ -142,6 +161,7 @@ function(Map, Navigation, ToggleButton) {
 		listenClick();
 		listenMousemove();
 		listenZoom_changed();
+		listenExtent_changed();
 	});
 });
 
@@ -154,6 +174,7 @@ function(Map, Navigation, ToggleButton) {
 <div id="click">Click</div>
 <div id="mousemove">Mouse Move</div>
 <div id="zoom_changed">Zoom Changed</div>
+<div id="extent_changed">Extent Changed</div>
 
 <div id="map" style="width:800px;height:400px;"></div>
 

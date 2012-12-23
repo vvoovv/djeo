@@ -5,6 +5,7 @@ define([
 	"dojo/_base/lang", // mixin, isString, hitch
 	"dojo/_base/array", // forEach
 	"dojo/dom-construct", // create
+	"dojo/dom-geometry",
 	"dojo/on",
 	"../_base",
 	"../dojox/gfx",
@@ -13,7 +14,7 @@ define([
 	"./Placemark",
 	"../util/geometry",
 	"../_tiles"
-], function(require, declare, has, lang, array, domConstruct, on, djeo, gfx, matrix, Engine, Placemark, geom, supportedLayers) {
+], function(require, declare, has, lang, array, domConstruct, domGeom, on, djeo, gfx, matrix, Engine, Placemark, geom, supportedLayers) {
 
 var engineEvents = {mouseover: "onmouseover", mouseout: "onmouseout", click: "onclick"};
 
@@ -126,10 +127,28 @@ return declare([Engine], {
 	},
 	
 	onForMap: function(event, method, context) {
-		return on(this.map.container, event, lang.hitch(context, method));
+		// processing mouse events here
+
+		return on(this.map.container, event, lang.hitch(this, function(e){
+			// finding mouse position relative to the map container
+			var containerPos = domGeom.position(this.container, true),
+				x = e.pageX - containerPos.x,
+				y = e.pageY - containerPos.y,
+				// calling map's containerPixelToCoords instead of local one for the projection transformation to work
+				coords = this.map.containerPixelToCoords(x, y)
+			;
+			method.call(context, {
+				mapCoords: coords,
+				nativeEvent: e
+			});
+		}));
 	},
 	
 	_on_zoom_changed: function(event, method, context) {
+		return on(this, event, lang.hitch(context, method));
+	},
+
+	_on_extent_changed: function(event, method, context) {
 		return on(this, event, lang.hitch(context, method));
 	},
 	
@@ -297,21 +316,8 @@ return declare([Engine], {
 	},
 
 	_get_center: function() {
-		var map = this.map,
-			t = this.group.getTransform(),
-			scale = t.xx, // same as t.yy
-			x = -t.dx/scale,
-			y = -t.dy/scale
-		;
-		// now getting coordinates in the map projection, i.e. performing a reverse action in comparison to zoomTo function
-		if (this.correctScale) {
-			x /= this.correctionScale;
-			y /= this.correctionScale;
-		}
-		if (this.correctScale) scale *= this.correctionScale;
-		x += this.extent[0] + map.width/scale/2;
-		y = this.extent[3] - y - map.height/scale/2;
-		return [x, y];
+		var map = this.map;
+		return this.containerPixelToCoords(map.width/2, map.height/2);
 	},
 	
 	_set_zoom: function(zoom) {
@@ -338,7 +344,33 @@ return declare([Engine], {
 	_get_zoom: function() {
 		return this.layers.length ? this.layers[0].zoom : -1;
 	},
+
+	_get_extent: function() {
+		var map = this.map,
+			coords1 = this.containerPixelToCoords(0, map.height),
+			coords2 = this.containerPixelToCoords(map.width, 0)
+		;
+		return [coords1[0], coords1[1], coords2[0], coords2[1]];
+	},
 	
+	containerPixelToCoords: function(px, py) {
+		var map = this.map,
+			t = this.group.getTransform(),
+			scale = t.xx, // same as t.yy
+			x = -t.dx/scale,
+			y = -t.dy/scale
+		;
+		// now getting coordinates in the map projection, i.e. performing a reverse action in comparison to zoomTo function
+		if (this.correctScale) {
+			x /= this.correctionScale;
+			y /= this.correctionScale;
+		}
+		if (this.correctScale) scale *= this.correctionScale;
+		x += this.extent[0] + px/scale;
+		y = this.extent[3] - y - py/scale;
+		return [x, y];
+	},
+
 	_appendDiv: function(div) {
 		// we append the div to this.container
 		this.container.children[0].appendChild(div);

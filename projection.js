@@ -175,6 +175,28 @@ p._get_center = function() {
 	}
 	return center;
 }
+// patch _get_extent method of the Map class
+var _get_extent = p._get_extent; // original _get_extent
+p._get_extent = function() {
+	var extent = _get_extent.call(this),
+		appProjection = this.appProjection || this.dataProjection || this.projection
+	;
+	if (this.projection && appProjection != this.projection) {
+		extent = proj.transform(this.projection, appProjection, extent);
+	}
+	return extent;
+}
+// patch containerPixelToCoords method of the Map class
+var containerPixelToCoords = p.containerPixelToCoords; // original _get_extent
+p.containerPixelToCoords = function(x, y) {
+	var coords = containerPixelToCoords.call(this, x, y),
+		appProjection = this.appProjection || this.dataProjection || this.projection
+	;
+	if (this.projection && appProjection != this.projection) {
+		coords = proj.transform(this.projection, appProjection, coords, "Point");
+	}
+	return coords;
+}
 
 // patch the Placemark class
 lang.extend(Placemark, {

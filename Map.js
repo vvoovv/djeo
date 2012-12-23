@@ -630,6 +630,14 @@ return declare(null, {
 		return this.engine._get_center();
 	},
 	
+	_get_extent: function() {
+		return this.engine._get_extent();
+	},
+	
+	containerPixelToCoords: function(x, y) {
+		return this.engine.containerPixelToCoords(x, y);
+	},
+	
 	_appendDiv: function(div) {
 		this.engine._appendDiv(div);
 	}
