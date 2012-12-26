@@ -150,12 +150,12 @@ var fc = declare([Feature], {
 		return bb;
 	},
 	
-	render: function(stylingOnly, theme) {
-		return this.map.engine.renderContainer(this, stylingOnly, theme);
+	render: function(theme, destroy) {
+		return this.map.engine.renderContainer(this, theme, destroy);
 	},
 	
-	_render: function(stylingOnly, theme) {
-		return this.map.engine._renderContainer(this, stylingOnly, theme);
+	_render: function(theme, destroy) {
+		return this.map.engine._renderContainer(this, theme, destroy);
 	},
 	
 	getContainer: function() {

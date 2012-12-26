@@ -86,15 +86,15 @@ var p = declare([Feature], {
 		return this.getCoords();
 	},
 	
-	render: function(stylingOnly, theme) {
-		this.map.engine.factories.Placemark.render(this, stylingOnly, theme);
+	render: function(theme, destroy) {
+		this.map.engine.factories.Placemark.render(this, theme, destroy);
 	},
 
-	_render: function(stylingOnly, theme) {
-		if (!stylingOnly) {
+	_render: function(theme, destroy) {
+		if (destroy) {
 			this.parent._show(this, true, true);
 		}
-		this.map.engine.factories.Placemark._render(this, stylingOnly, theme);
+		this.map.engine.factories.Placemark._render(this, theme, destroy);
 	},
 	
 	remove: function() {

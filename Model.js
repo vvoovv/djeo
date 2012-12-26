@@ -18,7 +18,7 @@ var Model = declare([Placemark], {
 		return this.coordsType || "Point";
 	},
 
-	_render: function(stylingOnly, theme) {
+	_render: function(theme, destroy) {
 		// set factory
 		if (!this.factory) {
 			var map = this.map;

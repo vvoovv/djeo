@@ -209,54 +209,54 @@ return declare([Evented], {
 		};
 	},
 	
-	render: function(/* Boolean */stylingOnly, /* String? */theme) {
+	render: function(/* String? */theme, /* Boolean? */destroy) {
 		// summary:
 		//		Default implementation of the render method of djeo/Map
-		// stylingOnly:
-		//		See description in the render method of djeo/Map
 		// theme:
+		//		See description in the render method of djeo/Map
+		// destroy:
 		//		See description in the render method of djeo/Map
 		var map = this.map;
 		map._calculateViewport();
 		this.prepare();
 		this._initCamera();
-		return map.document.render(stylingOnly, theme);
+		return map.document.render(theme, destroy);
 	},
 	
-	renderFeatures: function(/* Array|Object */features, /* Boolean */stylingOnly, /* String? */theme) {
+	renderFeatures: function(/* Array|Object */features, /* String? */theme, /* Boolean? */destroy) {
 		// summary:
 		//		Default implementation of the renderFeatures method of djeo/Map
 		if (lang.isString(features)) features = [features];
 		if (lang.isArray(features)) {
 			array.forEach(features, function(feature){
 				if (lang.isString(feature)) feature = this.getFeatureById(feature);
-				if (feature) feature._render(stylingOnly, theme);
+				if (feature) feature._render(theme, destroy);
 			}, this);
 		}
 		else {
 			for(var fid in features) {
 				// TODO: avoid double rendering
-				features[fid]._render(stylingOnly, theme);
+				features[fid]._render(theme, destroy);
 			}
 		}
 	},
 
-	renderContainer: function(container, stylingOnly, theme) {
-		if (!stylingOnly) {
+	renderContainer: function(container, theme, destroy) {
+		if (destroy) {
 			// reset numVisibleFeatures
 			container.numVisibleFeatures = 0;
 		}
-		this._renderContainer(container, stylingOnly, theme);
+		this._renderContainer(container, theme, destroy);
 	},
 
-	_renderContainer: function(container, stylingOnly, theme) {
+	_renderContainer: function(container, theme, destroy) {
 		if (!container.visible) return;
-		if (container.features.length == 0 && !stylingOnly) {
+		if (container.features.length == 0 && destroy) {
 			container.parent.numVisibleFeatures++;
 		}
 		array.forEach(container.features, function(feature){
 			if (feature.isContainer || feature.visible) {
-				feature._render(stylingOnly, theme);
+				feature._render(theme, destroy);
 			}
 		});
 	},

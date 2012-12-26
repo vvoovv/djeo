@@ -120,6 +120,10 @@ return declare(null, {
 	//		styleClass is used as a key
 	featuresByClass: null,
 
+	// themeForState: Object
+	//		A registry that defines the theme for a feature state
+	themeForState: null,
+	
 	// _ready: Boolean
 	//		Used by the ready function.
 	//		If set to true the callback supplied to the ready function is called immediately,
@@ -138,6 +142,10 @@ return declare(null, {
 		this.styleByClass = {};
 		this.styleByClassAndFid = {};
 		this.featuresByClass = {};
+		
+		this.themeForState = {
+			highlight: "highlight"
+		};
 
 		this.engineOptions = {};
 
@@ -286,24 +294,25 @@ return declare(null, {
 		this.document.removeFeatures(features);
 	},
 	
-	render: function(/* Boolean */stylingOnly, /* String? */theme) {
+	render: function(/* String? */theme, /* Boolean? */destroy) {
 		// summary:
 		//		Render map features
-		// stylingOnly:
-		//		If set to true, only style is reapplied to the features. This is used by the Highlight control
 		// theme:
 		//		Specifies which theme to use for map rendering.
 		//		If theme is not set, the map will be rendered with the theme set for the "normal" map mode
-		return this.engine.render(stylingOnly, theme);
+		// destroy:
+		//		If set to true, the feature(s) will be destroyed and created again.
+		//		Otherwise styling is reapplied to the feature(s).
+		return this.engine.render(theme, destroy);
 	},
 	
-	renderFeatures: function(/* Array|Object */features, /* Boolean */stylingOnly, /* String? */theme) {
+	renderFeatures: function(/* Array|Object */features, /* String? */theme, /* Boolean? */destroy) {
 		// summary:
 		//		Renders the specified features instead of the whole map tree
 		// features:
 		//		Can be an array or a "hash" (javascript object) of features.
 		//		Feature id is used as a hash key in the latter case.
-		this.engine.renderFeatures(features, stylingOnly, theme);
+		this.engine.renderFeatures(features, theme, destroy);
 	},
 	
 	show: function(/* Array|Object|String|Boolean */features, /* Boolean? */show) {

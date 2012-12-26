@@ -12,11 +12,11 @@ var P = declare(null, {
 	
 	specificStyleIndex: -1, // -1 means: use the last specific style in the array
 	
-	render: function(feature, stylingOnly, theme) {
-		this._render(feature, stylingOnly, theme);
+	render: function(feature, theme, destroy) {
+		this._render(feature, theme, destroy);
 	},
 	
-	_render: function(feature, stylingOnly, theme) {
+	_render: function(feature, theme, destroy) {
 		if (!feature.visible) return;
 		//TODO: disconnect connections and then reconnect them
 		var coords = feature.getCoords();
@@ -26,14 +26,14 @@ var P = declare(null, {
 		}
 
 		// TODO: disconnect
-		if (!stylingOnly) {
+		if (destroy) {
 			// destroy base shapes
 			for (var i=feature.baseShapes.length-1; i>=0; i--) {
 				this.map.engine.destroy(feature.baseShapes.pop(), feature);
 			}
 		}
 		// destroy extra shapes
-		// extra shapes are destroyed in an case (also if stylingOnly == true)
+		// extra shapes are destroyed in any case (also if destroy == false)
 		if (feature.extraShapes) for (var i=feature.extraShapes.length-1; i>=0; i--) {
 			this.map.engine.destroy(feature.extraShapes.pop(), feature);
 		}
@@ -47,7 +47,7 @@ var P = declare(null, {
 
 		// apply style to the base geometry
 		var styleType = feature.isPoint() ? "point" : (feature.isArea() ? "area" : "line");
-		if (stylingOnly) {
+		if (!destroy) {
 			this.applyStyle(feature, style, styleType, coords);
 		}
 		else {
