@@ -161,7 +161,7 @@ var ready = function(Map, Navigation, usaGeometries, usaFeatures, usaSomeRailway
 		checked: true,
 		onChange: function(value){
 			if (value) handleMap = map.document.on("click", fMap);
-			else map.document.disconnect(handleMap);
+			else handleMap.remove();
 		},
 		iconClass: "dijitRadioIcon"
 	}, "wholeMap");
@@ -188,11 +188,11 @@ var ready = function(Map, Navigation, usaGeometries, usaFeatures, usaSomeRailway
 }
 
 var connectFeature = function(id, callback) {
-	return map.getFeatureById(id).on(["click", "mouseover", "mouseout"], callback);
+	return map.$(id).on(["click", "mouseover", "mouseout"], callback);
 }
 
 var disconnectFeature = function(id, handle) {
-	map.getFeatureById(id).disconnect(handle);
+	handle.remove(map.$(id));
 }
 
 

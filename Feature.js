@@ -97,11 +97,19 @@ return declare(null, {
 	},
 
 	on: function(/* String|Array? */events, /*Function*/ method, /*Object?*/ context) {
-		return this.onForHandle(null, {
-			events: lang.isString(events) ? [events] : events,
-			context: context,
-			method: method
-		});
+		var map = this.map,
+			handle = this.onForHandle(null, {
+				events: lang.isString(events) ? [events] : events,
+				context: context,
+				method: method
+			})
+		;
+		return {
+			remove: function(feature) {
+				if (feature) feature.disconnect(handle);
+				else map.disconnect(handle);
+			}
+		};
 	},
 	
 	onForHandle: function(/* String|Number */ handle, /*Object*/ kwArgs) {
