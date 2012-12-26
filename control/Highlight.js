@@ -17,11 +17,11 @@ return declare([Base], {
 		if (this.enabled) this.enable();
 	},
 
-	pointeroverAction: function(newfeature, oldFeature) {
+	pointeroverAction: function(newFeature, oldFeature) {
 		if (oldFeature) {
 			oldFeature.render(true);
 		}
-		newfeature.render(true, this.theme);
+		newFeature.render(true, this.theme);
 	},
 	
 	pointeroutAction: function(feature) {

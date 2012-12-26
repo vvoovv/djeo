@@ -81,7 +81,7 @@ return declare(null, {
 				this.style.push(s);
 			}
 		}, this);
-		if (!preventRendering) this.render(true);
+		if (!preventRendering) this.render();
 	},
 	
 	render: function() {

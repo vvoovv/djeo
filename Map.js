@@ -144,7 +144,8 @@ return declare(null, {
 		this.featuresByClass = {};
 		
 		this.themeForState = {
-			highlight: "highlight"
+			highlight: "highlight",
+			normal: null
 		};
 
 		this.engineOptions = {};

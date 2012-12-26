@@ -351,7 +351,7 @@ return declare([Evented], {
 	
 	onzoom_changed: function() {
 		if (!this._renderingDisabled && this.map._hasZoomStyle) {
-			this.map.document.render(true);
+			this.map.document.render();
 		}
 		// "zoom_changed" is emited here automatically (see documentation for dojo/Evented)
 	},

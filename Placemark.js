@@ -195,6 +195,11 @@ var p = declare([Feature], {
 			delete this.handles[handle];
 		}
 	},
+	
+	_set_state: function(state) {
+		this.state = state;
+		this.render();
+	},
 
 	_set_orientation: function(o) {
 		var factory = this.map.engine.factories.Placemark;
