@@ -160,15 +160,15 @@ return declare([P], {
 		}
 		if (size) {
 			// store the size and the scale for possible future reference
-			feature.state.size = [size[0], size[1]];
-			feature.state.scale = scale;
+			feature.reg.size = [size[0], size[1]];
+			feature.reg.scale = scale;
 		}
 		else if (shape) {
 			// check if we can apply relative scale (rScale)
 			rScale = P.get("rScale", calculatedStyle, specificStyle, specificShapeStyle);
 			if (isVectorShape !== undefined && rScale !== undefined) {
-				size = feature.state.size;
-				scale = rScale * feature.state.scale;
+				size = feature.reg.size;
+				scale = rScale * feature.reg.scale;
 			}
 		}
 
@@ -244,8 +244,8 @@ return declare([P], {
 		if (shape) {
 			if (applyTransform) {
 				// check if need to apply rotation
-				var state = feature.state,
-					heading = state.orientation ? state.orientation.heading : state.heading;
+				var reg = feature.reg,
+					heading = reg.orientation ? reg.orientation.heading : reg.heading;
 				if (heading !== undefined) {
 					transform.push(matrix.rotate(heading));
 				}
@@ -356,9 +356,9 @@ return declare([P], {
 	
 	show: function(feature, show) {
 		if (show) {
-			var container = feature.state.gfxContainer;
+			var container = feature.reg.gfxContainer;
 			// we don't need the container anymore
-			delete feature.state.gfxContainer;
+			delete feature.reg.gfxContainer;
 
 			array.forEach(feature.baseShapes, function(shape){
 				container.add(shape);
@@ -368,7 +368,7 @@ return declare([P], {
 			if (feature.baseShapes.length) {
 				// save shapes container for possible future use
 				// all base shapes are supposed to be in the same gfx container
-				feature.state.gfxContainer = feature.baseShapes[0].getParent();
+				feature.reg.gfxContainer = feature.baseShapes[0].getParent();
 			}
 			array.forEach(feature.baseShapes, function(shape){
 				shape.removeShape();
@@ -400,7 +400,7 @@ return declare([P], {
 		if (label) {
 			feature.textShapes = [];
 			// ts states for "text style"
-			feature.state.ts = textStyle;
+			feature.reg.ts = textStyle;
 
 			// for halo effect we need two text shapes: the lower one with stroke and the upper one without stroke
 			if (textStyle.haloFill && textStyle.haloRadius) {
@@ -436,7 +436,7 @@ return declare([P], {
 			;
 
 			if (fill) textShape.setFill(fill);
-			this._makeFont(textShape, textStyle, P.getScale(feature.state.cs));
+			this._makeFont(textShape, textStyle, P.getScale(feature.reg.cs));
 			if (stroke) textShape.setStroke(stroke);
 			
 			feature.textShapes.push(textShape);
@@ -461,8 +461,8 @@ return declare([P], {
 			y = this.getY(center[1]);
 		}
 		
-		var textStyle = feature.state.ts,
-			calculatedStyle = feature.state.cs,
+		var textStyle = feature.reg.ts,
+			calculatedStyle = feature.reg.cs,
 			scale = P.getScale(calculatedStyle),
 			transforms = [matrix.scaleAt(1/this.lengthDenominator, x, y)],
 			// determing label offset
@@ -522,8 +522,8 @@ return declare([P], {
 		// orientation is actually heading
 		var baseShapes = feature.baseShapes,
 			heading = lang.isObject(o) ? o.heading : o,
-			state = feature.state,
-			oldHeading = state.orientation ? state.orientation.heading : state.heading,
+			reg = feature.reg,
+			oldHeading = reg.orientation ? reg.orientation.heading : reg.heading,
 			deltaHeading = -oldHeading + heading
 		;
 

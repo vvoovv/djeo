@@ -13,7 +13,7 @@ return declare(null, {
 	process: function(event){
 		var feature = event.feature,
 			domEvent = event.event,
-			cs = feature.state.cs,
+			cs = feature.reg.cs,
 			content = cs.info ? cs.info(feature) : this.content(feature)
 		;
 		// adjust relative coordinates to absolute, and remove fractions

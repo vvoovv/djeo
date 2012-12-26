@@ -76,7 +76,7 @@ return declare([Base], {
 	showTooltip: function(feature) {
 		this._setAroundRect();
 		// calculated style
-		var cs = feature.state.cs;
+		var cs = feature.reg.cs;
 		tooltip.show(cs.tooltip ? cs.tooltip(feature) : this.content(feature), aroundRect, this.position, this.rtl);
 	},
 	

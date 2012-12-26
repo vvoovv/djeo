@@ -39,10 +39,10 @@ var P = declare(null, {
 		}
 		
 		var style = djeo.calculateStyle(feature, theme);
-		//save calculated style (for normal theme only) in this.state
+		//save calculated style (for normal theme only) in this.reg
 		// cs stands for "calculated style"
 		if (!theme || theme == "normal") {
-			feature.state.cs = style;
+			feature.reg.cs = style;
 		}
 
 		// apply style to the base geometry

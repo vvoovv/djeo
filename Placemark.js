@@ -24,12 +24,12 @@ var p = declare([Feature], {
 	textShapes: null,
 
 	// store dynamical or engine specific information here
-	state: null,
+	reg: null,
 
 	constructor: function(/* Object? */featureDef, /* Object? */kwArgs) {
 		this.handles = {};
 		this.baseShapes = [];
-		this.state = {};
+		this.reg = {};
 	},
 	
 	getType: function() {
@@ -199,14 +199,14 @@ var p = declare([Feature], {
 	_set_orientation: function(o) {
 		var factory = this.map.engine.factories.Placemark;
 		if (factory.setOrientation) {
-			var state = this.state;
-			if (state.heading === undefined) {
-				state.heading = 0;
+			var reg = this.reg;
+			if (reg.heading === undefined) {
+				reg.heading = 0;
 			}
 			var heading = lang.isObject(o) ? o.heading : o;
 			if (heading !== undefined) {
 				factory.setOrientation(heading, this);
-				state.heading = heading;
+				reg.heading = heading;
 			}
 		}
 	}
