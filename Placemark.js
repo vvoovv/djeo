@@ -87,6 +87,9 @@ var p = declare([Feature], {
 	},
 	
 	render: function(theme, destroy) {
+		if (!theme && this.state) {
+			theme = this.map.states[this.state];
+		}
 		this.map.engine.factories.Placemark.render(this, theme, destroy);
 	},
 

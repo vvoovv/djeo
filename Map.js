@@ -120,9 +120,10 @@ return declare(null, {
 	//		styleClass is used as a key
 	featuresByClass: null,
 
-	// themeForState: Object
-	//		A registry that defines the theme for a feature state
-	themeForState: null,
+	// states: Object
+	//		A registry providing information for a state
+	//		If the registry value for a state is a string, the string is a theme name  
+	states: null,
 	
 	// _ready: Boolean
 	//		Used by the ready function.
@@ -143,7 +144,7 @@ return declare(null, {
 		this.styleByClassAndFid = {};
 		this.featuresByClass = {};
 		
-		this.themeForState = {
+		this.states = {
 			highlight: "highlight",
 			normal: null
 		};

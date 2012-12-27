@@ -10,8 +10,6 @@ djeo.registerDependency(dependency);
 return declare([Base], {
 	//	summary:
 	//		A basic highlighting control for the map
-	
-	theme: "highlight",
 
 	constructor: function(map, kwArgs){
 		if (this.enabled) this.enable();
@@ -19,13 +17,13 @@ return declare([Base], {
 
 	pointeroverAction: function(newFeature, oldFeature) {
 		if (oldFeature) {
-			oldFeature.render(true);
+			oldFeature.set("state", null);
 		}
-		newFeature.render(true, this.theme);
+		newFeature.set("state", "highlight");
 	},
 	
 	pointeroutAction: function(feature) {
-		feature.render(true);
+		feature.set("state", null);
 	}
 });
 
