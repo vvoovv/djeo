@@ -259,7 +259,7 @@ return declare(null, {
 			}
 
 			// perform rendering
-			var renderDeferred = this.render();
+			var renderDeferred = this.render(null, true);
 
 			if (renderDeferred) {
 				renderDeferred.then(lang.hitch(this, function(){
