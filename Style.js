@@ -94,7 +94,7 @@ var Style = declare(null, {
 
 		this._setDef(def);
 		// apply the style to the the affected features
-		this.map.renderFeatures(affectedFeatures, true, "normal");
+		this.map.renderFeatures(affectedFeatures);
 	},
 	
 	_setDef: function(def) {
