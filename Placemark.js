@@ -206,16 +206,9 @@ var p = declare([Feature], {
 
 	_set_orientation: function(o) {
 		var factory = this.map.engine.factories.Placemark;
-		if (factory.setOrientation) {
-			var reg = this.reg;
-			if (reg.heading === undefined) {
-				reg.heading = 0;
-			}
-			var heading = lang.isObject(o) ? o.heading : o;
-			if (heading !== undefined) {
-				factory.setOrientation(heading, this);
-				reg.heading = heading;
-			}
+		var heading = lang.isObject(o) ? o.heading : o;
+		if (heading !== undefined) {
+			factory.setOrientation(heading, this);
 		}
 	}
 });

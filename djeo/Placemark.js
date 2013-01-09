@@ -245,7 +245,14 @@ return declare([P], {
 			if (applyTransform) {
 				// check if need to apply rotation
 				var reg = feature.reg,
-					heading = reg.orientation ? reg.orientation.heading : reg.heading;
+					heading = reg.heading
+				;
+				if (heading === undefined) {
+					// check if have orientation directly in the feature (this is case of map initialization)
+					heading = feature.orientation;
+					if (lang.isObject(heading)) heading = heading.heading;
+					reg.heading = heading;
+				}
 				if (heading !== undefined) {
 					transform.push(matrix.rotate(heading));
 				}
@@ -520,16 +527,19 @@ return declare([P], {
 
 	setOrientation: function(o, feature) {
 		// orientation is actually heading
+		var reg = feature.reg;
+		if (reg.heading === undefined) {
+			reg.heading = 0;
+		}
 		var baseShapes = feature.baseShapes,
-			heading = lang.isObject(o) ? o.heading : o,
-			reg = feature.reg,
-			oldHeading = reg.orientation ? reg.orientation.heading : reg.heading,
-			deltaHeading = -oldHeading + heading
+			deltaHeading = -reg.heading + o
 		;
 
 		array.forEach(baseShapes, function(shape){
 			shape.applyRightTransform(matrix.rotate(deltaHeading));
 		}, this);
+		
+		reg.heading = o;
 	},
 	
 	makePathString: function(entities, depth) {

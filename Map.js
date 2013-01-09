@@ -85,7 +85,7 @@ return declare(null, {
 	useAttrs: false,
 	
 	// renderModels: Boolean
-	//		Specifies if an engine (e.g. ge - Google Earth) capable of rendering 3D models
+	//		Specifies if an engine (e.g. ge - Google Earth) is capable of rendering 3D models
 	//		should really render them.
 	//		If renderModels is set to false for such engine, it is supposed to render
 	//		2D representation of the 3D model
@@ -206,7 +206,13 @@ return declare(null, {
 		;
 		// TODO: make optimization for the case of different engines on the same web page:
 		// allow a user to specify module dependencies per each instance of djeo.Map
-		for (var dep in djeo.dependencies) {
+		var deps = djeo.dependencies;
+		for (var dep in deps) {
+			if (deps[dep] != 1) {
+				// we have a filter function
+				// if the function returns false the dependency will not be loaded
+				if (!deps[dep](this)) continue;
+			}
 			var moduleId = engine.matchModuleId(dep);
 			if (moduleId) {
 				requireModules.push(moduleId);

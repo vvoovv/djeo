@@ -1,17 +1,28 @@
 define([
 	"dojo/_base/declare",
-	"dojo/_base/lang",
+	"dojo/_base/lang", // isObject
 	"./Placemark",
 	"./_base",
 ], function(declare, lang, Placemark, djeo) {
 	
 var dependency = "Model";
-djeo.registerDependency(dependency);
+djeo.registerDependency(dependency, function(map){
+	return map.engine.canRenderModels;
+});
 
 var Model = declare([Placemark], {
 
 	constructor: function(/* Object? */featureDef, /* Object? */kwArgs) {
 		lang.mixin(this, kwArgs);
+		if (!lang.isObject(this.orientation)) {
+			var heading = this.orientation;
+			this.orientation = {
+				heading: heading === undefined ? 0: heading,
+				tilt: 0,
+				roll: 0
+			};
+			
+		}
 	},
 	
 	getCoordsType: function() {
@@ -37,16 +48,25 @@ var Model = declare([Placemark], {
 		}
 	},
 	
-	rotate: function(orientation) {
-		var factory = this.factory;
-		if (factory.rotate) {
-			if (this.orientation === undefined) this.orientation = {
-				heading: 0,
-				tilt: 0,
-				roll: 0
-			};
-			factory.rotate(orientation, this);
+	_set_coords: function(coords) {
+		// convert coordinates to the map projection if it is relevant here
+		var _coords = this.map.getCoords(coords);
+		this.factory.setCoords(_coords, this);
+		this.coords = coords;
+		this._coords = _coords;
+	},
+	
+	_set_orientation: function(orientation) {
+		var m = this.map;
+		if (m.engine.canRenderModels && m.renderModels) {
+			if (!lang.isObject(orientation)) {
+				orientation = {heading: orientation};
+			}
+			this.factory.setOrientation(orientation, this);
 			lang.mixin(this.orientation, orientation);
+		}
+		else {
+			this.inherited(arguments);
 		}
 	}
 });

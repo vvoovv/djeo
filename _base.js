@@ -14,8 +14,8 @@ var d = {
 
 var deps = {};
 d.dependencies = deps;
-d.registerDependency = function(moduleId) {
-	deps[moduleId] = 1;
+d.registerDependency = function(moduleId, func) {
+	deps[moduleId] = func || 1;
 };
 
 d.defaultStyle = [
