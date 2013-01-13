@@ -209,6 +209,7 @@ var p = declare([Feature], {
 		var heading = lang.isObject(o) ? o.heading : o;
 		if (heading !== undefined) {
 			factory.setOrientation(heading, this);
+			this.orientation = heading;
 		}
 	}
 });

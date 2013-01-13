@@ -91,6 +91,11 @@ return declare(null, {
 	//		2D representation of the 3D model
 	renderModels: true,
 	
+	// simulateOrientation: Boolean
+	//		Defines if an engine should simulate icon orientation if it doesn't support it natively
+	//		Normally the icon orientation is simulated by sprites
+	simulateOrientation: false,
+	
 	// iconBasePath: String
 	//		This path is prepended to the src field in each style definition
 	//		provided that the src field specifies a relative path
