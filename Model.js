@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang", // isObject
 	"./Placemark",
-	"./_base",
+	"./_base"
 ], function(declare, lang, Placemark, djeo) {
 	
 var dependency = "Model";

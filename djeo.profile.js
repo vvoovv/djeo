@@ -1,6 +1,13 @@
 var copyOnly = function(mid) {
-	return mid in {
-	}
+	return mid in {};
+};
+
+var miniExclude = function(filename, mid) {
+	return mid == "djeo/djeo.profile" ||
+		/^djeo\/tests/.test(mid) ||
+		/package.json$/.test(filename) ||
+		/README.md$/.test(filename)
+	;
 };
 
 var profile = {
@@ -12,7 +19,7 @@ var profile = {
 	optimize: "closure",
 	layerOptimize: "closure",
 	stripConsole: "all",
-	selectorEngine: "acme",
+	selectorEngine: "lite",
 	staticHasFeatures: {
 		"djeo-built": 1
 	},
@@ -78,6 +85,9 @@ var profile = {
 		},
 		amd: function(filename, mid) {
 			return !copyOnly(mid) && /\.js$/.test(filename);
+		},
+		miniExclude: function(filename, mid) {
+			return miniExclude(filename, mid);
 		}
 	}
 };

@@ -18,11 +18,12 @@
 	},
 	"bugs": "https://github.com/vvoovv/djeo/issues",
 	"dependencies": {
-		"dojo": "1.7.1",
-		"dijit": "1.7.1"
+		"dojo": "1.7.3",
+		"dijit": "1.7.3"
 	},
 	"keywords": ["djeo", "geo"],
 	"homepage": "http://djeo.org",
 	"main": "./Map",
-	"icon": "http://djeo.github.com/djeo25.png"
+	"icon": "http://djeo.github.com/djeo25.png",
+	"dojoBuild": "djeo.profile.js"
 }
