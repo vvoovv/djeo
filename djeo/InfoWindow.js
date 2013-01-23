@@ -12,7 +12,7 @@ return declare(null, {
 
 	process: function(event){
 		var feature = event.feature,
-			domEvent = event.event,
+			domEvent = event.nativeEvent,
 			cs = feature.reg.cs,
 			content = cs.info ? cs.info(feature) : this.content(feature)
 		;
