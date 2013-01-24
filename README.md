@@ -15,7 +15,7 @@ If you never worked with Dojo Toolkit, we recommend to download the latest built
 Unpack the archive and start from _helloworld/helloworld.html_. There are demos in the _djeo-demos_ directory and examples from the djeo [tutorial](https://github.com/vvoovv/djeo-tutorial) in the _djeo-tutorial_ directory.
 
 ### For advanced development
-If you are an experienced Dojo Toolkit developer or you would like to make a custom djeo build, read [the article](https://github.com/vvoovv/djeo).
+If you are an experienced Dojo Toolkit developer or you would like to make a custom djeo build, read [the article](https://github.com/vvoovv/djeo/wiki/Advanced-Development-with-djeo).
 
 ## Learning djeo
 The "Hello World!" application is more or less self explaining. It can be found in the built version of djeo (see above). The code of the application is also presented below.
