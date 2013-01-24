@@ -20,7 +20,7 @@ If you are an experienced Dojo Toolkit developer or you would like to make a cus
 ## Learning djeo
 The "Hello World!" application is more or less self explaining. It can be found in the built version of djeo (see above). The code of the application is also presented below.
 
-A tutorial (under development) is located [here](https://github.com/vvoovv/djeo/wiki/Tutorial). Examples from the tutorial can be found in the built version under _djeo-tutorial_ directory or in the [djeo-tutorial](https://github.com/vvoovv/djeo-tutorial).
+A tutorial (under development) is located [here](https://github.com/vvoovv/djeo/wiki/Tutorial). Examples from the tutorial can be found in the built version under _djeo-tutorial_ directory or in the [djeo-tutorial](https://github.com/vvoovv/djeo-tutorial) repo.
 
 ## Code Sample
 Place a file with the code sample in a directory next to dojo, dijit, djeo directories
