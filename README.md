@@ -12,50 +12,15 @@ Please see [Demos wiki page](https://github.com/vvoovv/djeo/wiki/demos)
 ### Built version
 
 If you never worked with Dojo Toolkit, we recommend to download the latest built version of the djeo library from [here](https://github.com/vvoovv/djeo/downloads).
-Unpack the archive and start from helloworld/helloworld.html
+Unpack the archive and start from _helloworld/helloworld.html_. There are demos in the _djeo-demos_ directory.
 
-### Automatic Download with CPM
+### For advanced development
+If you are an experienced Dojo Toolkit developer or you would like to make a custom djeo build, read [the article](https://github.com/vvoovv/djeo).
 
-djeo can be installed via [CPM](https://github.com/kriszyp/cpm) using the following command:
+## Learning djeo
+The "Hello World!" application is more or less self explaining. It can be found in the built version of djeo (see above). The code of the application is also presented below.
 
-    cpm install djeo
-
-If you are going to use alternative engines for djeo (Leaflet, Google Maps API, Google Earth Javascript API, ArcGIS API for JavaScript, Yandex Maps API),
-execute one or several of the following commands:
-    
-	cpm install djeo-leaflet
-	cpm install djeo-gmaps
-	cpm install djeo-ge
-	cpm install djeo-esri
-	cpm install djeo-ymaps
-
-### Manual Download
-
-Alternatively, djeo and its dependencies can be downloaded individually:
-
-* [djeo](https://github.com/vvoovv/djeo)
-* [The Dojo Toolkit](http://dojotoolkit.org/download/) SDK version 1.7.3
-
-If you are going to use alternative engines for djeo (Leaflet, Google Maps API, Google Earth Javascript API, ArcGIS API for JavaScript, Yandex Maps API),
-then download one or several of the following items:
-
-* [djeo-leaflet](https://github.com/vvoovv/djeo-leaflet)
-* [djeo-gmaps](https://github.com/vvoovv/djeo-gmaps)
-* [djeo-ge](https://github.com/vvoovv/djeo-ge)
-* [djeo-esri](https://github.com/vvoovv/djeo-esri)
-* [djeo-ymaps](https://github.com/vvoovv/djeo-ymaps)
-
-Arrange all items as siblings, resulting in a directory structure like the following:
-
-* `djeo`
-* `dojo`
-* `dijit`
-* `djeo-leaflet` (optional, Leaflet)
-* `djeo-gmaps` (optional, Google Maps API)
-* `djeo-ge` (optional, Google Earth Javascript API)
-* `djeo-esri` (optional, ArcGIS API for JavaScript)
-* `djeo-ymaps` (optional, Yandex Maps API)
-
+A tutorial (under development) is located [here](https://github.com/vvoovv/djeo/wiki/Tutorial). Examples from the tutorial can be found in the built versions under _djeo-tutorial_ directory or in the [djeo-tutorial](https://github.com/vvoovv/djeo-tutorial).
 
 ## Code Sample
 Place a file with the code sample in a directory next to dojo, dijit, djeo directories
@@ -73,6 +38,7 @@ Place a file with the code sample in a directory next to dojo, dijit, djeo direc
 	Google Earth API - djeoEngine:'ge'
 	ArcGIS API for JavaScript - djeoEngine: 'esri'
 	Yandex Maps API - djeoEngine:'ymaps'
+	native djeo engine - djeoEngine:'djeo'
 	-->
 	<script src="../dojo/dojo.js" data-dojo-config="
 		djeoEngine: 'leaflet'
