@@ -11,7 +11,7 @@ Please see [Demos wiki page](https://github.com/vvoovv/djeo/wiki/demos)
 
 ### Built version
 
-If you never worked with Dojo Toolkit, we recommend to download the latest built version of the djeo library from [here](https://github.com/vvoovv/djeo/downloads).
+If you never worked with Dojo Toolkit, we recommend to download the latest built version of the djeo library from [here](https://www.dropbox.com/sh/gmaxzy6sr02zewj/nRddQMduZS).
 Unpack the archive and start from _helloworld/helloworld.html_. There are demos in the _djeo-demos_ directory and examples from the djeo [tutorial](https://github.com/vvoovv/djeo-tutorial) in the _djeo-tutorial_ directory.
 
 ### For advanced development
