@@ -95,7 +95,7 @@ var fc = declare([Feature], {
 		}, this);
 
 		if (!preventRendering) {
-			this.map.renderFeatures(addedFeatures);
+			this.map.renderFeatures(addedFeatures, null, true);
 			if (!ignoreEvents) {
 				// attach parent's events to the feature
 				array.forEach(addedFeatures, function(feature) {
