@@ -21,13 +21,17 @@ var fc = declare([Feature], {
 	numVisibleFeatures: 0,
 	
 	constructor: function(featureDef, kwArgs) {
+		this._init();
+		this.handles = {};
+	},
+	
+	_init: function() {
 		if (this.features) {
 			var features = this.features;
 			this.features = [];
 			this.addFeatures(features, true, true);
 		}
 		else this.features = [];
-		this.handles = {};
 	},
 	
 	show: function(show) {
