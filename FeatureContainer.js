@@ -100,32 +100,33 @@ var fc = declare([Feature], {
 
 		if (!preventRendering) {
 			this.map.renderFeatures(addedFeatures, null, true);
-			if (!ignoreEvents) {
-				// attach parent's events to the feature
-				array.forEach(addedFeatures, function(feature) {
-					for(var handle in this.handles) {
-						var handleObj = this.handles[handle];
-						if (handleObj.keys) {
-							for (var key in handleObj.keys) {
-								feature.onForHandle(handle, {
-									events: handleObj.events,
-									method: handleObj.method,
-									context: handleObj.context,
-									key: key,
-									value: handleObj.keys[key]
-								});
-							}
-						}
-						else {
+		}
+		
+		if (!ignoreEvents) {
+			// attach parent's events to the feature
+			array.forEach(addedFeatures, function(feature) {
+				for(var handle in this.handles) {
+					var handleObj = this.handles[handle];
+					if (handleObj.keys) {
+						for (var key in handleObj.keys) {
 							feature.onForHandle(handle, {
 								events: handleObj.events,
 								method: handleObj.method,
-								context: handleObj.context
+								context: handleObj.context,
+								key: key,
+								value: handleObj.keys[key]
 							});
 						}
 					}
-				}, this);
-			}
+					else {
+						feature.onForHandle(handle, {
+							events: handleObj.events,
+							method: handleObj.method,
+							context: handleObj.context
+						});
+					}
+				}
+			}, this);
 		}
 		return addedFeatures;
 	},
@@ -170,7 +171,6 @@ var fc = declare([Feature], {
 	},
 	
 	onForHandle: function(handle, kwArgs) {
-		if (!this.features.length) return handle;
 		if (kwArgs.events) {
 			kwArgs.events = lang.isString(kwArgs.events) ? [kwArgs.events] : kwArgs.events;
 		}

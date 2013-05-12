@@ -5,8 +5,9 @@ define([
 	"dojo/on",
 	"dojo/_base/array", // forEach
 	"dojo/Evented", //emit
+	"dojo/Deferred",
 	"./_base"
-], function(declare, has, lang, on, array, Evented, djeo){
+], function(declare, has, lang, on, array, Evented, Deferred, djeo){
 	
 var defaultCenter = [0,0],
 	defaultZoom = 3
@@ -107,7 +108,8 @@ return declare([Evented], {
 			extent = map.extent,
 			zoom,
 			// do we need to project center to the map's projection?
-			projectCenter = true
+			projectCenter = true,
+			deferred
 		;
 		// the following attribute checked in the onzoom_changed function
 		// if this._renderingDisabled == true, then no rendering due to style change will occur in the onzoom_changed
@@ -117,7 +119,7 @@ return declare([Evented], {
 			var lb = this.map.getCoords([extent[0], extent[1]]),
 				rt = this.map.getCoords([extent[2], extent[3]])
 			;
-			this.zoomTo([lb[0], lb[1], rt[0], rt[1]]);
+			deferred = this.zoomTo([lb[0], lb[1], rt[0], rt[1]]);
 		}
 		else {
 			// finding map center
@@ -155,13 +157,14 @@ return declare([Evented], {
 			}
 			// now actually set the camera
 			if (center) {
-				this._setCamera({center: center, zoom: zoom});
+				deferred = this._setCamera({center: center, zoom: zoom});
 			}
 			else {
-				this.zoomTo(bbox);
+				deferred = this.zoomTo(bbox);
 			}
 		}
 		this._renderingDisabled = false;
+		return deferred;
 	},
 	
 	getFactory: function(/* String */dependency) {
@@ -219,8 +222,28 @@ return declare([Evented], {
 		var map = this.map;
 		map._calculateViewport();
 		this.prepare();
-		this._initCamera();
-		return map.document.render(theme, destroy);
+		// wait till zooming is ready
+		var cameraDeferred = this._initCamera(),
+			resultDeferred
+		;
+		if (cameraDeferred) {
+			resultDeferred = new Deferred();
+			cameraDeferred.then(function(){
+				var renderDeferred = map.document.render(theme, destroy);
+				if (renderDeferred) {
+					renderDeferred.then(function(){
+						resultDeferred.resolve();
+					});
+				}
+				else {
+					resultDeferred.resolve();
+				}
+			})
+		}
+		else {
+			resultDeferred = map.document.render(theme, destroy);
+		}
+		return resultDeferred;
 	},
 	
 	renderFeatures: function(/* Array|Object */features, /* String? */theme, /* Boolean? */destroy) {
