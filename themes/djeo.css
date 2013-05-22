@@ -3,3 +3,9 @@
 	left: 50px;
 	top: 20px;
 }
+
+.djeoPointerCoords {
+	position: absolute;
+	right: 50px;
+	bottom: 20px;
+}
