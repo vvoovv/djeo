@@ -198,6 +198,17 @@ P.getImgSize = function(calculatedStyle, specificStyle, specificShapeStyle) {
 	return (lang.isObject(img) && img.size) ? img.size : P.getSize(calculatedStyle, specificStyle, specificShapeStyle);
 };
 
+P.getTextStyle = function(feature, calculatedStyle) {
+	var specificStyle;
+	if (feature.isPoint()) {
+		specificStyle = calculatedStyle.point;
+	}
+	else if (feature.isArea()) {
+		specificStyle = calculatedStyle.area;
+	}
+	return P.get("text", calculatedStyle, specificStyle);
+}
+
 return P;
 
 });
