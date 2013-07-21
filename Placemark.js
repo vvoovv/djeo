@@ -87,17 +87,24 @@ var p = declare([Feature], {
 	},
 	
 	render: function(theme, destroy) {
-		if (!theme && this.state) {
-			theme = this.map.states[this.state];
-		}
+		theme = this._checkState(theme);
 		this.map.engine.factories.Placemark.render(this, theme, destroy);
 	},
 
 	_render: function(theme, destroy) {
+		theme = this._checkState(theme);
 		if (destroy) {
 			this.parent._show(this, true, true);
 		}
 		this.map.engine.factories.Placemark._render(this, theme, destroy);
+	},
+	
+	_checkState: function(theme) {
+		if (!theme && this.state) {
+			var states = this.map.states;
+			theme = this.state in states ? states[this.state] : this.state;
+		}
+		return theme;
 	},
 	
 	remove: function() {
