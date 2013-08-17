@@ -1,11 +1,8 @@
 djeo
 ====
 
-## Twitter
-[@djeonews](http://twitter.com/djeonews)
-
 ## Demos
-Please see [Demos wiki page](https://github.com/vvoovv/djeo/wiki/demos)
+See [Demos wiki page](https://github.com/vvoovv/djeo/wiki/demos)
 
 ## Installation
 
