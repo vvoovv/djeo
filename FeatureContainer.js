@@ -142,7 +142,10 @@ var fc = declare([Feature], {
 	},
 	
 	remove: function() {
-		this.removeFeatures(this.features);
+		var features = this.features;
+		for(var i=features.length-1; i>=0; i--) {
+			features[i].remove();
+		}
 	},
 	
 	getBbox: function() {
