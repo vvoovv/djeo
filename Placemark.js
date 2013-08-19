@@ -108,10 +108,18 @@ var p = declare([Feature], {
 	},
 	
 	remove: function() {
+		// remove from the registry of features
+		delete this.map.features[this.id];
+		// remove feature from the feature container
+		var siblings = this.parent.features;
+		for(var i=0,numSiblings=siblings.length; i<numSiblings; i++) {
+			if (siblings[i]==this) {
+				siblings.splice(i,1);
+				break;
+			}
+		}
 		this.map.engine.factories.Placemark.remove(this);
 		// FIXME publish("djeo.placemark.remove", [this]);
-		// remove feature from the feature container
-		// remove from the registry of features
 		// remove from style dependence
 		// disconnect all events
 	},
