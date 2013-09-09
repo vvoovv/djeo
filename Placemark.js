@@ -119,9 +119,18 @@ var p = declare([Feature], {
 			}
 		}
 		this.map.engine.factories.Placemark.remove(this);
-		// FIXME publish("djeo.placemark.remove", [this]);
-		// remove from style dependence
 		// disconnect all events
+		for(var handle in this.handles) {
+			this.disconnect(handle);
+			delete this.handles[handle];
+		}
+		// remove from style dependence
+		if (this.style) {
+			array.forEach(this.style, function(style){
+				delete style._features[this.id];
+			}, this);
+			delete this.style;
+		}
 	},
 	
 	show: function(show) {
