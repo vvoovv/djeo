@@ -108,8 +108,9 @@ var p = declare([Feature], {
 	},
 	
 	remove: function() {
+		var map = this.map;
 		// remove from the registry of features
-		delete this.map.features[this.id];
+		delete map.features[this.id];
 		// remove feature from the feature container
 		var siblings = this.parent.features;
 		for(var i=0,numSiblings=siblings.length; i<numSiblings; i++) {
@@ -118,7 +119,7 @@ var p = declare([Feature], {
 				break;
 			}
 		}
-		this.map.engine.factories.Placemark.remove(this);
+		map.engine.factories.Placemark.remove(this);
 		// disconnect all events
 		for(var handle in this.handles) {
 			this.disconnect(handle);
@@ -130,6 +131,19 @@ var p = declare([Feature], {
 				delete style._features[this.id];
 			}, this);
 			delete this.style;
+		}
+		// remove from map.featuresByClass
+		if (this.styleClass) {
+			var featuresByClass = map.featuresByClass
+			array.forEach(this.styleClass, function(styleClass){
+				var features = featuresByClass[styleClass];
+				for(var i=0,numFeatures=features.length; i<numFeatures; i++) {
+					if (features[i]==this) {
+						features.splice(i,1);
+						break;
+					}
+				}
+			}, this);
 		}
 	},
 	
