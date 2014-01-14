@@ -42,7 +42,7 @@ return declare([_Widget, _TemplatedMixin, _MapWidgetMixin], {
 		var map = this.map;
 		
 		this.calculateLength(this.map.get("zoom"), map.get("extent")[1]);
-		this.domNode.style.zIndex = 1000;
+		this.domNode.style.zIndex = "zIndex" in this ? this.zIndex : 1000;
 
 		map.on("extent_changed", lang.hitch(this, function(){
 			this.calculateLength(map.get("zoom"), map.get("extent")[1]);

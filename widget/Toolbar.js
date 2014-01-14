@@ -11,7 +11,7 @@ return declare([Toolbar, _MapWidgetMixin], {
 		this.inherited(arguments);
 
 		domClass.add(this.domNode, "djeoToolbar");
-		this.domNode.style.zIndex = 1000;
+		this.domNode.style.zIndex = "zIndex" in this ? this.zIndex : 1000;
 		if (this.appendToMap) {
 			this.map._appendDiv(this.domNode);
 		}
