@@ -16,7 +16,7 @@ return declare([_Widget, _MapWidgetMixin], {
 		;
 		domNode.className = "djeoPointerCoords";
 		
-		domNode.style.zIndex = 1000;
+		domNode.style.zIndex = "zIndex" in this ? this.zIndex : 1000;
 
 		map.on("mousemove", function(event){
 			var coords = event.mapCoords;
