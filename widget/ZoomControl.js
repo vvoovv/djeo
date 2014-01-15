@@ -43,7 +43,7 @@ return declare([_Widget, _TemplatedMixin, _CssStateMixin, _MapWidgetMixin], {
 		this._connects.push(typematic.addMouseListener(
 			this.zoomOut, this, "_typematicCallback", 25, 500));
 
-		this.domNode.style.zIndex = "zIndex" in this ? this.zIndex : 1000;
+		this._setZIndex();
 
 		if (this.appendToMap) {
 			this.map._appendDiv(this.domNode);

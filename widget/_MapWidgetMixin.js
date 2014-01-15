@@ -15,6 +15,12 @@ return declare(null, {
 			srcNodeRef = null;
 		}
 		this.create(params, srcNodeRef);
+	},
+	
+	_setZIndex: function() {
+		if ("guiZIndex" in this.map) {
+			this.domNode.style.zIndex = this.map.guiZIndex;
+		}
 	}
 });
 	
