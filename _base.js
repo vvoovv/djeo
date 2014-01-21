@@ -9,7 +9,7 @@ var d = {
 	// registry of feature constructors
 	featureTypes: {},
 	// supported events
-	events: {mouseover: 1, mouseout: 1, click: 1, mousemove: 1}
+	events: {mouseover: 1, mouseout: 1, click: 1, mousemove: 1, contextmenu: 1}
 };
 
 var deps = {};
