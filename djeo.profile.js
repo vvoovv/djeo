@@ -1,11 +1,25 @@
+var packages = {};
+try {
+	// retrieve the set of packages for determining which modules to include
+	require(['util/build/buildControl'], function (buildControl) {
+		packages = buildControl.packages;
+	});
+} catch (error) {
+	console.error('Unable to retrieve packages for determining optional package support in dejo');
+}
+
 var copyOnly = function(filename, mid) {
+	// conditionally omit modules dependent on tiles packages
+	if (!packages['tiles'] && "djeo/djeo/WebTiles" == mid){
+		return true;
+	}
 	return mid in {
 		"djeo/tests/util": 1
 	} || /djeo\/tests\/data\//.test(filename)
 };
 
 var miniExclude = function(filename, mid) {
-	return mid in {};
+	return mid == "djeo/djeo.profile" || /package.json$/.test(filename);
 };
 
 var profile = {
