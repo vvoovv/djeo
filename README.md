@@ -5,12 +5,6 @@ djeo
 See [Demos wiki page](https://github.com/vvoovv/djeo/wiki/demos)
 
 ## Installation
-
-### Built version
-
-If you never worked with Dojo Toolkit, we recommend to download the latest built version of the djeo library from [here](https://www.dropbox.com/sh/gmaxzy6sr02zewj/6GUGBUFsbl/djeo_0.3.0.zip).
-Unpack the archive and start from _helloworld/helloworld.html_. There are examples from the djeo [tutorial](https://github.com/vvoovv/djeo-tutorial) in the _djeo-tutorial_ directory.
-
 ### For advanced development
 If you are an experienced Dojo Toolkit developer or you would like to make a custom djeo build, read [the article](https://github.com/vvoovv/djeo/wiki/Advanced-Development-with-djeo).
 
